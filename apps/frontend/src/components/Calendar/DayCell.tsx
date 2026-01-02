@@ -18,6 +18,25 @@ export function DayCell({ date, currentMonth, note }: DayCellProps) {
     navigate(`/day/${dateToString(date)}`);
   };
 
+  // Get preview text (strip markdown and truncate)
+  const getPreviewText = (content: string): string => {
+    // Remove markdown formatting
+    const stripped = content
+      .replace(/#{1,6}\s/g, '') // Remove headers
+      .replace(/\*\*(.+?)\*\*/g, '$1') // Remove bold
+      .replace(/\*(.+?)\*/g, '$1') // Remove italic
+      .replace(/\[(.+?)\]\(.+?\)/g, '$1') // Remove links
+      .replace(/`(.+?)`/g, '$1') // Remove inline code
+      .replace(/^[-*+]\s/gm, '') // Remove list markers
+      .trim();
+
+    // Truncate to first 60 characters
+    if (stripped.length > 60) {
+      return stripped.substring(0, 60) + '...';
+    }
+    return stripped;
+  };
+
   return (
     <button
       onClick={handleClick}
@@ -39,13 +58,15 @@ export function DayCell({ date, currentMonth, note }: DayCellProps) {
       </span>
 
       {hasNote && isCurrentMonth && (
-        <div className="w-full">
-          {/* Note indicator */}
-          <div className="w-2 h-2 rounded-full bg-primary-500 mb-1" />
+        <div className="w-full flex flex-col gap-1">
+          {/* Note content preview */}
+          <p className="text-xs text-gray-600 line-clamp-2 text-left">
+            {getPreviewText(note.content)}
+          </p>
 
           {/* Tags preview */}
           {note.tags && note.tags.length > 0 && (
-            <div className="flex flex-wrap gap-1 mt-1">
+            <div className="flex flex-wrap gap-1">
               {note.tags.slice(0, 2).map((tag) => (
                 <span
                   key={tag.id}
