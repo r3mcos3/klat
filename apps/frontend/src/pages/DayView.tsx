@@ -99,6 +99,13 @@ export function DayView() {
     return [...new Set(matches.map(tag => tag.substring(1).toLowerCase()))];
   };
 
+  // Remove hashtags from content after processing
+  const removeHashtags = (content: string): string => {
+    // Same regex as extractHashtags - replace #hashtag with just the word
+    const hashtagRegex = /#(\w+)(?!\s)/g;
+    return content.replace(hashtagRegex, '$1');
+  };
+
   // Get an unused color from the palette that is visually distinct from existing colors
   const getUnusedColor = (existingTags: Tag[], usedInCurrentOperation: Set<string>): string => {
     const allUsedColors = [
@@ -166,13 +173,16 @@ export function DayView() {
       // Process hashtags from content
       const hashtagIds = await processHashtags(data.content);
 
+      // Remove hashtags from content after processing
+      const cleanedContent = removeHashtags(data.content);
+
       // Combine manually selected tags with hashtag tags (unique)
       const allTagIds = [...new Set([...selectedTagIds, ...hashtagIds])];
 
       await updateNote.mutateAsync({
         id: note.id,
         data: {
-          content: data.content,
+          content: cleanedContent,
           tagIds: allTagIds,
         },
       });
@@ -183,12 +193,15 @@ export function DayView() {
     // Process hashtags from content
     const hashtagIds = await processHashtags(data.content);
 
+    // Remove hashtags from content after processing
+    const cleanedContent = removeHashtags(data.content);
+
     // Combine manually selected tags with hashtag tags (unique)
     const allTagIds = [...new Set([...selectedTagIds, ...hashtagIds])];
 
     await createNote.mutateAsync({
       date: data.date,
-      content: data.content,
+      content: cleanedContent,
       tagIds: allTagIds,
     });
   };
@@ -294,7 +307,7 @@ export function DayView() {
         {/* Helper text */}
         <div className="mt-4 text-sm text-gray-500 text-center space-y-1">
           <p>💡 Je notitie wordt elke 30 seconden automatisch opgeslagen, of gebruik de "Opslaan" knop</p>
-          <p>🏷️ Gebruik #hashtags in je notitie om automatisch tags aan te maken met unieke kleuren</p>
+          <p>🏷️ Gebruik #hashtags in je notitie om automatisch tags aan te maken (de # wordt daarna verwijderd)</p>
         </div>
       </div>
 
