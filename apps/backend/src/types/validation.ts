@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 // Note validation schemas
 export const createNoteSchema = z.object({
-  date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Date must be in YYYY-MM-DD format'),
+  date: z.string().datetime('Date must be a valid ISO datetime'),
   content: z.string().min(0),
   deadline: z.string().datetime().optional(),
   tagIds: z.array(z.string()).optional(),
