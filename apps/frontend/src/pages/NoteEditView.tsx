@@ -89,8 +89,14 @@ export function NoteEditView() {
     }
   }, [note?.id, isNewNote]);
 
-  const handleSaveComplete = () => {
-    navigate('/');
+  const handleSaveComplete = (noteId?: string) => {
+    if (noteId) {
+      // If a note ID is provided (new note created), navigate to that note's edit page
+      navigate(`/note/${noteId}`);
+    } else {
+      // Otherwise, go back to calendar
+      navigate('/');
+    }
   };
 
   const handleToggleTag = (tagId: string) => {
@@ -195,12 +201,14 @@ export function NoteEditView() {
     const allTagIds = [...new Set([...selectedTagIds, ...hashtagIds])];
     const deadlineISO = deadline ? deadline.toISOString() : undefined;
 
-    await createNote.mutateAsync({
+    const newNote = await createNote.mutateAsync({
       date: noteDate.toISOString(),
       content: cleanedContent,
       deadline: deadlineISO,
       tagIds: allTagIds,
     });
+
+    return newNote.id;
   };
 
   const handleDeleteClick = () => {

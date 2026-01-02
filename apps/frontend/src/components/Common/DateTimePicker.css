@@ -76,3 +76,15 @@
   background-color: #d1d5db;
   border-radius: 3px;
 }
+
+/* Ensure all text elements in the date picker have dark text */
+.react-datepicker__navigation-icon::before,
+.react-datepicker__year-read-view--down-arrow,
+.react-datepicker__month-read-view--down-arrow,
+.react-datepicker__month-year-read-view--down-arrow {
+  border-color: #111827 !important;
+}
+
+.react-datepicker__input-container input {
+  color: #111827 !important;
+}

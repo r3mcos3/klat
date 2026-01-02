@@ -7,8 +7,8 @@ interface MarkdownEditorProps {
   note?: Note;
   date: string;
   onSave: (data: { content: string; tagIds: string[] }) => Promise<void>;
-  onCreate: (data: { date: string; content: string; tagIds: string[] }) => Promise<void>;
-  onSaveComplete?: () => void;
+  onCreate: (data: { date: string; content: string; tagIds: string[] }) => Promise<string | undefined>;
+  onSaveComplete?: (noteId?: string) => void;
 }
 
 function SaveStatusIndicator({ status }: { status: SaveStatus }) {
@@ -86,15 +86,17 @@ export function MarkdownEditor({ note, date, onSave, onCreate, onSaveComplete }:
 
     setIsSaving(true);
     try {
+      let createdNoteId: string | undefined;
+
       if (note) {
         await onSave({ content, tagIds });
       } else if (content.trim().length > 0 && !isCreating) {
         setIsCreating(true);
-        await onCreate({ date, content, tagIds });
+        createdNoteId = await onCreate({ date, content, tagIds });
       }
       // Call completion callback after successful save
       if (onSaveComplete) {
-        onSaveComplete();
+        onSaveComplete(createdNoteId);
       }
     } catch (error) {
       console.error('Manual save error:', error);
@@ -115,7 +117,11 @@ export function MarkdownEditor({ note, date, onSave, onCreate, onSaveComplete }:
         // Create new note (only if there's content and not already creating)
         try {
           setIsCreating(true);
-          await onCreate({ date, ...value });
+          const createdNoteId = await onCreate({ date, ...value });
+          // After auto-save creates a note, navigate to it
+          if (onSaveComplete && createdNoteId) {
+            onSaveComplete(createdNoteId);
+          }
         } catch (error) {
           setIsCreating(false);
           throw error;

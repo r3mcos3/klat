@@ -27,7 +27,7 @@ const CustomInput = forwardRef<HTMLInputElement, any>(({ value, onClick, placeho
     ref={ref}
     placeholder={placeholder}
     readOnly
-    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 cursor-pointer bg-white"
+    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 cursor-pointer bg-white text-gray-900"
   />
 ));
 
