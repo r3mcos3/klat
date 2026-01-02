@@ -2,6 +2,7 @@ import { forwardRef } from 'react';
 import DatePicker, { registerLocale } from 'react-datepicker';
 import { nl } from 'date-fns/locale';
 import 'react-datepicker/dist/react-datepicker.css';
+import './DateTimePicker.css';
 
 // Register Dutch locale
 registerLocale('nl', nl);
