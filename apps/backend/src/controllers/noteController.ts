@@ -17,13 +17,26 @@ export class NoteController {
     }
   }
 
-  // GET /api/notes/:date - Get note by date
+  // GET /api/notes/id/:id - Get note by ID
+  async getNoteById(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { id } = req.params;
+      const note = await noteService.getNoteById(id);
+      res.json({
+        data: note,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  // GET /api/notes/:date - Get all notes by date (returns array)
   async getNoteByDate(req: Request, res: Response, next: NextFunction) {
     try {
       const { date } = req.params;
-      const note = await noteService.getNoteByDate(date);
+      const notes = await noteService.getNoteByDate(date);
       res.json({
-        data: note,
+        data: notes,
       });
     } catch (error) {
       next(error);

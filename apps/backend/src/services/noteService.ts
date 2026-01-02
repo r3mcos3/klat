@@ -3,22 +3,11 @@ import { CreateNoteDto, UpdateNoteDto } from '../types/validation';
 import { AppError } from '../middleware/errorHandler';
 
 export class NoteService {
-  // Create a new note
+  // Create a new note (multiple notes per day allowed)
   async createNote(data: CreateNoteDto) {
     const { date, content, deadline, tagIds } = data;
 
-    // Check if note already exists for this date
-    const { data: existing } = await supabase
-      .from('notes')
-      .select('*')
-      .eq('date', date)
-      .single();
-
-    if (existing) {
-      throw new AppError('Er bestaat al een notitie voor deze datum', 409);
-    }
-
-    // Generate a simple ID (Supabase uses text IDs like our schema)
+    // Generate a unique ID
     const id = `note_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
     // Create note
@@ -51,7 +40,7 @@ export class NoteService {
     return this.getNoteById(id);
   }
 
-  // Get note by ID
+  // Get note by ID (single note)
   async getNoteById(id: string) {
     const { data: note, error } = await supabase
       .from('notes')
@@ -75,9 +64,9 @@ export class NoteService {
     };
   }
 
-  // Get note by date
-  async getNoteByDate(date: string) {
-    const { data: note, error } = await supabase
+  // Get all notes for a specific date
+  async getNotesByDate(date: string) {
+    const { data: notes, error } = await supabase
       .from('notes')
       .select(
         `
@@ -86,16 +75,14 @@ export class NoteService {
       `
       )
       .eq('date', date)
-      .single();
+      .order('createdAt', { ascending: false });
 
-    if (error || !note) {
-      throw new AppError('Notitie niet gevonden', 404);
-    }
+    if (error) throw new AppError(error.message, 500);
 
-    return {
+    return (notes || []).map((note: any) => ({
       ...note,
       tags: note.tags?.map((t: any) => t.tag).filter(Boolean) || [],
-    };
+    }));
   }
 
   // Get notes for a specific month
@@ -114,7 +101,7 @@ export class NoteService {
       )
       .gte('date', startDate)
       .lte('date', endDate)
-      .order('date', { ascending: true });
+      .order('createdAt', { ascending: false });
 
     if (error) throw new AppError(error.message, 500);
 
@@ -213,7 +200,7 @@ export class NoteService {
         tags:_NoteToTag(tag:tags(*))
       `
       )
-      .order('date', { ascending: false });
+      .order('createdAt', { ascending: false });
 
     if (error) throw new AppError(error.message, 500);
 

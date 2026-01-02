@@ -11,7 +11,7 @@ datasource db {
 
 model Note {
   id        String    @id @default(cuid())
-  date      DateTime  @unique // Één notitie per dag
+  date      DateTime  // Note date (can have multiple notes per day)
   content   String    @db.Text // Markdown content
   deadline  DateTime? // Optionele deadline voor to-do's
   tags      Tag[]     @relation("NoteToTag")
@@ -19,6 +19,7 @@ model Note {
   updatedAt DateTime  @updatedAt
 
   @@index([date])
+  @@index([createdAt])
   @@index([deadline])
   @@map("notes")
 }
