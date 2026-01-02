@@ -68,6 +68,7 @@ export function MarkdownEditor({ note, date, onSave, onCreate }: MarkdownEditorP
   const [content, setContent] = useState(note?.content || '');
   const [tagIds, setTagIds] = useState<string[]>(note?.tags?.map((t) => t.id) || []);
   const [isCreating, setIsCreating] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
 
   // Update content when note changes
   useEffect(() => {
@@ -77,6 +78,26 @@ export function MarkdownEditor({ note, date, onSave, onCreate }: MarkdownEditorP
       setIsCreating(false); // Reset creating flag when note is loaded
     }
   }, [note?.id]);
+
+  // Save function
+  const handleManualSave = async () => {
+    if (isSaving) return; // Prevent double-save
+
+    setIsSaving(true);
+    try {
+      if (note) {
+        await onSave({ content, tagIds });
+      } else if (content.trim().length > 0 && !isCreating) {
+        setIsCreating(true);
+        await onCreate({ date, content, tagIds });
+      }
+    } catch (error) {
+      console.error('Manual save error:', error);
+      setIsCreating(false);
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
   // Auto-save logic
   const { status } = useAutoSave({
@@ -96,7 +117,7 @@ export function MarkdownEditor({ note, date, onSave, onCreate }: MarkdownEditorP
         }
       }
     },
-    delay: 2000, // 2 seconds delay for less aggressive auto-save
+    delay: 30000, // 30 seconds delay for auto-save
     enabled: true,
   });
 
@@ -104,7 +125,16 @@ export function MarkdownEditor({ note, date, onSave, onCreate }: MarkdownEditorP
     <div className="w-full">
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-lg font-semibold text-gray-900">Notitie</h3>
-        <SaveStatusIndicator status={status} />
+        <div className="flex items-center gap-3">
+          <SaveStatusIndicator status={status} />
+          <button
+            onClick={handleManualSave}
+            disabled={isSaving}
+            className="px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm font-medium"
+          >
+            {isSaving ? 'Opslaan...' : 'Opslaan'}
+          </button>
+        </div>
       </div>
 
       <div data-color-mode="light">
@@ -122,7 +152,7 @@ export function MarkdownEditor({ note, date, onSave, onCreate }: MarkdownEditorP
       </div>
 
       <div className="mt-2 text-xs text-gray-500">
-        💡 Tip: Gebruik Markdown voor opmaak. De notitie wordt automatisch opgeslagen.
+        💡 Tip: Gebruik Markdown voor opmaak. De notitie wordt elke 30 seconden automatisch opgeslagen, of klik op "Opslaan" om direct op te slaan.
       </div>
     </div>
   );

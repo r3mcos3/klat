@@ -111,7 +111,7 @@ export function DayView() {
 
         {/* Helper text */}
         <div className="mt-4 text-sm text-gray-500 text-center">
-          💡 Je notitie wordt automatisch opgeslagen terwijl je typt
+          💡 Je notitie wordt elke 30 seconden automatisch opgeslagen, of gebruik de "Opslaan" knop
         </div>
       </div>
     </div>
