@@ -2,11 +2,12 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import { MarkdownEditor } from '@/components/NoteEditor/MarkdownEditor';
 import { TagList } from '@/components/Tags/TagList';
 import { useNoteByDate, useCreateNote, useUpdateNote } from '@/hooks/useNotes';
-import { useAllTags } from '@/hooks/useTags';
+import { useAllTags, tagKeys } from '@/hooks/useTags';
 import { formatDateNL, stringToDate } from '@/utils/dateHelpers';
 import { useState, useEffect } from 'react';
 import { tagApi } from '@/services/tagApi';
 import type { Tag } from '@klat/types';
+import { useQueryClient } from '@tanstack/react-query';
 
 // Predefined color palette for tags
 const TAG_COLORS = [
@@ -25,6 +26,7 @@ const TAG_COLORS = [
 export function DayView() {
   const { date } = useParams<{ date: string }>();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const [selectedTagIds, setSelectedTagIds] = useState<string[]>([]);
 
   if (!date) {
@@ -66,9 +68,12 @@ export function DayView() {
   };
 
   // Get an unused color from the palette
-  const getUnusedColor = (existingTags: Tag[]): string => {
-    const usedColors = new Set(existingTags.map(tag => tag.color).filter(Boolean));
-    const unusedColor = TAG_COLORS.find(color => !usedColors.has(color));
+  const getUnusedColor = (existingTags: Tag[], usedInCurrentOperation: Set<string>): string => {
+    const allUsedColors = new Set([
+      ...existingTags.map(tag => tag.color).filter(Boolean),
+      ...Array.from(usedInCurrentOperation)
+    ]);
+    const unusedColor = TAG_COLORS.find(color => !allUsedColors.has(color));
     return unusedColor || TAG_COLORS[Math.floor(Math.random() * TAG_COLORS.length)];
   };
 
@@ -78,6 +83,8 @@ export function DayView() {
     if (hashtags.length === 0) return [];
 
     const tagIds: string[] = [];
+    const usedColorsInOperation = new Set<string>();
+    let tagsCreated = false;
 
     for (const hashtag of hashtags) {
       // Check if tag already exists
@@ -90,15 +97,23 @@ export function DayView() {
       } else {
         // Create new tag with unused color
         try {
+          const color = getUnusedColor(allTags, usedColorsInOperation);
           const newTag = await tagApi.createTag({
             name: hashtag,
-            color: getUnusedColor(allTags),
+            color: color,
           });
           tagIds.push(newTag.id);
+          usedColorsInOperation.add(color);
+          tagsCreated = true;
         } catch (error) {
           console.error('Error creating tag from hashtag:', error);
         }
       }
+    }
+
+    // Invalidate tags query to refresh the list
+    if (tagsCreated) {
+      queryClient.invalidateQueries({ queryKey: tagKeys.all });
     }
 
     return tagIds;
