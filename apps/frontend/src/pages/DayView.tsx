@@ -5,6 +5,22 @@ import { useNoteByDate, useCreateNote, useUpdateNote } from '@/hooks/useNotes';
 import { useAllTags } from '@/hooks/useTags';
 import { formatDateNL, stringToDate } from '@/utils/dateHelpers';
 import { useState, useEffect } from 'react';
+import { tagApi } from '@/services/tagApi';
+import type { Tag } from '@klat/types';
+
+// Predefined color palette for tags
+const TAG_COLORS = [
+  '#EF4444', // Red
+  '#F59E0B', // Orange
+  '#10B981', // Green
+  '#3B82F6', // Blue
+  '#6366F1', // Indigo
+  '#8B5CF6', // Purple
+  '#EC4899', // Pink
+  '#14B8A6', // Teal
+  '#F97316', // Orange
+  '#84CC16', // Lime
+];
 
 export function DayView() {
   const { date } = useParams<{ date: string }>();
@@ -39,23 +55,84 @@ export function DayView() {
     );
   };
 
+  // Extract hashtags from content
+  const extractHashtags = (content: string): string[] => {
+    const hashtagRegex = /#(\w+)/g;
+    const matches = content.match(hashtagRegex);
+    if (!matches) return [];
+
+    // Remove # and get unique hashtags
+    return [...new Set(matches.map(tag => tag.substring(1).toLowerCase()))];
+  };
+
+  // Get an unused color from the palette
+  const getUnusedColor = (existingTags: Tag[]): string => {
+    const usedColors = new Set(existingTags.map(tag => tag.color).filter(Boolean));
+    const unusedColor = TAG_COLORS.find(color => !usedColors.has(color));
+    return unusedColor || TAG_COLORS[Math.floor(Math.random() * TAG_COLORS.length)];
+  };
+
+  // Process hashtags: create tags that don't exist and return all tag IDs
+  const processHashtags = async (content: string): Promise<string[]> => {
+    const hashtags = extractHashtags(content);
+    if (hashtags.length === 0) return [];
+
+    const tagIds: string[] = [];
+
+    for (const hashtag of hashtags) {
+      // Check if tag already exists
+      const existingTag = allTags.find(
+        tag => tag.name.toLowerCase() === hashtag.toLowerCase()
+      );
+
+      if (existingTag) {
+        tagIds.push(existingTag.id);
+      } else {
+        // Create new tag with unused color
+        try {
+          const newTag = await tagApi.createTag({
+            name: hashtag,
+            color: getUnusedColor(allTags),
+          });
+          tagIds.push(newTag.id);
+        } catch (error) {
+          console.error('Error creating tag from hashtag:', error);
+        }
+      }
+    }
+
+    return tagIds;
+  };
+
   const handleSave = async (data: { content: string; tagIds: string[] }) => {
     if (note) {
+      // Process hashtags from content
+      const hashtagIds = await processHashtags(data.content);
+
+      // Combine manually selected tags with hashtag tags (unique)
+      const allTagIds = [...new Set([...selectedTagIds, ...hashtagIds])];
+
       await updateNote.mutateAsync({
         id: note.id,
         data: {
           content: data.content,
-          tagIds: selectedTagIds,
+          tagIds: allTagIds,
         },
       });
     }
   };
 
   const handleCreate = async (data: { date: string; content: string; tagIds: string[] }) => {
+    // Process hashtags from content
+    const hashtagIds = await processHashtags(data.content);
+
+    // Combine manually selected tags with hashtag tags (unique)
+    const allTagIds = [...new Set([...selectedTagIds, ...hashtagIds])];
+
     await createNote.mutateAsync({
       date: data.date,
       content: data.content,
-      tagIds: selectedTagIds,
+      tagIds: allTagIds,
     });
   };
 
@@ -123,8 +200,9 @@ export function DayView() {
         </div>
 
         {/* Helper text */}
-        <div className="mt-4 text-sm text-gray-500 text-center">
-          💡 Je notitie wordt elke 30 seconden automatisch opgeslagen, of gebruik de "Opslaan" knop
+        <div className="mt-4 text-sm text-gray-500 text-center space-y-1">
+          <p>💡 Je notitie wordt elke 30 seconden automatisch opgeslagen, of gebruik de "Opslaan" knop</p>
+          <p>🏷️ Gebruik #hashtags in je notitie om automatisch tags aan te maken met unieke kleuren</p>
         </div>
       </div>
     </div>
