@@ -4,7 +4,7 @@ import { TagList } from '@/components/Tags/TagList';
 import { useNoteByDate, useCreateNote, useUpdateNote } from '@/hooks/useNotes';
 import { useAllTags } from '@/hooks/useTags';
 import { formatDateNL, stringToDate } from '@/utils/dateHelpers';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 export function DayView() {
   const { date } = useParams<{ date: string }>();
@@ -21,6 +21,13 @@ export function DayView() {
   const updateNote = useUpdateNote();
 
   const dateObj = stringToDate(date);
+
+  // Initialize selectedTagIds with note's tags when note loads
+  useEffect(() => {
+    if (note?.tags) {
+      setSelectedTagIds(note.tags.map((t) => t.id));
+    }
+  }, [note?.id]);
 
   const handleSaveComplete = () => {
     navigate('/calendar');
@@ -94,7 +101,7 @@ export function DayView() {
           {allTags.length > 0 ? (
             <TagList
               tags={allTags}
-              selectedTags={selectedTagIds.length > 0 ? selectedTagIds : note?.tags?.map((t) => t.id) || []}
+              selectedTags={selectedTagIds}
               onToggle={handleToggleTag}
             />
           ) : (
