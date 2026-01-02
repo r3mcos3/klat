@@ -32,8 +32,7 @@ export function CardStackView() {
   };
 
   const handleCardClick = (note: Note) => {
-    const dateStr = note.date.split('T')[0];
-    navigate(`/day/${dateStr}`);
+    navigate(`/note/${note.id}`);
   };
 
   if (error) {
@@ -61,7 +60,7 @@ export function CardStackView() {
 
           <div className="flex gap-3">
             <Link
-              to={`/day/${new Date().toISOString().split('T')[0]}`}
+              to="/note/new"
               className="px-4 py-2 text-sm font-medium text-white bg-primary-600 rounded-md hover:bg-primary-700 flex items-center gap-2 shadow-sm transition-colors"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -120,7 +119,7 @@ export function CardStackView() {
           <div className="text-center py-20">
             <p className="text-gray-500 text-lg mb-4">Je hebt nog geen notities</p>
             <Link
-              to={`/day/${new Date().toISOString().split('T')[0]}`}
+              to="/note/new"
               className="inline-block px-6 py-3 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
             >
               Schrijf je eerste notitie
