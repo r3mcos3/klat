@@ -5,18 +5,38 @@ import type { Note, CreateNoteDto, UpdateNoteDto } from '@klat/types';
 // Query keys
 export const noteKeys = {
   all: ['notes'] as const,
+  byId: (id: string) => [...noteKeys.all, 'id', id] as const,
   byDate: (date: string) => [...noteKeys.all, 'date', date] as const,
   byMonth: (yearMonth: string) => [...noteKeys.all, 'month', yearMonth] as const,
 };
 
-// Get note by date
-export const useNoteByDate = (date: string) => {
+// Get note by ID
+export const useNoteById = (id: string, options?: { enabled?: boolean }) => {
+  return useQuery({
+    queryKey: noteKeys.byId(id),
+    queryFn: () => noteApi.getNoteById(id),
+    retry: false,
+    enabled: options?.enabled !== undefined ? options.enabled : !!id,
+  });
+};
+
+// Get notes by date (returns array - multiple notes per day allowed)
+export const useNotesByDate = (date: string) => {
   return useQuery({
     queryKey: noteKeys.byDate(date),
     queryFn: () => noteApi.getNoteByDate(date),
-    retry: false, // Don't retry if note doesn't exist (404)
+    retry: false,
     enabled: !!date,
   });
+};
+
+// Legacy hook for backward compatibility - returns first note or undefined
+export const useNoteByDate = (date: string) => {
+  const { data: notes, ...rest } = useNotesByDate(date);
+  return {
+    ...rest,
+    data: notes?.[0],
+  };
 };
 
 // Get notes by month
@@ -43,9 +63,9 @@ export const useCreateNote = () => {
   return useMutation({
     mutationFn: (data: CreateNoteDto) => noteApi.createNote(data),
     onSuccess: (newNote) => {
-      // Invalidate relevant queries
+      // Invalidate all note queries
       queryClient.invalidateQueries({ queryKey: noteKeys.all });
-      queryClient.setQueryData(noteKeys.byDate(newNote.date), newNote);
+      queryClient.invalidateQueries({ queryKey: noteKeys.byDate(newNote.date) });
     },
   });
 };
@@ -79,9 +99,9 @@ export const useUpdateNote = () => {
       }
     },
     onSuccess: (updatedNote) => {
-      // Update cache
+      // Invalidate all note queries
       queryClient.invalidateQueries({ queryKey: noteKeys.all });
-      queryClient.setQueryData(noteKeys.byDate(updatedNote.date), updatedNote);
+      queryClient.invalidateQueries({ queryKey: noteKeys.byDate(updatedNote.date) });
     },
   });
 };

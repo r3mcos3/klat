@@ -2,8 +2,14 @@ import api from './api';
 import type { Note, CreateNoteDto, UpdateNoteDto } from '@klat/types';
 
 export const noteApi = {
-  // Get note by date
-  getNoteByDate: async (date: string): Promise<Note> => {
+  // Get note by ID
+  getNoteById: async (id: string): Promise<Note> => {
+    const response = await api.get(`/notes/id/${id}`);
+    return response.data.data;
+  },
+
+  // Get notes by date (returns array - multiple notes per day allowed)
+  getNoteByDate: async (date: string): Promise<Note[]> => {
     const response = await api.get(`/notes/${date}`);
     return response.data.data;
   },
