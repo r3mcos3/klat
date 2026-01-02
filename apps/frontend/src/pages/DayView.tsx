@@ -101,9 +101,9 @@ export function DayView() {
 
   // Remove hashtags from content after processing
   const removeHashtags = (content: string): string => {
-    // Same regex as extractHashtags - replace #hashtag with just the word
+    // Same regex as extractHashtags - remove entire #hashtag including the word
     const hashtagRegex = /#(\w+)(?!\s)/g;
-    return content.replace(hashtagRegex, '$1');
+    return content.replace(hashtagRegex, '').trim();
   };
 
   // Get an unused color from the palette that is visually distinct from existing colors
