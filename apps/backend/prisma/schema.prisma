@@ -1,0 +1,33 @@
+// Prisma schema voor klat
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model Note {
+  id        String   @id @default(cuid())
+  date      DateTime @unique // Één notitie per dag
+  content   String   @db.Text // Markdown content
+  tags      Tag[]    @relation("NoteToTag")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([date])
+  @@map("notes")
+}
+
+model Tag {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  color     String? // Hex color voor UI
+  notes     Note[]   @relation("NoteToTag")
+  createdAt DateTime @default(now())
+
+  @@index([name])
+  @@map("tags")
+}
