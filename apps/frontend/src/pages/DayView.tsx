@@ -1,7 +1,7 @@
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { MarkdownEditor } from '@/components/NoteEditor/MarkdownEditor';
 import { TagList } from '@/components/Tags/TagList';
-import { useNoteByDate, useCreateNote, useUpdateNote } from '@/hooks/useNotes';
+import { useNoteByDate, useCreateNote, useUpdateNote, useDeleteNote } from '@/hooks/useNotes';
 import { useAllTags, tagKeys } from '@/hooks/useTags';
 import { formatDateNL, stringToDate } from '@/utils/dateHelpers';
 import { useState, useEffect } from 'react';
@@ -37,6 +37,7 @@ export function DayView() {
   const { data: allTags = [], isLoading: tagsLoading } = useAllTags();
   const createNote = useCreateNote();
   const updateNote = useUpdateNote();
+  const deleteNote = useDeleteNote();
 
   const dateObj = stringToDate(date);
 
@@ -151,6 +152,19 @@ export function DayView() {
     });
   };
 
+  const handleDelete = async () => {
+    if (!note) return;
+
+    const confirmed = window.confirm(
+      'Weet je zeker dat je deze notitie wilt verwijderen? Dit kan niet ongedaan worden gemaakt.'
+    );
+
+    if (confirmed) {
+      await deleteNote.mutateAsync(note.id);
+      navigate('/calendar');
+    }
+  };
+
   if (noteLoading || tagsLoading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -167,20 +181,39 @@ export function DayView() {
       <div className="container mx-auto px-4 py-8 max-w-4xl">
         {/* Header */}
         <div className="mb-8">
-          <Link
-            to="/calendar"
-            className="inline-flex items-center text-sm text-gray-600 hover:text-gray-900 mb-4"
-          >
-            <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M15 19l-7-7 7-7"
-              />
-            </svg>
-            Terug naar kalender
-          </Link>
+          <div className="flex items-center justify-between mb-4">
+            <Link
+              to="/calendar"
+              className="inline-flex items-center text-sm text-gray-600 hover:text-gray-900"
+            >
+              <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M15 19l-7-7 7-7"
+                />
+              </svg>
+              Terug naar kalender
+            </Link>
+
+            {note && (
+              <button
+                onClick={handleDelete}
+                className="inline-flex items-center px-3 py-1.5 text-sm text-red-600 hover:text-red-700 hover:bg-red-50 rounded-md transition-colors"
+              >
+                <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                  />
+                </svg>
+                Verwijderen
+              </button>
+            )}
+          </div>
 
           <h1 className="text-3xl font-bold text-gray-900 capitalize">
             {formatDateNL(dateObj, 'EEEE d MMMM yyyy')}
