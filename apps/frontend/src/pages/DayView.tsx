@@ -24,6 +24,33 @@ const TAG_COLORS = [
   '#84CC16', // Lime
 ];
 
+// Convert hex color to RGB
+const hexToRgb = (hex: string): { r: number; g: number; b: number } => {
+  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+  return result
+    ? {
+        r: parseInt(result[1], 16),
+        g: parseInt(result[2], 16),
+        b: parseInt(result[3], 16),
+      }
+    : { r: 0, g: 0, b: 0 };
+};
+
+// Calculate color distance using Euclidean distance in RGB space
+const colorDistance = (hex1: string, hex2: string): number => {
+  const rgb1 = hexToRgb(hex1);
+  const rgb2 = hexToRgb(hex2);
+  return Math.sqrt(
+    Math.pow(rgb1.r - rgb2.r, 2) +
+    Math.pow(rgb1.g - rgb2.g, 2) +
+    Math.pow(rgb1.b - rgb2.b, 2)
+  );
+};
+
+// Minimum color distance threshold (0-441, higher = more different)
+// Value of 50 means colors must be visually distinct
+const MIN_COLOR_DISTANCE = 50;
+
 export function DayView() {
   const { date } = useParams<{ date: string }>();
   const navigate = useNavigate();
@@ -62,7 +89,9 @@ export function DayView() {
 
   // Extract hashtags from content
   const extractHashtags = (content: string): string[] => {
-    const hashtagRegex = /#(\w+)/g;
+    // Match hashtags: # followed by word characters, but NOT followed by a space
+    // This prevents matching Markdown headers like "# Header" or "## Subheader"
+    const hashtagRegex = /#(\w+)(?!\s)/g;
     const matches = content.match(hashtagRegex);
     if (!matches) return [];
 
@@ -70,14 +99,24 @@ export function DayView() {
     return [...new Set(matches.map(tag => tag.substring(1).toLowerCase()))];
   };
 
-  // Get an unused color from the palette
+  // Get an unused color from the palette that is visually distinct from existing colors
   const getUnusedColor = (existingTags: Tag[], usedInCurrentOperation: Set<string>): string => {
-    const allUsedColors = new Set([
+    const allUsedColors = [
       ...existingTags.map(tag => tag.color).filter(Boolean),
       ...Array.from(usedInCurrentOperation)
-    ]);
-    const unusedColor = TAG_COLORS.find(color => !allUsedColors.has(color));
-    return unusedColor || TAG_COLORS[Math.floor(Math.random() * TAG_COLORS.length)];
+    ];
+
+    // Filter colors that are not too similar to any existing color
+    const availableColors = TAG_COLORS.filter(candidateColor => {
+      // Check if this color is too similar to any used color
+      return !allUsedColors.some(usedColor => {
+        const distance = colorDistance(candidateColor, usedColor as string);
+        return distance < MIN_COLOR_DISTANCE;
+      });
+    });
+
+    // Return first available color, or fallback to random if all are too similar
+    return availableColors[0] || TAG_COLORS[Math.floor(Math.random() * TAG_COLORS.length)];
   };
 
   // Process hashtags: create tags that don't exist and return all tag IDs
