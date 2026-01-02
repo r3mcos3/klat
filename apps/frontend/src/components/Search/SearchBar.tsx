@@ -23,7 +23,7 @@ export function SearchBar({ onSearch, placeholder = 'Zoek in notities...' }: Sea
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder={placeholder}
-          className="w-full px-4 py-3 pl-12 text-gray-900 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+          className="w-full px-4 py-3 pl-12 text-gray-900 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
         />
         <div className="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none">
           <svg
