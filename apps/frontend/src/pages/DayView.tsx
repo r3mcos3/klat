@@ -78,7 +78,7 @@ export function DayView() {
   }, [note?.id]);
 
   const handleSaveComplete = () => {
-    navigate('/calendar');
+    navigate('/');
   };
 
   const handleToggleTag = (tagId: string) => {
@@ -215,7 +215,7 @@ export function DayView() {
 
     setShowDeleteDialog(false);
     await deleteNote.mutateAsync(note.id);
-    navigate('/calendar');
+    navigate('/');
   };
 
   const handleDeleteCancel = () => {
@@ -240,7 +240,7 @@ export function DayView() {
         <div className="mb-8">
           <div className="flex items-center justify-between mb-4">
             <Link
-              to="/calendar"
+              to="/"
               className="inline-flex items-center text-sm text-gray-600 hover:text-gray-900"
             >
               <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -251,7 +251,7 @@ export function DayView() {
                   d="M15 19l-7-7 7-7"
                 />
               </svg>
-              Terug naar kalender
+              Terug naar overzicht
             </Link>
 
             {note && (
