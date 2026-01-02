@@ -8,6 +8,7 @@ interface MarkdownEditorProps {
   date: string;
   onSave: (data: { content: string; tagIds: string[] }) => Promise<void>;
   onCreate: (data: { date: string; content: string; tagIds: string[] }) => Promise<void>;
+  onSaveComplete?: () => void;
 }
 
 function SaveStatusIndicator({ status }: { status: SaveStatus }) {
@@ -64,7 +65,7 @@ function SaveStatusIndicator({ status }: { status: SaveStatus }) {
   );
 }
 
-export function MarkdownEditor({ note, date, onSave, onCreate }: MarkdownEditorProps) {
+export function MarkdownEditor({ note, date, onSave, onCreate, onSaveComplete }: MarkdownEditorProps) {
   const [content, setContent] = useState(note?.content || '');
   const [tagIds, setTagIds] = useState<string[]>(note?.tags?.map((t) => t.id) || []);
   const [isCreating, setIsCreating] = useState(false);
@@ -90,6 +91,10 @@ export function MarkdownEditor({ note, date, onSave, onCreate }: MarkdownEditorP
       } else if (content.trim().length > 0 && !isCreating) {
         setIsCreating(true);
         await onCreate({ date, content, tagIds });
+      }
+      // Call completion callback after successful save
+      if (onSaveComplete) {
+        onSaveComplete();
       }
     } catch (error) {
       console.error('Manual save error:', error);

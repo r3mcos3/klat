@@ -1,4 +1,4 @@
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { MarkdownEditor } from '@/components/NoteEditor/MarkdownEditor';
 import { TagList } from '@/components/Tags/TagList';
 import { useNoteByDate, useCreateNote, useUpdateNote } from '@/hooks/useNotes';
@@ -8,6 +8,7 @@ import { useState } from 'react';
 
 export function DayView() {
   const { date } = useParams<{ date: string }>();
+  const navigate = useNavigate();
   const [selectedTagIds, setSelectedTagIds] = useState<string[]>([]);
 
   if (!date) {
@@ -20,6 +21,10 @@ export function DayView() {
   const updateNote = useUpdateNote();
 
   const dateObj = stringToDate(date);
+
+  const handleSaveComplete = () => {
+    navigate('/calendar');
+  };
 
   const handleToggleTag = (tagId: string) => {
     setSelectedTagIds((prev) =>
@@ -106,6 +111,7 @@ export function DayView() {
             date={date}
             onSave={handleSave}
             onCreate={handleCreate}
+            onSaveComplete={handleSaveComplete}
           />
         </div>
 
