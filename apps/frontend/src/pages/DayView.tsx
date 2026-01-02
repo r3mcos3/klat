@@ -1,6 +1,7 @@
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { MarkdownEditor } from '@/components/NoteEditor/MarkdownEditor';
 import { TagList } from '@/components/Tags/TagList';
+import { ConfirmDialog } from '@/components/Common/ConfirmDialog';
 import { useNoteByDate, useCreateNote, useUpdateNote, useDeleteNote } from '@/hooks/useNotes';
 import { useAllTags, tagKeys } from '@/hooks/useTags';
 import { formatDateNL, stringToDate } from '@/utils/dateHelpers';
@@ -28,6 +29,7 @@ export function DayView() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [selectedTagIds, setSelectedTagIds] = useState<string[]>([]);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   if (!date) {
     return <div>Ongeldige datum</div>;
@@ -152,17 +154,20 @@ export function DayView() {
     });
   };
 
-  const handleDelete = async () => {
+  const handleDeleteClick = () => {
+    setShowDeleteDialog(true);
+  };
+
+  const handleDeleteConfirm = async () => {
     if (!note) return;
 
-    const confirmed = window.confirm(
-      'Weet je zeker dat je deze notitie wilt verwijderen? Dit kan niet ongedaan worden gemaakt.'
-    );
+    setShowDeleteDialog(false);
+    await deleteNote.mutateAsync(note.id);
+    navigate('/calendar');
+  };
 
-    if (confirmed) {
-      await deleteNote.mutateAsync(note.id);
-      navigate('/calendar');
-    }
+  const handleDeleteCancel = () => {
+    setShowDeleteDialog(false);
   };
 
   if (noteLoading || tagsLoading) {
@@ -199,7 +204,7 @@ export function DayView() {
 
             {note && (
               <button
-                onClick={handleDelete}
+                onClick={handleDeleteClick}
                 className="inline-flex items-center px-3 py-1.5 text-sm text-red-600 hover:text-red-700 hover:bg-red-50 rounded-md transition-colors"
               >
                 <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -253,6 +258,18 @@ export function DayView() {
           <p>🏷️ Gebruik #hashtags in je notitie om automatisch tags aan te maken met unieke kleuren</p>
         </div>
       </div>
+
+      {/* Delete Confirmation Dialog */}
+      <ConfirmDialog
+        isOpen={showDeleteDialog}
+        title="Notitie verwijderen?"
+        message="Weet je zeker dat je deze notitie wilt verwijderen? Dit kan niet ongedaan worden gemaakt."
+        confirmText="Verwijderen"
+        cancelText="Annuleren"
+        onConfirm={handleDeleteConfirm}
+        onCancel={handleDeleteCancel}
+        danger={true}
+      />
     </div>
   );
 }
