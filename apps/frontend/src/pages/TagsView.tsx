@@ -1,19 +1,35 @@
 import { Link } from 'react-router-dom';
 import { TagInput } from '@/components/Tags/TagInput';
+import { ConfirmDialog } from '@/components/Common/ConfirmDialog';
 import { useAllTags, useDeleteTag } from '@/hooks/useTags';
+import { useState } from 'react';
 
 export function TagsView() {
   const { data: tags = [], isLoading } = useAllTags();
   const deleteTag = useDeleteTag();
+  const [tagToDelete, setTagToDelete] = useState<{ id: string; name: string } | null>(null);
+  const [deleteError, setDeleteError] = useState<string>('');
 
-  const handleDelete = async (id: string, name: string) => {
-    if (confirm(`Weet je zeker dat je de tag "${name}" wilt verwijderen?`)) {
-      try {
-        await deleteTag.mutateAsync(id);
-      } catch (error: any) {
-        alert(error.response?.data?.message || 'Fout bij verwijderen van tag');
-      }
+  const handleDeleteClick = (id: string, name: string) => {
+    setDeleteError('');
+    setTagToDelete({ id, name });
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!tagToDelete) return;
+
+    try {
+      await deleteTag.mutateAsync(tagToDelete.id);
+      setTagToDelete(null);
+      setDeleteError('');
+    } catch (error: any) {
+      setDeleteError(error.response?.data?.message || 'Fout bij verwijderen van tag');
     }
+  };
+
+  const handleDeleteCancel = () => {
+    setTagToDelete(null);
+    setDeleteError('');
   };
 
   return (
@@ -81,7 +97,7 @@ export function TagsView() {
                   </div>
 
                   <button
-                    onClick={() => handleDelete(tag.id, tag.name)}
+                    onClick={() => handleDeleteClick(tag.id, tag.name)}
                     disabled={deleteTag.isPending}
                     className="px-3 py-1.5 text-sm font-medium text-red-600 hover:bg-red-50 rounded-md disabled:opacity-50"
                   >
@@ -93,6 +109,26 @@ export function TagsView() {
           )}
         </div>
       </div>
+
+      {/* Delete Confirmation Dialog */}
+      <ConfirmDialog
+        isOpen={!!tagToDelete}
+        title="Tag verwijderen?"
+        message={
+          deleteError
+            ? deleteError
+            : `Weet je zeker dat je de tag "${tagToDelete?.name}" wilt verwijderen?${
+                tags.find((t) => t.id === tagToDelete?.id)?._count?.notes
+                  ? ' Deze tag is nog in gebruik bij notities.'
+                  : ''
+              }`
+        }
+        confirmText="Verwijderen"
+        cancelText="Annuleren"
+        onConfirm={handleDeleteConfirm}
+        onCancel={handleDeleteCancel}
+        danger={true}
+      />
     </div>
   );
 }
