@@ -48,12 +48,16 @@ export function SearchResults({ results, isLoading }: SearchResultsProps) {
 
   return (
     <div className="space-y-4">
-      {results.map((result) => (
-        <Link
-          key={result.note.id}
-          to={`/day/${result.note.date}`}
-          className="block p-4 bg-white rounded-lg border border-gray-200 hover:border-primary-300 hover:shadow-md transition-all"
-        >
+      {results.map((result) => {
+        // Extract date part from ISO string (e.g., "2024-01-01T12:00:00Z" -> "2024-01-01")
+        const dateStr = result.note.date.split('T')[0];
+
+        return (
+          <Link
+            key={result.note.id}
+            to={`/day/${dateStr}`}
+            className="block p-4 bg-white rounded-lg border border-gray-200 hover:border-primary-300 hover:shadow-md transition-all"
+          >
           <div className="flex items-center justify-between mb-2">
             <span className="text-sm font-medium text-primary-600">
               {formatDateNL(new Date(result.note.date))}
@@ -89,8 +93,9 @@ export function SearchResults({ results, isLoading }: SearchResultsProps) {
               ))}
             </div>
           )}
-        </Link>
-      ))}
+          </Link>
+        );
+      })}
 
       <div className="text-center text-sm text-gray-500 pt-4">
         {results.length} {results.length === 1 ? 'resultaat' : 'resultaten'} gevonden

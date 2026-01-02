@@ -131,7 +131,7 @@ export function CardStackView() {
         {/* Card Stack */}
         {!isLoading && sortedNotes.length > 0 && (
           <div className="relative">
-            <div className="space-y-6">
+            <div className="flex flex-col">
               {sortedNotes.map((note, index) => {
                 const dateStr = note.date.split('T')[0];
                 const dateObj = new Date(dateStr + 'T12:00:00');
@@ -142,7 +142,7 @@ export function CardStackView() {
                     key={note.id}
                     className="relative"
                     style={{
-                      transform: `translateY(-${Math.min(index * 4, 40)}px)`,
+                      marginTop: index === 0 ? '0' : '-120px',
                       zIndex: sortedNotes.length - index,
                     }}
                   >
