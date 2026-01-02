@@ -43,3 +43,6 @@ prisma/migrations/
 .cache/
 temp/
 tmp/
+
+# Auto Claude data directory
+.auto-claude/
