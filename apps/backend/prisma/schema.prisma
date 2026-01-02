@@ -10,14 +10,16 @@ datasource db {
 }
 
 model Note {
-  id        String   @id @default(cuid())
-  date      DateTime @unique // Één notitie per dag
-  content   String   @db.Text // Markdown content
-  tags      Tag[]    @relation("NoteToTag")
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id        String    @id @default(cuid())
+  date      DateTime  @unique // Één notitie per dag
+  content   String    @db.Text // Markdown content
+  deadline  DateTime? // Optionele deadline voor to-do's
+  tags      Tag[]     @relation("NoteToTag")
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 
   @@index([date])
+  @@index([deadline])
   @@map("notes")
 }
 

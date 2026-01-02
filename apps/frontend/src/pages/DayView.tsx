@@ -56,6 +56,7 @@ export function DayView() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [selectedTagIds, setSelectedTagIds] = useState<string[]>([]);
+  const [deadline, setDeadline] = useState<string>('');
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   if (!date) {
@@ -70,12 +71,22 @@ export function DayView() {
 
   const dateObj = stringToDate(date);
 
-  // Initialize selectedTagIds with note's tags when note loads
+  // Initialize selectedTagIds and deadline with note's data when note loads
   useEffect(() => {
     if (note?.tags) {
       setSelectedTagIds(note.tags.map((t) => t.id));
     }
-  }, [note?.id]);
+    if (note?.deadline) {
+      // Convert ISO string to datetime-local format (YYYY-MM-DDTHH:mm)
+      const deadlineDate = new Date(note.deadline);
+      const localDateTime = new Date(deadlineDate.getTime() - deadlineDate.getTimezoneOffset() * 60000)
+        .toISOString()
+        .slice(0, 16);
+      setDeadline(localDateTime);
+    } else {
+      setDeadline('');
+    }
+  }, [note?.id, note?.deadline]);
 
   const handleSaveComplete = () => {
     navigate('/');
@@ -179,10 +190,14 @@ export function DayView() {
       // Combine manually selected tags with hashtag tags (unique)
       const allTagIds = [...new Set([...selectedTagIds, ...hashtagIds])];
 
+      // Convert deadline to ISO string if set
+      const deadlineISO = deadline ? new Date(deadline).toISOString() : undefined;
+
       await updateNote.mutateAsync({
         id: note.id,
         data: {
           content: cleanedContent,
+          deadline: deadlineISO,
           tagIds: allTagIds,
         },
       });
@@ -199,9 +214,13 @@ export function DayView() {
     // Combine manually selected tags with hashtag tags (unique)
     const allTagIds = [...new Set([...selectedTagIds, ...hashtagIds])];
 
+    // Convert deadline to ISO string if set
+    const deadlineISO = deadline ? new Date(deadline).toISOString() : undefined;
+
     await createNote.mutateAsync({
       date: data.date,
       content: cleanedContent,
+      deadline: deadlineISO,
       tagIds: allTagIds,
     });
   };
@@ -291,6 +310,37 @@ export function DayView() {
               Nog geen tags. <Link to="/tags" className="text-primary-600 hover:underline">Maak er één aan</Link>
             </div>
           )}
+        </div>
+
+        {/* Deadline Section */}
+        <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
+          <div className="flex items-center gap-2 mb-4">
+            <svg className="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+              />
+            </svg>
+            <h3 className="text-lg font-semibold text-gray-900">Deadline (optioneel)</h3>
+          </div>
+          <div className="flex items-center gap-4">
+            <input
+              type="datetime-local"
+              value={deadline}
+              onChange={(e) => setDeadline(e.target.value)}
+              className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+            />
+            {deadline && (
+              <button
+                onClick={() => setDeadline('')}
+                className="px-4 py-2 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                Wissen
+              </button>
+            )}
+          </div>
         </div>
 
         {/* Editor Section */}

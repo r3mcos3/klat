@@ -5,7 +5,7 @@ import { AppError } from '../middleware/errorHandler';
 export class NoteService {
   // Create a new note
   async createNote(data: CreateNoteDto) {
-    const { date, content, tagIds } = data;
+    const { date, content, deadline, tagIds } = data;
 
     // Check if note already exists for this date
     const { data: existing } = await supabase
@@ -28,6 +28,7 @@ export class NoteService {
         id,
         date,
         content,
+        deadline: deadline || null,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       })
@@ -125,7 +126,7 @@ export class NoteService {
 
   // Update note
   async updateNote(id: string, data: UpdateNoteDto) {
-    const { content, tagIds } = data;
+    const { content, deadline, tagIds } = data;
 
     // Check if note exists
     const { data: existing } = await supabase
@@ -138,14 +139,23 @@ export class NoteService {
       throw new AppError('Notitie niet gevonden', 404);
     }
 
-    // Update note content if provided
-    if (content !== undefined) {
+    // Update note content/deadline if provided
+    if (content !== undefined || deadline !== undefined) {
+      const updateData: any = {
+        updatedAt: new Date().toISOString(),
+      };
+
+      if (content !== undefined) {
+        updateData.content = content;
+      }
+
+      if (deadline !== undefined) {
+        updateData.deadline = deadline || null;
+      }
+
       const { error } = await supabase
         .from('notes')
-        .update({
-          content,
-          updatedAt: new Date().toISOString(),
-        })
+        .update(updateData)
         .eq('id', id);
 
       if (error) throw new AppError(error.message, 500);

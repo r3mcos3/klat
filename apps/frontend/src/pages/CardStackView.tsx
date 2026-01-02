@@ -167,6 +167,39 @@ export function CardStackView() {
                         </p>
                       )}
 
+                      {/* Deadline */}
+                      {note.deadline && (
+                        <div className="mb-4">
+                          {(() => {
+                            const deadlineDate = new Date(note.deadline);
+                            const now = new Date();
+                            const isExpired = deadlineDate < now;
+                            const deadlineStr = formatDateNL(deadlineDate, 'd MMM yyyy HH:mm');
+
+                            return (
+                              <div
+                                className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium ${
+                                  isExpired
+                                    ? 'bg-red-100 text-red-700 border border-red-300'
+                                    : 'bg-amber-100 text-amber-700 border border-amber-300'
+                                }`}
+                              >
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                                  />
+                                </svg>
+                                {isExpired ? 'Verlopen: ' : 'Deadline: '}
+                                {deadlineStr}
+                              </div>
+                            );
+                          })()}
+                        </div>
+                      )}
+
                       {/* Tags */}
                       {note.tags && note.tags.length > 0 && (
                         <div className="flex flex-wrap gap-2">
