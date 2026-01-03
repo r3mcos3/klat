@@ -13,10 +13,19 @@ export function CardStackView() {
   
   const [noteToDelete, setNoteToDelete] = useState<Note | null>(null);
 
-  // Sort notes by date (newest first)
-  const sortedNotes = [...notes].sort(
-    (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
-  );
+  // Sort notes: uncompleted first (by date), then completed (by date)
+  const sortedNotes = [...notes].sort((a, b) => {
+    // First, sort by completion status (uncompleted first)
+    const aCompleted = !!a.completedAt;
+    const bCompleted = !!b.completedAt;
+
+    if (aCompleted !== bCompleted) {
+      return aCompleted ? 1 : -1; // Uncompleted (false) comes before completed (true)
+    }
+
+    // Then sort by date (newest first) within each group
+    return new Date(b.date).getTime() - new Date(a.date).getTime();
+  });
 
   const handleToggleDone = async (e: React.MouseEvent, note: Note) => {
     e.stopPropagation();
@@ -90,9 +99,9 @@ export function CardStackView() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
-      <div className="container mx-auto px-4 py-8 max-w-5xl">
+      <div className="container mx-auto px-4 py-4 max-w-5xl">
         {/* Header */}
-        <div className="flex items-center justify-between mb-12">
+        <div className="flex items-center justify-between mb-6">
           <div>
             <h1 className="text-4xl font-bold text-gray-900">klat</h1>
             <p className="text-gray-600 mt-1">Your personal diary</p>
