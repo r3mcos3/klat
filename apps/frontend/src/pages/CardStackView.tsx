@@ -343,7 +343,7 @@ export function CardStackView() {
                       {/* Tags */}
                       {note.tags && note.tags.length > 0 && (
                         <div className="flex flex-wrap gap-2">
-                          {note.tags.map((tag) => (
+                          {note.tags.map((tag: any) => (
                             <span
                               key={tag.id}
                               className="text-sm px-3 py-1 rounded-full font-medium"
