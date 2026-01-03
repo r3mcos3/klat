@@ -71,7 +71,7 @@ export function SearchView() {
         {!hasSearched && (
           <div className="text-center py-12">
             <svg
-              className="mx-auto h-16 w-16 text-gray-400"
+              className="mx-auto h-16 w-16 text-gray-400 dark:text-gray-500"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -83,8 +83,8 @@ export function SearchView() {
                 d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
               />
             </svg>
-            <h3 className="mt-4 text-lg font-medium text-gray-900">Start searching</h3>
-            <p className="mt-2 text-sm text-gray-500">
+            <h3 className="mt-4 text-lg font-medium text-gray-900 dark:text-white">Start searching</h3>
+            <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
               Enter a search term to search through your notes
             </p>
           </div>

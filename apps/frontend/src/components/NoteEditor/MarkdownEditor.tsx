@@ -135,7 +135,7 @@ export function MarkdownEditor({ note, date, onSave, onCreate, onSaveComplete }:
   return (
     <div className="w-full">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-semibold text-gray-900">Note</h3>
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Note</h3>
         <div className="flex items-center gap-3">
           <SaveStatusIndicator status={status} />
           <button
@@ -148,7 +148,7 @@ export function MarkdownEditor({ note, date, onSave, onCreate, onSaveComplete }:
         </div>
       </div>
 
-      <div data-color-mode="light">
+      <div data-color-mode="auto">
         <MDEditor
           value={content}
           onChange={(val) => setContent(val || '')}
@@ -162,7 +162,7 @@ export function MarkdownEditor({ note, date, onSave, onCreate, onSaveComplete }:
         />
       </div>
 
-      <div className="mt-2 text-xs text-gray-500">
+      <div className="mt-2 text-xs text-gray-500 dark:text-gray-400">
         💡 Tip: Use Markdown for formatting. Auto-saves every 30 seconds, or click 'Save' to save immediately.
       </div>
     </div>

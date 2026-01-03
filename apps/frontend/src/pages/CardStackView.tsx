@@ -285,9 +285,9 @@ export function CardStackView() {
                               onClick={(e) => handleToggleDone(e, note)}
                               className={`
                                 p-2 rounded-full transition-all border
-                                ${note.completedAt 
-                                  ? 'text-green-600 bg-green-100 border-green-300 hover:bg-red-100 hover:text-red-600 hover:border-red-300' 
-                                  : 'text-gray-400 bg-gray-50 border-gray-200 hover:bg-green-100 hover:text-green-600 hover:border-green-300'}
+                                ${note.completedAt
+                                  ? 'text-green-600 dark:text-green-400 bg-green-100 dark:bg-green-900/30 border-green-300 dark:border-green-700 hover:bg-red-100 dark:hover:bg-red-900/30 hover:text-red-600 dark:hover:text-red-400 hover:border-red-300 dark:hover:border-red-700'
+                                  : 'text-gray-400 dark:text-gray-500 bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600 hover:bg-green-100 dark:hover:bg-green-900/30 hover:text-green-600 dark:hover:text-green-400 hover:border-green-300 dark:hover:border-green-700'}
                               `}
                               title={note.completedAt ? "Mark as incomplete" : "Mark as completed"}
                             >
@@ -301,10 +301,10 @@ export function CardStackView() {
                                 </svg>
                               )}
                             </button>
-                            
+
                             <button
                               onClick={(e) => handleDeleteClick(e, note)}
-                              className="p-2 rounded-full text-gray-400 bg-gray-50 border border-gray-200 hover:bg-red-100 hover:text-red-600 hover:border-red-300 transition-all"
+                              className="p-2 rounded-full text-gray-400 dark:text-gray-500 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 hover:bg-red-100 dark:hover:bg-red-900/30 hover:text-red-600 dark:hover:text-red-400 hover:border-red-300 dark:hover:border-red-700 transition-all"
                               title="Delete note"
                             >
                               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -324,24 +324,24 @@ export function CardStackView() {
                       {/* Info Bar (Deadline & Importance) */}
                       <div className="flex flex-wrap items-center gap-3 mb-4">
                         {/* Importance Selector */}
-                        <div className="flex bg-gray-100 rounded-lg p-1" onClick={(e) => e.stopPropagation()}>
+                        <div className="flex bg-gray-100 dark:bg-gray-700 rounded-lg p-1" onClick={(e) => e.stopPropagation()}>
                           <button
                             onClick={(e) => handleImportanceChange(e, note, 'LOW')}
-                            className={`p-1.5 rounded transition-all ${note.importance === 'LOW' ? 'bg-white shadow text-blue-600' : 'text-gray-400 hover:text-blue-500'}`}
+                            className={`p-1.5 rounded transition-all ${note.importance === 'LOW' ? 'bg-white dark:bg-gray-600 shadow text-blue-600 dark:text-blue-400' : 'text-gray-400 dark:text-gray-500 hover:text-blue-500 dark:hover:text-blue-400'}`}
                             title="Low Importance"
                           >
                             <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><circle cx="10" cy="10" r="8" /></svg>
                           </button>
                           <button
                             onClick={(e) => handleImportanceChange(e, note, 'MEDIUM')}
-                            className={`p-1.5 rounded transition-all ${note.importance === 'MEDIUM' ? 'bg-white shadow text-amber-500' : 'text-gray-400 hover:text-amber-500'}`}
+                            className={`p-1.5 rounded transition-all ${note.importance === 'MEDIUM' ? 'bg-white dark:bg-gray-600 shadow text-amber-500 dark:text-amber-400' : 'text-gray-400 dark:text-gray-500 hover:text-amber-500 dark:hover:text-amber-400'}`}
                             title="Medium Importance"
                           >
                             <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><circle cx="10" cy="10" r="8" /></svg>
                           </button>
                           <button
                             onClick={(e) => handleImportanceChange(e, note, 'HIGH')}
-                            className={`p-1.5 rounded transition-all ${note.importance === 'HIGH' ? 'bg-white shadow text-red-600' : 'text-gray-400 hover:text-red-500'}`}
+                            className={`p-1.5 rounded transition-all ${note.importance === 'HIGH' ? 'bg-white dark:bg-gray-600 shadow text-red-600 dark:text-red-400' : 'text-gray-400 dark:text-gray-500 hover:text-red-500 dark:hover:text-red-400'}`}
                             title="High Importance"
                           >
                             <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><circle cx="10" cy="10" r="8" /></svg>
