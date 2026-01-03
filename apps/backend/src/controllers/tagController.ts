@@ -4,7 +4,7 @@ import { CreateTagDto, UpdateTagDto } from '../types/validation';
 
 export class TagController {
   // GET /api/tags - Get all tags
-  async getAllTags(req: Request, res: Response, next: NextFunction) {
+  async getAllTags(_req: Request, res: Response, next: NextFunction) {
     try {
       const tags = await tagService.getAllTags();
       res.json({

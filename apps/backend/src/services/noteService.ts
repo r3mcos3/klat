@@ -11,7 +11,7 @@ export class NoteService {
     const id = `note_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
     // Start a transaction
-    const { data: note, error } = await supabase
+    const { error } = await supabase
       .from('notes')
       .insert({
         id,

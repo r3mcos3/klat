@@ -1,11 +1,10 @@
 import { Router } from 'express';
 import noteController from '../controllers/noteController';
-import { validateBody, validateParams, validateQuery } from '../middleware/validation';
+import { validateBody, validateParams } from '../middleware/validation';
 import {
   createNoteSchema,
   updateNoteSchema,
   dateParamSchema,
-  monthQuerySchema,
   idParamSchema,
 } from '../types/validation';
 

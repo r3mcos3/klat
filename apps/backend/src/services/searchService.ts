@@ -1,4 +1,4 @@
-import prisma from '../config/database';
+import { supabase } from '../config/supabase';
 
 export interface SearchOptions {
   query: string;
@@ -19,74 +19,73 @@ export class SearchService {
       return [];
     }
 
-    // Build Prisma where clause
-    const where: any = {
-      AND: [],
-    };
-
-    // Search query: content OR tags
-    if (query) {
-      where.AND.push({
-        OR: [
-          { content: { contains: query, mode: 'insensitive' } },
-          { tags: { some: { name: { contains: query, mode: 'insensitive' } } } },
-        ],
-      });
-    }
-
-    // Filter by specific tag IDs (if provided via checkboxes)
-    if (tags && tags.length > 0) {
-      where.AND.push({
-        tags: {
-          some: {
-            id: { in: tags },
-          },
-        },
-      });
-    }
-
-    // Date filters
-    if (startDate) {
-      where.AND.push({ date: { gte: new Date(startDate) } });
-    }
-    if (endDate) {
-      where.AND.push({ date: { lte: new Date(endDate) } });
-    }
-
     try {
-      console.log('[SearchService] Executing Prisma query with where clause:', JSON.stringify(where, null, 2));
+      // Step 1: Get all notes with their tags
+      let supabaseQuery = supabase
+        .from('notes')
+        .select(
+          `
+          *,
+          tags:_NoteToTag(tag:tags(*))
+        `
+        )
+        .order('date', { ascending: false });
 
-      const notes = await prisma.note.findMany({
-        where,
-        include: {
-          tags: true,
-        },
-        orderBy: {
-          date: 'desc',
-        },
-      });
+      // Add date filters if provided
+      if (startDate) {
+        supabaseQuery = supabaseQuery.gte('date', startDate);
+      }
+      if (endDate) {
+        supabaseQuery = supabaseQuery.lte('date', endDate);
+      }
 
-      console.log(`[SearchService] Found ${notes.length} notes from database.`);
+      const { data: notes, error } = await supabaseQuery;
+
+      if (error) {
+        console.error('[SearchService] Database error:', error);
+        return [];
+      }
+
+      console.log(`[SearchService] Found ${notes?.length || 0} notes from database.`);
+
+      // Transform notes to expected format
+      let results = (notes || []).map((note: any) => ({
+        ...note,
+        tags: note.tags?.map((t: any) => t.tag).filter(Boolean) || [],
+      }));
+
+      // Step 2: Filter by query (search in content OR tag names)
+      if (query) {
+        const lowerQuery = query.toLowerCase();
+        results = results.filter((note: any) => {
+          // Search in content
+          const contentMatch = note.content.toLowerCase().includes(lowerQuery);
+
+          // Search in tag names
+          const tagMatch = note.tags.some((tag: any) =>
+            tag.name.toLowerCase().includes(lowerQuery)
+          );
+
+          return contentMatch || tagMatch;
+        });
+      }
+
+      // Step 3: Filter by specific tag IDs (if provided)
+      if (tags && tags.length > 0) {
+        results = results.filter((note: any) =>
+          tags.some((tagId) => note.tags.some((tag: any) => tag.id === tagId))
+        );
+      }
+
+      console.log(`[SearchService] After filtering: ${results.length} results.`);
 
       // Create search results with snippets
-      const searchResults = notes.map((note) => {
-        // Since we include tags in the search, sometimes the content might not match
-        // (if we matched on tag name). We still want to show a snippet.
-        // If content doesn't match, we show the beginning of content.
+      const searchResults = results.map((note: any) => {
         const snippet = this.createSnippet(note.content, query);
         const highlights = this.findHighlights(note.content, query);
 
-        // Convert dates to strings to match expected interface if needed
-        // Prisma returns Date objects, frontend might expect strings
         return {
-          note: {
-            ...note,
-            date: note.date.toISOString(),
-            createdAt: note.createdAt.toISOString(),
-            updatedAt: note.updatedAt.toISOString(),
-            deadline: note.deadline?.toISOString() || undefined,
-            completedAt: note.completedAt?.toISOString() || undefined,
-          },
+          note,
           snippet,
           highlights,
         };

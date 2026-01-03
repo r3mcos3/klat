@@ -34,7 +34,7 @@ export class NoteController {
   async getNoteByDate(req: Request, res: Response, next: NextFunction) {
     try {
       const { date } = req.params;
-      const notes = await noteService.getNoteByDate(date);
+      const notes = await noteService.getNotesByDate(date);
       res.json({
         data: notes,
       });
