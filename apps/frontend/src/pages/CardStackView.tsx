@@ -185,6 +185,20 @@ export function CardStackView() {
                 const dateObj = new Date(dateStr + 'T12:00:00');
                 const hasContent = note.content.trim().length > 0;
 
+                // Get border color based on importance
+                const getBorderColor = () => {
+                  if (note.completedAt) return 'border-green-200';
+                  if (note.importance === 'HIGH') return 'border-red-500';
+                  if (note.importance === 'MEDIUM') return 'border-amber-500';
+                  if (note.importance === 'LOW') return 'border-blue-500';
+                  return 'border-gray-200';
+                };
+
+                const getBorderWidth = () => {
+                  if (note.importance && !note.completedAt) return 'border-2';
+                  return 'border';
+                };
+
                 return (
                   <div
                     key={note.id}
@@ -200,10 +214,10 @@ export function CardStackView() {
                         }
                       }}
                       className={`
-                        w-full rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 p-6 border hover:scale-[1.02] text-left
-                        ${note.completedAt 
-                          ? 'bg-green-50 border-green-200 shadow-green-100/50' 
-                          : 'bg-white border-gray-200'}
+                        w-full rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 p-6 hover:scale-[1.02] text-left
+                        ${getBorderWidth()}
+                        ${getBorderColor()}
+                        ${note.completedAt ? 'bg-green-50 shadow-green-100/50' : 'bg-white'}
                       `}
                     >
                       {/* Date & Done Toggle */}
