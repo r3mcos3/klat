@@ -64,7 +64,7 @@ export function SearchResults({ results, isLoading }: SearchResultsProps) {
             </span>
             {result.note.tags && result.note.tags.length > 0 && (
               <div className="flex gap-1">
-                {result.note.tags.map((tag) => (
+                {result.note.tags.map((tag: any) => (
                   <span
                     key={tag.id}
                     className="text-xs px-2 py-0.5 rounded"
@@ -86,7 +86,7 @@ export function SearchResults({ results, isLoading }: SearchResultsProps) {
 
           {result.highlights.length > 0 && (
             <div className="mt-2 flex flex-wrap gap-1">
-              {result.highlights.slice(0, 5).map((highlight, i) => (
+              {result.highlights.slice(0, 5).map((highlight: string, i: number) => (
                 <span key={i} className="text-xs px-2 py-0.5 bg-yellow-100 text-yellow-800 rounded">
                   {highlight}
                 </span>

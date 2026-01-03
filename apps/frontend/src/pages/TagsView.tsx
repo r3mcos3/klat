@@ -210,11 +210,7 @@ export function TagsView() {
         message={
           deleteError
             ? deleteError
-            : `Are you sure you want to delete the tag "${tagToDelete?.name}"?${
-                tags.find((t) => t.id === tagToDelete?.id)?._count?.notes
-                  ? ' This tag is still in use in notes.'
-                  : ''
-              }`
+            : `Are you sure you want to delete the tag "${tagToDelete?.name}"?`
         }
         confirmText="Delete"
         cancelText="Cancel"

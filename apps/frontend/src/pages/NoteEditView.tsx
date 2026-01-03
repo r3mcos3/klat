@@ -5,7 +5,7 @@ import { ConfirmDialog } from '@/components/Common/ConfirmDialog';
 import { DateTimePicker } from '@/components/Common/DateTimePicker';
 import { useNoteById, useCreateNote, useUpdateNote, useDeleteNote } from '@/hooks/useNotes';
 import { useAllTags, tagKeys } from '@/hooks/useTags';
-import { formatDateNL, stringToDate, formatCompletedAt } from '@/utils/dateHelpers';
+import { formatDateNL, formatCompletedAt } from '@/utils/dateHelpers';
 import { useState, useEffect } from 'react';
 import { tagApi } from '@/services/tagApi';
 import type { Tag } from '@klat/types';

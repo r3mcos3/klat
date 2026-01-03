@@ -125,7 +125,7 @@ export function DayCell({ date, currentMonth, note }: DayCellProps) {
           {/* Tags preview */}
           {note.tags && note.tags.length > 0 && (
             <div className="flex flex-wrap gap-1">
-              {note.tags.slice(0, 2).map((tag) => (
+              {note.tags.slice(0, 2).map((tag: any) => (
                 <span
                   key={tag.id}
                   className="text-xs px-1.5 py-0.5 rounded"

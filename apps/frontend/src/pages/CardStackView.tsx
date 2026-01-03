@@ -180,7 +180,7 @@ export function CardStackView() {
         {!isLoading && sortedNotes.length > 0 && (
           <div className="relative">
             <div className="flex flex-col space-y-6">
-              {sortedNotes.map((note, index) => {
+              {sortedNotes.map((note, _index) => {
                 const dateStr = note.date.split('T')[0];
                 const dateObj = new Date(dateStr + 'T12:00:00');
                 const hasContent = note.content.trim().length > 0;

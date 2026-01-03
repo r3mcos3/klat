@@ -35,7 +35,7 @@ export interface UpdateNoteDto {
   deadline?: string; // Optional deadline ISO 8601 datetime string
   completedAt?: string; // Optional completion timestamp ISO 8601 datetime string
   importance?: 'LOW' | 'MEDIUM' | 'HIGH';
-  tagIds?: string; // Array of tag IDs to associate with the note
+  tagIds?: string[]; // Array of tag IDs to associate with the note
 }
 
 export interface CreateTagDto {

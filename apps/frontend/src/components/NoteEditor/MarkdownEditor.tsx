@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import MDEditor from '@uiw/react-md-editor';
 import { useAutoSave, SaveStatus } from '@/hooks/useAutoSave';
-import type { Note, UpdateNoteDto } from '@klat/types';
+import type { Note } from '@klat/types';
 
 interface MarkdownEditorProps {
   note?: Note;
@@ -67,7 +67,7 @@ function SaveStatusIndicator({ status }: { status: SaveStatus }) {
 
 export function MarkdownEditor({ note, date, onSave, onCreate, onSaveComplete }: MarkdownEditorProps) {
   const [content, setContent] = useState(note?.content || '');
-  const [tagIds, setTagIds] = useState<string[]>(note?.tags?.map((t) => t.id) || []);
+  const [tagIds, setTagIds] = useState<string[]>(note?.tags?.map((t: any) => t.id) || []);
   const [isCreating, setIsCreating] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
 
@@ -75,7 +75,7 @@ export function MarkdownEditor({ note, date, onSave, onCreate, onSaveComplete }:
   useEffect(() => {
     if (note) {
       setContent(note.content);
-      setTagIds(note.tags?.map((t) => t.id) || []);
+      setTagIds(note.tags?.map((t: any) => t.id) || []);
       setIsCreating(false); // Reset creating flag when note is loaded
     }
   }, [note?.id]);

@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { tagApi } from '@/services/tagApi';
-import type { Tag, CreateTagDto, UpdateTagDto } from '@klat/types';
+import type { CreateTagDto, UpdateTagDto } from '@klat/types';
 
 // Query keys
 export const tagKeys = {

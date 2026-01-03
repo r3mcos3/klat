@@ -38,7 +38,6 @@ export function TagList({ tags, selectedTags = [], onToggle, readonly = false }:
             style={{
               backgroundColor: tag.color ? `${tag.color}30` : '#E5E7EB',
               color: tag.color || '#374151',
-              ringColor: tag.color,
             }}
           >
             {tag.name}
