@@ -100,13 +100,8 @@ export function NoteEditView() {
   }, [note?.id, isNewNote]);
 
   const handleSaveComplete = (noteId?: string) => {
-    if (noteId) {
-      // If a note ID is provided (new note created), navigate to that note's edit page
-      navigate(`/note/${noteId}`);
-    } else {
-      // Otherwise, go back to calendar
-      navigate('/');
-    }
+    // Always navigate back to main page after saving
+    navigate('/');
   };
 
   const handleToggleTag = (tagId: string) => {
