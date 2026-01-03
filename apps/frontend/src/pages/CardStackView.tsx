@@ -118,17 +118,15 @@ export function CardStackView() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
       <div className="container mx-auto px-4 py-4 max-w-5xl">
-        {/* Live Clock & Date */}
-        <div className="mb-6">
-          <LiveDateTime />
-        </div>
-
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <div>
             <h1 className="text-4xl font-bold text-gray-900">klat</h1>
             <p className="text-gray-600 mt-1">Your personal diary</p>
           </div>
+
+          {/* Live Clock & Date */}
+          <LiveDateTime />
 
           <div className="flex gap-3">
             <Link
