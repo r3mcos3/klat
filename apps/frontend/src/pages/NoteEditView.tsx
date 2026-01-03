@@ -99,7 +99,7 @@ export function NoteEditView() {
     }
   }, [note?.id, isNewNote]);
 
-  const handleSaveComplete = (noteId?: string) => {
+  const handleSaveComplete = (_noteId?: string) => {
     // Always navigate back to main page after saving
     navigate('/');
   };
