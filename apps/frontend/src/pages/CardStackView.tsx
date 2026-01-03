@@ -123,7 +123,7 @@ export function CardStackView() {
         <div className="flex flex-col gap-4 mb-6 md:flex-row md:items-center md:justify-between">
           <div>
             <h1 className="text-4xl font-bold text-gray-900 dark:text-white">klat</h1>
-            <p className="text-gray-600 dark:text-gray-400 mt-1">Your Personal Notepad</p>
+            <p className="text-gray-600 dark:text-gray-400 mt-1">Your Personal Notes</p>
           </div>
 
           {/* Live Clock & Date - Hidden on mobile */}
