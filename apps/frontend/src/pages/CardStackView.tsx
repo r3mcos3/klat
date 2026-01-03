@@ -3,6 +3,7 @@ import { useAllNotes, useUpdateNote, useDeleteNote } from '@/hooks/useNotes';
 import { formatDateNL } from '@/utils/dateHelpers';
 import { ConfirmDialog } from '@/components/Common/ConfirmDialog';
 import { LiveDateTime } from '@/components/Common/LiveDateTime';
+import { ThemeToggle } from '@/components/Common/ThemeToggle';
 import { useState } from 'react';
 import type { Note } from '@klat/types';
 
@@ -104,10 +105,10 @@ export function CardStackView() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
         <div className="text-center">
-          <p className="text-red-600">Error loading notes</p>
-          <p className="text-sm text-gray-500 mt-2">
+          <p className="text-red-600 dark:text-red-400">Error loading notes</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
             {error instanceof Error ? error.message : 'Unknown error'}
           </p>
         </div>
@@ -116,13 +117,13 @@ export function CardStackView() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
       <div className="container mx-auto px-4 py-4 max-w-5xl">
         {/* Header */}
         <div className="flex flex-col gap-4 mb-6 md:flex-row md:items-center md:justify-between">
           <div>
-            <h1 className="text-4xl font-bold text-gray-900">klat</h1>
-            <p className="text-gray-600 mt-1">Your personal diary</p>
+            <h1 className="text-4xl font-bold text-gray-900 dark:text-white">klat</h1>
+            <p className="text-gray-600 dark:text-gray-400 mt-1">Your personal diary</p>
           </div>
 
           {/* Live Clock & Date - Hidden on mobile */}
@@ -131,6 +132,7 @@ export function CardStackView() {
           </div>
 
           <div className="flex gap-3">
+            <ThemeToggle />
             <Link
               to="/note/new"
               className="px-4 py-2 text-sm font-medium text-white bg-primary-600 rounded-md hover:bg-primary-700 flex items-center gap-2 shadow-sm transition-colors"
@@ -147,7 +149,7 @@ export function CardStackView() {
             </Link>
             <Link
               to="/search"
-              className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 flex items-center gap-2 shadow-sm"
+              className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-600 flex items-center gap-2 shadow-sm"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path
@@ -161,7 +163,7 @@ export function CardStackView() {
             </Link>
             <Link
               to="/tags"
-              className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 flex items-center gap-2 shadow-sm"
+              className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-600 flex items-center gap-2 shadow-sm"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path
@@ -181,7 +183,7 @@ export function CardStackView() {
           <div className="flex items-center justify-center py-20">
             <div className="text-center">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto" />
-              <p className="mt-4 text-gray-600">Loading...</p>
+              <p className="mt-4 text-gray-600 dark:text-gray-400">Loading...</p>
             </div>
           </div>
         )}
@@ -189,7 +191,7 @@ export function CardStackView() {
         {/* Empty State */}
         {!isLoading && sortedNotes.length === 0 && (
           <div className="text-center py-20">
-            <p className="text-gray-500 text-lg mb-4">You don't have any notes yet</p>
+            <p className="text-gray-500 dark:text-gray-400 text-lg mb-4">You don't have any notes yet</p>
             <Link
               to="/note/new"
               className="inline-block px-6 py-3 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
@@ -240,17 +242,17 @@ export function CardStackView() {
                         w-full rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 p-6 hover:scale-[1.02] text-left
                         ${getBorderWidth()}
                         ${getBorderColor()}
-                        ${note.completedAt ? 'bg-green-50 shadow-green-100/50' : 'bg-white'}
+                        ${note.completedAt ? 'bg-green-50 dark:bg-green-900/20 shadow-green-100/50' : 'bg-white dark:bg-gray-800'}
                       `}
                     >
                       {/* Date & Done Toggle */}
                       <div className="flex items-center justify-between mb-4">
                         <div className="flex items-center gap-3">
-                          <h3 className="text-lg font-semibold text-gray-900">
+                          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
                             {formatDateNL(dateObj, 'EEEE d MMMM yyyy')}
                           </h3>
                           {note.completedAt && (
-                            <div className="flex items-center gap-1 text-green-600 bg-green-100/50 px-2 py-0.5 rounded-full text-xs font-bold">
+                            <div className="flex items-center gap-1 text-green-600 dark:text-green-400 bg-green-100/50 dark:bg-green-900/30 px-2 py-0.5 rounded-full text-xs font-bold">
                               <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
                                 <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                               </svg>
@@ -294,7 +296,7 @@ export function CardStackView() {
 
                       {/* Content Preview */}
                       {hasContent && (
-                        <p className="text-gray-700 mb-4 line-clamp-3">
+                        <p className="text-gray-700 dark:text-gray-300 mb-4 line-clamp-3">
                           {getPreviewText(note.content)}
                         </p>
                       )}
@@ -398,7 +400,7 @@ export function CardStackView() {
 
                       {/* Empty note indicator */}
                       {!hasContent && (
-                        <p className="text-gray-400 italic">No content</p>
+                        <p className="text-gray-400 dark:text-gray-500 italic">No content</p>
                       )}
                     </div>
                   </div>
@@ -409,7 +411,7 @@ export function CardStackView() {
         )}
 
         {/* Footer */}
-        <div className="mt-12 text-center text-sm text-gray-500">
+        <div className="mt-12 text-center text-sm text-gray-500 dark:text-gray-400">
           <p>Click a card to edit the note</p>
         </div>
       </div>

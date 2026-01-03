@@ -69,13 +69,13 @@ export function TagsView() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <div className="container mx-auto px-4 py-8 max-w-4xl">
         {/* Header */}
         <div className="mb-8">
           <Link
             to="/"
-            className="inline-flex items-center text-sm text-gray-600 hover:text-gray-900 mb-4"
+            className="inline-flex items-center text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 mb-4"
           >
             <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
@@ -88,19 +88,19 @@ export function TagsView() {
             Back to overview
           </Link>
 
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Manage Tags</h1>
-          <p className="text-gray-600">Organize your notes with tags</p>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">Manage Tags</h1>
+          <p className="text-gray-600 dark:text-gray-400">Organize your notes with tags</p>
         </div>
 
         {/* Create Tag */}
-        <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Create new tag</h2>
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 mb-6">
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Create new tag</h2>
           <TagInput />
         </div>
 
         {/* Tags List */}
-        <div className="bg-white rounded-lg shadow-sm p-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6">
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
             Your tags ({tags.length})
           </h2>
 

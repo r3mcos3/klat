@@ -33,13 +33,13 @@ export function SearchView() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <div className="container mx-auto px-4 py-8 max-w-4xl">
         {/* Header */}
         <div className="mb-8">
           <Link
             to="/"
-            className="inline-flex items-center text-sm text-gray-600 hover:text-gray-900 mb-4"
+            className="inline-flex items-center text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 mb-4"
           >
             <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
@@ -52,8 +52,8 @@ export function SearchView() {
             Back to overview
           </Link>
 
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Search</h1>
-          <p className="text-gray-600">Search all your notes</p>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">Search</h1>
+          <p className="text-gray-600 dark:text-gray-400">Search all your notes</p>
         </div>
 
         {/* Search Bar */}
@@ -63,7 +63,7 @@ export function SearchView() {
 
         {/* Results */}
         {hasSearched && (
-          <div className="bg-white rounded-lg shadow-sm p-6">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6">
             <SearchResults results={results} isLoading={isLoading} />
           </div>
         )}
