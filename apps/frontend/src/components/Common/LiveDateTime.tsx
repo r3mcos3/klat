@@ -7,12 +7,12 @@ export function LiveDateTime() {
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentTime(new Date());
-    }, 1000);
+    }, 60000); // Update every minute instead of every second
 
     return () => clearInterval(timer);
   }, []);
 
-  const timeString = formatDateNL(currentTime, 'HH:mm:ss');
+  const timeString = formatDateNL(currentTime, 'HH:mm');
   const dateString = formatDateNL(currentTime, 'EEEE d MMMM yyyy');
 
   return (
