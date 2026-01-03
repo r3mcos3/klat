@@ -212,11 +212,7 @@ export function CardStackView() {
                             </div>
                           )}
                         </div>
-                        <div className="flex items-center gap-4">
-                          <span className="text-sm text-gray-500">
-                            {formatDateNL(dateObj, 'd MMM')}
-                          </span>
-                          <div className="flex flex-col gap-2">
+                        <div className="flex flex-col gap-2">
                             <button
                               onClick={(e) => handleToggleDone(e, note)}
                               className={`
@@ -248,7 +244,6 @@ export function CardStackView() {
                               </svg>
                             </button>
                           </div>
-                        </div>
                       </div>
 
                       {/* Content Preview */}
