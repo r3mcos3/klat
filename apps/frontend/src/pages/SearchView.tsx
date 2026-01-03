@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { SearchBar } from '@/components/Search/SearchBar';
 import { SearchResults } from '@/components/Search/SearchResults';
@@ -10,7 +10,14 @@ export function SearchView() {
   const [isLoading, setIsLoading] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
 
-  const handleSearch = async (query: string) => {
+  const handleSearch = useCallback(async (query: string) => {
+    if (!query.trim()) {
+      setResults([]);
+      setHasSearched(false);
+      setIsLoading(false);
+      return;
+    }
+
     setIsLoading(true);
     setHasSearched(true);
 
@@ -23,7 +30,7 @@ export function SearchView() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
 
   return (
     <div className="min-h-screen bg-gray-50">

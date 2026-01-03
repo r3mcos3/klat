@@ -5,12 +5,12 @@ import { AppError } from '../middleware/errorHandler';
 export class NoteService {
   // Create a new note (multiple notes per day allowed)
   async createNote(data: CreateNoteDto) {
-    const { date, content, deadline, completedAt, tagIds } = data;
+    const { date, content, deadline, completedAt, importance, tagIds } = data;
 
     // Generate a unique ID
     const id = `note_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
-    // Create note
+    // Start a transaction
     const { data: note, error } = await supabase
       .from('notes')
       .insert({
@@ -19,6 +19,7 @@ export class NoteService {
         content,
         deadline: deadline || null,
         completedAt: completedAt || null,
+        importance: importance || null,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       })
@@ -114,7 +115,7 @@ export class NoteService {
 
   // Update note
   async updateNote(id: string, data: UpdateNoteDto) {
-    const { content, deadline, completedAt, tagIds } = data;
+    const { content, deadline, completedAt, importance, tagIds } = data;
 
     // Check if note exists
     const { data: existing } = await supabase
@@ -127,8 +128,8 @@ export class NoteService {
       throw new AppError('Notitie niet gevonden', 404);
     }
 
-    // Update note content/deadline/completedAt if provided
-    if (content !== undefined || deadline !== undefined || completedAt !== undefined) {
+    // Update note content/deadline/completedAt/importance if provided
+    if (content !== undefined || deadline !== undefined || completedAt !== undefined || importance !== undefined) {
       const updateData: any = {
         updatedAt: new Date().toISOString(),
       };
@@ -143,6 +144,10 @@ export class NoteService {
 
       if (completedAt !== undefined) {
         updateData.completedAt = completedAt || null;
+      }
+
+      if (importance !== undefined) {
+        updateData.importance = importance || null;
       }
 
       const { error } = await supabase

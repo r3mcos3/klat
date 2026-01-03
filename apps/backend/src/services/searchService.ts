@@ -1,4 +1,4 @@
-import { supabase } from '../config/supabase';
+import prisma from '../config/database';
 
 export interface SearchOptions {
   query: string;
@@ -11,60 +11,93 @@ export class SearchService {
   async searchNotes(options: SearchOptions) {
     const { query, tags, startDate, endDate } = options;
 
-    // Build query
-    let supabaseQuery = supabase
-      .from('notes')
-      .select(
-        `
-        *,
-        tags:_NoteToTag(tag:tags(*))
-      `
-      )
-      .ilike('content', `%${query}%`); // Case-insensitive search
+    console.log('[SearchService] Received options:', JSON.stringify(options, null, 2));
 
-    // Add date filters if provided
-    if (startDate) {
-      supabaseQuery = supabaseQuery.gte('date', startDate);
-    }
-    if (endDate) {
-      supabaseQuery = supabaseQuery.lte('date', endDate);
-    }
-
-    supabaseQuery = supabaseQuery.order('date', { ascending: false });
-
-    const { data: notes, error } = await supabaseQuery;
-
-    if (error) {
-      console.error('Search error:', error);
+    // If there is no query and no tags to filter by, return empty results
+    if (!query && (!tags || tags.length === 0)) {
+      console.log('[SearchService] No query or tags provided, returning empty array.');
       return [];
     }
 
-    // Transform notes and filter by tags if needed
-    let results = (notes || []).map((note: any) => ({
-      ...note,
-      tags: note.tags?.map((t: any) => t.tag).filter(Boolean) || [],
-    }));
+    // Build Prisma where clause
+    const where: any = {
+      AND: [],
+    };
 
-    // Filter by tags if provided (client-side for now)
-    if (tags && tags.length > 0) {
-      results = results.filter((note: any) =>
-        tags.some((tagId) => note.tags.some((tag: any) => tag.id === tagId))
-      );
+    // Search query: content OR tags
+    if (query) {
+      where.AND.push({
+        OR: [
+          { content: { contains: query, mode: 'insensitive' } },
+          { tags: { some: { name: { contains: query, mode: 'insensitive' } } } },
+        ],
+      });
     }
 
-    // Create search results with snippets
-    const searchResults = results.map((note) => {
-      const snippet = this.createSnippet(note.content, query);
-      const highlights = this.findHighlights(note.content, query);
+    // Filter by specific tag IDs (if provided via checkboxes)
+    if (tags && tags.length > 0) {
+      where.AND.push({
+        tags: {
+          some: {
+            id: { in: tags },
+          },
+        },
+      });
+    }
 
-      return {
-        note,
-        snippet,
-        highlights,
-      };
-    });
+    // Date filters
+    if (startDate) {
+      where.AND.push({ date: { gte: new Date(startDate) } });
+    }
+    if (endDate) {
+      where.AND.push({ date: { lte: new Date(endDate) } });
+    }
 
-    return searchResults;
+    try {
+      console.log('[SearchService] Executing Prisma query with where clause:', JSON.stringify(where, null, 2));
+
+      const notes = await prisma.note.findMany({
+        where,
+        include: {
+          tags: true,
+        },
+        orderBy: {
+          date: 'desc',
+        },
+      });
+
+      console.log(`[SearchService] Found ${notes.length} notes from database.`);
+
+      // Create search results with snippets
+      const searchResults = notes.map((note) => {
+        // Since we include tags in the search, sometimes the content might not match
+        // (if we matched on tag name). We still want to show a snippet.
+        // If content doesn't match, we show the beginning of content.
+        const snippet = this.createSnippet(note.content, query);
+        const highlights = this.findHighlights(note.content, query);
+
+        // Convert dates to strings to match expected interface if needed
+        // Prisma returns Date objects, frontend might expect strings
+        return {
+          note: {
+            ...note,
+            date: note.date.toISOString(),
+            createdAt: note.createdAt.toISOString(),
+            updatedAt: note.updatedAt.toISOString(),
+            deadline: note.deadline?.toISOString() || undefined,
+            completedAt: note.completedAt?.toISOString() || undefined,
+          },
+          snippet,
+          highlights,
+        };
+      });
+
+      console.log(`[SearchService] Returning ${searchResults.length} formatted results.`);
+      return searchResults;
+    } catch (error) {
+      console.error('[SearchService] Search error:', error);
+      return [];
+    }
   }
 
   // Create a snippet showing context around the search term

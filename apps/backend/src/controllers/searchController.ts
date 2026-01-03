@@ -9,7 +9,7 @@ export class SearchController {
       const { q, tags, startDate, endDate } = req.query as SearchQueryDto & { tags?: string };
 
       const results = await searchService.searchNotes({
-        query: q,
+        query: q || '',
         tags: tags ? tags.split(',') : undefined,
         startDate,
         endDate,

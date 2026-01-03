@@ -6,6 +6,7 @@ export const createNoteSchema = z.object({
   content: z.string().min(0),
   deadline: z.string().datetime().optional(),
   completedAt: z.string().datetime().optional(),
+  importance: z.enum(['LOW', 'MEDIUM', 'HIGH']).optional(),
   tagIds: z.array(z.string()).optional(),
 });
 
@@ -13,6 +14,7 @@ export const updateNoteSchema = z.object({
   content: z.string().min(0).optional(),
   deadline: z.string().datetime().optional(),
   completedAt: z.string().datetime().optional(),
+  importance: z.enum(['LOW', 'MEDIUM', 'HIGH']).optional(),
   tagIds: z.array(z.string()).optional(),
 });
 
@@ -37,7 +39,7 @@ export const updateTagSchema = z.object({
 
 // Search validation schema
 export const searchQuerySchema = z.object({
-  q: z.string().min(1),
+  q: z.string().optional(),
   tags: z.string().optional(), // Comma-separated tag IDs
   startDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
   endDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),

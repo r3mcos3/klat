@@ -7,6 +7,7 @@ export interface Note {
   content: string; // Markdown content
   deadline?: string; // Optional deadline ISO 8601 datetime string
   completedAt?: string; // Optional completion timestamp ISO 8601 datetime string
+  importance?: 'LOW' | 'MEDIUM' | 'HIGH'; // Optional importance level
   tags: Tag[];
   createdAt: string; // ISO 8601 datetime string
   updatedAt: string; // ISO 8601 datetime string
@@ -25,6 +26,7 @@ export interface CreateNoteDto {
   content: string; // Markdown content
   deadline?: string; // Optional deadline ISO 8601 datetime string
   completedAt?: string; // Optional completion timestamp ISO 8601 datetime string
+  importance?: 'LOW' | 'MEDIUM' | 'HIGH';
   tagIds?: string[]; // Array of tag IDs to associate with the note
 }
 
@@ -32,6 +34,7 @@ export interface UpdateNoteDto {
   content?: string; // Markdown content
   deadline?: string; // Optional deadline ISO 8601 datetime string
   completedAt?: string; // Optional completion timestamp ISO 8601 datetime string
+  importance?: 'LOW' | 'MEDIUM' | 'HIGH';
   tagIds?: string; // Array of tag IDs to associate with the note
 }
 

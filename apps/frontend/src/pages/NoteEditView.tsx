@@ -58,6 +58,7 @@ export function NoteEditView() {
   const [selectedTagIds, setSelectedTagIds] = useState<string[]>([]);
   const [deadline, setDeadline] = useState<Date | null>(null);
   const [completedAt, setCompletedAt] = useState<string>('');
+  const [importance, setImportance] = useState<'LOW' | 'MEDIUM' | 'HIGH' | undefined>(undefined);
   const [noteDate, setNoteDate] = useState<Date | null>(null);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
@@ -77,6 +78,7 @@ export function NoteEditView() {
       setSelectedTagIds([]);
       setDeadline(null);
       setCompletedAt('');
+      setImportance(undefined);
     } else if (note) {
       // For existing notes, load from note data
       setNoteDate(new Date(note.date));
@@ -93,6 +95,7 @@ export function NoteEditView() {
       } else {
         setCompletedAt('');
       }
+      setImportance(note.importance);
     }
   }, [note?.id, isNewNote]);
 
@@ -209,6 +212,7 @@ export function NoteEditView() {
           content: cleanedContent,
           deadline: deadlineISO,
           completedAt: completedAt || undefined,
+          importance: importance,
           tagIds: allTagIds,
         },
       });
@@ -228,6 +232,7 @@ export function NoteEditView() {
       content: cleanedContent,
       deadline: deadlineISO,
       completedAt: completedAt || undefined,
+      importance: importance,
       tagIds: allTagIds,
     });
 
@@ -369,6 +374,39 @@ export function NoteEditView() {
                 Clear
               </button>
             )}
+          </div>
+        </div>
+
+        {/* Importance Section */}
+        <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
+          <div className="flex items-center gap-2 mb-4">
+            <svg className="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+            </svg>
+            <h3 className="text-lg font-semibold text-gray-900">Importance (optional)</h3>
+          </div>
+          <div className="flex gap-2">
+            {(['LOW', 'MEDIUM', 'HIGH'] as const).map((level) => (
+              <button
+                key={level}
+                onClick={() => setImportance(importance === level ? undefined : level)}
+                className={`
+                  px-4 py-2 rounded-lg text-sm font-medium border transition-colors flex-1
+                  ${importance === level
+                    ? level === 'HIGH'
+                      ? 'bg-red-50 text-red-700 border-red-200 ring-2 ring-red-500'
+                      : level === 'MEDIUM'
+                        ? 'bg-amber-50 text-amber-700 border-amber-200 ring-2 ring-amber-500'
+                        : 'bg-blue-50 text-blue-700 border-blue-200 ring-2 ring-blue-500'
+                    : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
+                  }
+                `}
+              >
+                {level === 'LOW' && '🔵 Low'}
+                {level === 'MEDIUM' && '🟡 Medium'}
+                {level === 'HIGH' && '🔴 High'}
+              </button>
+            ))}
           </div>
         </div>
 

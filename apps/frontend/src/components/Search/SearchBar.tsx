@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useDebounce } from '@/hooks/useDebounce';
 
 interface SearchBarProps {
   onSearch: (query: string) => void;
@@ -7,12 +8,20 @@ interface SearchBarProps {
 
 export function SearchBar({ onSearch, placeholder = 'Search in notes...' }: SearchBarProps) {
   const [query, setQuery] = useState('');
+  const debouncedQuery = useDebounce(query, 500); // 500ms debounce delay
+
+  useEffect(() => {
+    // Trigger search when debounced query changes
+    // and meets the length requirement, or is empty.
+    if (debouncedQuery.length === 0 || debouncedQuery.length >= 3) {
+      onSearch(debouncedQuery);
+    }
+  }, [debouncedQuery, onSearch]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (query.trim()) {
-      onSearch(query.trim());
-    }
+    // Allow immediate search on Enter, bypassing debounce
+    onSearch(query);
   };
 
   return (
@@ -34,7 +43,7 @@ export function SearchBar({ onSearch, placeholder = 'Search in notes...' }: Sear
           >
             <path
               strokeLinecap="round"
-              strokeLinecap="round"
+              strokeLinejoin="round"
               strokeWidth={2}
               d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
             />
