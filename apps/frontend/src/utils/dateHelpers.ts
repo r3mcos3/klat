@@ -26,6 +26,14 @@ export const formatCompletedAt = (dateString: string): string => {
   return format(date, 'dd-MM-yy HH:mm', { locale: enGB });
 };
 
+// Format timestamp with explicit local time conversion
+export const formatTimestamp = (dateString: string, formatStr: string = 'd MMMM yyyy, HH:mm'): string => {
+  // Parse the ISO string to a Date object (automatically converts to local time)
+  const date = new Date(dateString);
+  // Format using local time
+  return format(date, formatStr, { locale: enGB });
+};
+
 export const getMonthDays = (date: Date): Date[] => {
   const monthStart = startOfMonth(date);
   const monthEnd = endOfMonth(date);

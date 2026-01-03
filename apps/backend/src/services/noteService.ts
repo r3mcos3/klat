@@ -10,6 +10,9 @@ export class NoteService {
     // Generate a unique ID
     const id = `note_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
+    // Get current timestamp
+    const now = new Date().toISOString();
+
     // Start a transaction
     const { error } = await supabase
       .from('notes')
@@ -20,8 +23,8 @@ export class NoteService {
         deadline: deadline || null,
         completedAt: completedAt || null,
         importance: importance || null,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
+        createdAt: now,
+        updatedAt: now,
       })
       .select()
       .single();
@@ -130,8 +133,9 @@ export class NoteService {
 
     // Update note content/deadline/completedAt/importance if provided
     if (content !== undefined || deadline !== undefined || completedAt !== undefined || importance !== undefined) {
+      const now = new Date().toISOString();
       const updateData: any = {
-        updatedAt: new Date().toISOString(),
+        updatedAt: now,
       };
 
       if (content !== undefined) {
