@@ -4,7 +4,7 @@ import { AppError } from '../middleware/errorHandler';
 
 export class NoteService {
   // Create a new note (multiple notes per day allowed)
-  async createNote(data: CreateNoteDto) {
+  async createNote(data: CreateNoteDto, userId: string) {
     const { date, content, deadline, completedAt, importance, tagIds } = data;
 
     // Generate a unique ID
@@ -18,6 +18,7 @@ export class NoteService {
       .from('notes')
       .insert({
         id,
+        userId,
         date,
         content,
         deadline: deadline || null,
@@ -42,11 +43,11 @@ export class NoteService {
     }
 
     // Fetch note with tags
-    return this.getNoteById(id);
+    return this.getNoteById(id, userId);
   }
 
   // Get note by ID (single note)
-  async getNoteById(id: string) {
+  async getNoteById(id: string, userId: string) {
     const { data: note, error } = await supabase
       .from('notes')
       .select(
@@ -56,6 +57,7 @@ export class NoteService {
       `
       )
       .eq('id', id)
+      .eq('userId', userId)
       .single();
 
     if (error || !note) {
@@ -70,7 +72,7 @@ export class NoteService {
   }
 
   // Get all notes for a specific date
-  async getNotesByDate(date: string) {
+  async getNotesByDate(date: string, userId: string) {
     const { data: notes, error } = await supabase
       .from('notes')
       .select(
@@ -80,6 +82,7 @@ export class NoteService {
       `
       )
       .eq('date', date)
+      .eq('userId', userId)
       .order('createdAt', { ascending: false });
 
     if (error) throw new AppError(error.message, 500);
@@ -91,7 +94,7 @@ export class NoteService {
   }
 
   // Get notes for a specific month
-  async getNotesByMonth(yearMonth: string) {
+  async getNotesByMonth(yearMonth: string, userId: string) {
     const [year, month] = yearMonth.split('-').map(Number);
     const startDate = new Date(year, month - 1, 1).toISOString();
     const endDate = new Date(year, month, 0, 23, 59, 59).toISOString();
@@ -106,6 +109,7 @@ export class NoteService {
       )
       .gte('date', startDate)
       .lte('date', endDate)
+      .eq('userId', userId)
       .order('createdAt', { ascending: false });
 
     if (error) throw new AppError(error.message, 500);
@@ -117,14 +121,15 @@ export class NoteService {
   }
 
   // Update note
-  async updateNote(id: string, data: UpdateNoteDto) {
+  async updateNote(id: string, data: UpdateNoteDto, userId: string) {
     const { content, deadline, completedAt, importance, tagIds } = data;
 
-    // Check if note exists
+    // Check if note exists and belongs to user
     const { data: existing } = await supabase
       .from('notes')
       .select('id')
       .eq('id', id)
+      .eq('userId', userId)
       .single();
 
     if (!existing) {
@@ -178,15 +183,16 @@ export class NoteService {
     }
 
     // Return updated note
-    return this.getNoteById(id);
+    return this.getNoteById(id, userId);
   }
 
   // Delete note
-  async deleteNote(id: string) {
+  async deleteNote(id: string, userId: string) {
     const { data: existing } = await supabase
       .from('notes')
       .select('id')
       .eq('id', id)
+      .eq('userId', userId)
       .single();
 
     if (!existing) {
@@ -205,7 +211,7 @@ export class NoteService {
   }
 
   // Get all notes
-  async getAllNotes() {
+  async getAllNotes(userId: string) {
     const { data: notes, error } = await supabase
       .from('notes')
       .select(
@@ -214,6 +220,7 @@ export class NoteService {
         tags:_NoteToTag(tag:tags(*))
       `
       )
+      .eq('userId', userId)
       .order('createdAt', { ascending: false });
 
     if (error) throw new AppError(error.message, 500);

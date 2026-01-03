@@ -4,6 +4,7 @@ import { formatDateNL } from '@/utils/dateHelpers';
 import { ConfirmDialog } from '@/components/Common/ConfirmDialog';
 import { LiveDateTime } from '@/components/Common/LiveDateTime';
 import { ThemeToggle } from '@/components/Common/ThemeToggle';
+import { useAuthStore } from '@/store/authStore';
 import { useState } from 'react';
 import type { Note } from '@klat/types';
 
@@ -12,8 +13,14 @@ export function CardStackView() {
   const updateNote = useUpdateNote();
   const deleteNote = useDeleteNote();
   const navigate = useNavigate();
-  
+  const { logout } = useAuthStore();
+
   const [noteToDelete, setNoteToDelete] = useState<Note | null>(null);
+
+  const handleLogout = async () => {
+    await logout();
+    navigate('/login');
+  };
 
   // Sort notes: by importance (HIGH -> MEDIUM -> LOW -> none), then completed at bottom
   const sortedNotes = [...notes].sort((a, b) => {
@@ -133,6 +140,21 @@ export function CardStackView() {
 
           <div className="flex gap-3">
             <ThemeToggle />
+            <button
+              onClick={handleLogout}
+              className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-600 flex items-center gap-2 shadow-sm"
+              title="Logout"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+                />
+              </svg>
+              <span className="hidden md:inline">Logout</span>
+            </button>
             <Link
               to="/note/new"
               className="px-4 py-2 text-sm font-medium text-white bg-primary-600 rounded-md hover:bg-primary-700 flex items-center gap-2 shadow-sm transition-colors"

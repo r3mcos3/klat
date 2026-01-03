@@ -7,13 +7,14 @@ export class SearchController {
   async search(req: Request, res: Response, next: NextFunction) {
     try {
       const { q, tags, startDate, endDate } = req.query as SearchQueryDto & { tags?: string };
+      const userId = req.userId!; // Set by auth middleware
 
       const results = await searchService.searchNotes({
         query: q || '',
         tags: tags ? tags.split(',') : undefined,
         startDate,
         endDate,
-      });
+      }, userId);
 
       res.json({
         data: results,

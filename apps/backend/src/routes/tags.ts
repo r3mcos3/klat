@@ -1,9 +1,13 @@
 import { Router } from 'express';
 import tagController from '../controllers/tagController';
 import { validateBody, validateParams } from '../middleware/validation';
+import { authenticate } from '../middleware/auth';
 import { createTagSchema, updateTagSchema, idParamSchema } from '../types/validation';
 
 const router = Router();
+
+// Apply authentication to all routes
+router.use(authenticate);
 
 // GET /api/tags - Get all tags
 router.get('/', tagController.getAllTags);

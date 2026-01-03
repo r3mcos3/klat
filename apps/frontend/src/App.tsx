@@ -4,6 +4,9 @@ import { CardStackView } from './pages/CardStackView';
 import { NoteEditView } from './pages/NoteEditView';
 import { SearchView } from './pages/SearchView';
 import { TagsView } from './pages/TagsView';
+import LoginView from './pages/LoginView';
+import { AuthProvider } from './components/Auth/AuthProvider';
+import { ProtectedRoute } from './components/Auth/ProtectedRoute';
 import { useThemeStore } from './store/themeStore';
 
 function App() {
@@ -19,13 +22,54 @@ function App() {
 
   return (
     <Router>
-      <Routes>
-        <Route path="/" element={<CardStackView />} />
-        <Route path="/note/new" element={<NoteEditView />} />
-        <Route path="/note/:id" element={<NoteEditView />} />
-        <Route path="/search" element={<SearchView />} />
-        <Route path="/tags" element={<TagsView />} />
-      </Routes>
+      <AuthProvider>
+        <Routes>
+          {/* Public route */}
+          <Route path="/login" element={<LoginView />} />
+
+          {/* Protected routes */}
+          <Route
+            path="/"
+            element={
+              <ProtectedRoute>
+                <CardStackView />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/note/new"
+            element={
+              <ProtectedRoute>
+                <NoteEditView />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/note/:id"
+            element={
+              <ProtectedRoute>
+                <NoteEditView />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/search"
+            element={
+              <ProtectedRoute>
+                <SearchView />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/tags"
+            element={
+              <ProtectedRoute>
+                <TagsView />
+              </ProtectedRoute>
+            }
+          />
+        </Routes>
+      </AuthProvider>
     </Router>
   );
 }

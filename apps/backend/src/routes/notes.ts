@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import noteController from '../controllers/noteController';
 import { validateBody, validateParams } from '../middleware/validation';
+import { authenticate } from '../middleware/auth';
 import {
   createNoteSchema,
   updateNoteSchema,
@@ -9,6 +10,9 @@ import {
 } from '../types/validation';
 
 const router = Router();
+
+// Apply authentication to all routes
+router.use(authenticate);
 
 // POST /api/notes - Create new note
 router.post('/', validateBody(createNoteSchema), noteController.createNote);

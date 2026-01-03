@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import { errorHandler, notFoundHandler } from './middleware/errorHandler';
+import authRouter from './routes/auth';
 import notesRouter from './routes/notes';
 import tagsRouter from './routes/tags';
 import searchRouter from './routes/search';
@@ -34,6 +35,7 @@ app.get('/api', (_req, res) => {
 });
 
 // API Routes
+app.use('/api/auth', authRouter);
 app.use('/api/notes', notesRouter);
 app.use('/api/tags', tagsRouter);
 app.use('/api/search', searchRouter);

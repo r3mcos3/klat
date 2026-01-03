@@ -50,9 +50,22 @@ export const idParamSchema = z.object({
   id: z.string().min(1),
 });
 
+// Auth validation schemas
+export const registerSchema = z.object({
+  email: z.string().email('Ongeldig e-mailadres'),
+  password: z.string().min(6, 'Wachtwoord moet minimaal 6 karakters zijn'),
+});
+
+export const loginSchema = z.object({
+  email: z.string().email('Ongeldig e-mailadres'),
+  password: z.string().min(1, 'Wachtwoord is verplicht'),
+});
+
 // Type exports
 export type CreateNoteDto = z.infer<typeof createNoteSchema>;
 export type UpdateNoteDto = z.infer<typeof updateNoteSchema>;
 export type CreateTagDto = z.infer<typeof createTagSchema>;
 export type UpdateTagDto = z.infer<typeof updateTagSchema>;
 export type SearchQueryDto = z.infer<typeof searchQuerySchema>;
+export type RegisterDto = z.infer<typeof registerSchema>;
+export type LoginDto = z.infer<typeof loginSchema>;

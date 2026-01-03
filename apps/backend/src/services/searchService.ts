@@ -8,7 +8,7 @@ export interface SearchOptions {
 }
 
 export class SearchService {
-  async searchNotes(options: SearchOptions) {
+  async searchNotes(options: SearchOptions, userId: string) {
     const { query, tags, startDate, endDate } = options;
 
     console.log('[SearchService] Received options:', JSON.stringify(options, null, 2));
@@ -20,7 +20,7 @@ export class SearchService {
     }
 
     try {
-      // Step 1: Get all notes with their tags
+      // Step 1: Get all notes with their tags (filtered by userId)
       let supabaseQuery = supabase
         .from('notes')
         .select(
@@ -29,6 +29,7 @@ export class SearchService {
           tags:_NoteToTag(tag:tags(*))
         `
         )
+        .eq('userId', userId)
         .order('date', { ascending: false });
 
       // Add date filters if provided

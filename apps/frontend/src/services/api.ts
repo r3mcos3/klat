@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { supabase } from '@/config/supabase';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
 
@@ -10,23 +11,47 @@ export const api = axios.create({
   timeout: 10000,
 });
 
-// Request interceptor
+// Request interceptor - Attach JWT token to all requests
 api.interceptors.request.use(
-  (config) => {
-    // Add any auth tokens here if needed
-    return config;
+  async (config) => {
+    try {
+      // Get current session from Supabase
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+
+      // Add Bearer token to Authorization header
+      if (session?.access_token) {
+        config.headers.Authorization = `Bearer ${session.access_token}`;
+      }
+
+      return config;
+    } catch (error) {
+      console.error('Failed to attach auth token:', error);
+      return config;
+    }
   },
   (error) => {
     return Promise.reject(error);
   }
 );
 
-// Response interceptor
+// Response interceptor - Handle 401 errors
 api.interceptors.response.use(
   (response) => response,
-  (error) => {
+  async (error) => {
     if (error.response) {
       console.error('API Error:', error.response.data);
+
+      // If 401 Unauthorized, logout user
+      if (error.response.status === 401) {
+        try {
+          await supabase.auth.signOut();
+          window.location.href = '/login';
+        } catch (logoutError) {
+          console.error('Failed to logout:', logoutError);
+        }
+      }
     } else if (error.request) {
       console.error('Network Error:', error.message);
     } else {

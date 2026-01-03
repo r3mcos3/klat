@@ -7,7 +7,8 @@ export class NoteController {
   async createNote(req: Request, res: Response, next: NextFunction) {
     try {
       const data: CreateNoteDto = req.body;
-      const note = await noteService.createNote(data);
+      const userId = req.userId!; // Set by auth middleware
+      const note = await noteService.createNote(data, userId);
       res.status(201).json({
         data: note,
         message: 'Notitie aangemaakt',
@@ -21,7 +22,8 @@ export class NoteController {
   async getNoteById(req: Request, res: Response, next: NextFunction) {
     try {
       const { id } = req.params;
-      const note = await noteService.getNoteById(id);
+      const userId = req.userId!; // Set by auth middleware
+      const note = await noteService.getNoteById(id, userId);
       res.json({
         data: note,
       });
@@ -34,7 +36,8 @@ export class NoteController {
   async getNoteByDate(req: Request, res: Response, next: NextFunction) {
     try {
       const { date } = req.params;
-      const notes = await noteService.getNotesByDate(date);
+      const userId = req.userId!; // Set by auth middleware
+      const notes = await noteService.getNotesByDate(date, userId);
       res.json({
         data: notes,
       });
@@ -47,14 +50,15 @@ export class NoteController {
   async getNotes(req: Request, res: Response, next: NextFunction) {
     try {
       const { month } = req.query as { month?: string };
+      const userId = req.userId!; // Set by auth middleware
 
       if (month) {
-        const notes = await noteService.getNotesByMonth(month);
+        const notes = await noteService.getNotesByMonth(month, userId);
         res.json({
           data: notes,
         });
       } else {
-        const notes = await noteService.getAllNotes();
+        const notes = await noteService.getAllNotes(userId);
         res.json({
           data: notes,
         });
@@ -69,7 +73,8 @@ export class NoteController {
     try {
       const { id } = req.params;
       const data: UpdateNoteDto = req.body;
-      const note = await noteService.updateNote(id, data);
+      const userId = req.userId!; // Set by auth middleware
+      const note = await noteService.updateNote(id, data, userId);
       res.json({
         data: note,
         message: 'Notitie bijgewerkt',
@@ -83,7 +88,8 @@ export class NoteController {
   async deleteNote(req: Request, res: Response, next: NextFunction) {
     try {
       const { id } = req.params;
-      const result = await noteService.deleteNote(id);
+      const userId = req.userId!; // Set by auth middleware
+      const result = await noteService.deleteNote(id, userId);
       res.json(result);
     } catch (error) {
       next(error);

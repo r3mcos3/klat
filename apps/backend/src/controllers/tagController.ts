@@ -4,9 +4,10 @@ import { CreateTagDto, UpdateTagDto } from '../types/validation';
 
 export class TagController {
   // GET /api/tags - Get all tags
-  async getAllTags(_req: Request, res: Response, next: NextFunction) {
+  async getAllTags(req: Request, res: Response, next: NextFunction) {
     try {
-      const tags = await tagService.getAllTags();
+      const userId = req.userId!; // Set by auth middleware
+      const tags = await tagService.getAllTags(userId);
       res.json({
         data: tags,
       });
@@ -19,7 +20,8 @@ export class TagController {
   async getTagById(req: Request, res: Response, next: NextFunction) {
     try {
       const { id } = req.params;
-      const tag = await tagService.getTagById(id);
+      const userId = req.userId!; // Set by auth middleware
+      const tag = await tagService.getTagById(id, userId);
       res.json({
         data: tag,
       });
@@ -32,7 +34,8 @@ export class TagController {
   async createTag(req: Request, res: Response, next: NextFunction) {
     try {
       const data: CreateTagDto = req.body;
-      const tag = await tagService.createTag(data);
+      const userId = req.userId!; // Set by auth middleware
+      const tag = await tagService.createTag(data, userId);
       res.status(201).json({
         data: tag,
         message: 'Tag aangemaakt',
@@ -47,7 +50,8 @@ export class TagController {
     try {
       const { id } = req.params;
       const data: UpdateTagDto = req.body;
-      const tag = await tagService.updateTag(id, data);
+      const userId = req.userId!; // Set by auth middleware
+      const tag = await tagService.updateTag(id, data, userId);
       res.json({
         data: tag,
         message: 'Tag bijgewerkt',
@@ -61,7 +65,8 @@ export class TagController {
   async deleteTag(req: Request, res: Response, next: NextFunction) {
     try {
       const { id } = req.params;
-      const result = await tagService.deleteTag(id);
+      const userId = req.userId!; // Set by auth middleware
+      const result = await tagService.deleteTag(id, userId);
       res.json(result);
     } catch (error) {
       next(error);

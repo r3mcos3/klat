@@ -4,10 +4,11 @@ import { AppError } from '../middleware/errorHandler';
 
 export class TagService {
   // Get all tags
-  async getAllTags() {
+  async getAllTags(userId: string) {
     const { data: tags, error } = await supabase
       .from('tags')
       .select('*, note_count:_NoteToTag(count)')
+      .eq('userId', userId)
       .order('name', { ascending: true });
 
     if (error) throw new AppError(error.message, 500);
@@ -21,11 +22,12 @@ export class TagService {
   }
 
   // Get tag by ID
-  async getTagById(id: string) {
+  async getTagById(id: string, userId: string) {
     const { data: tag, error } = await supabase
       .from('tags')
       .select('*, note_count:_NoteToTag(count)')
       .eq('id', id)
+      .eq('userId', userId)
       .single();
 
     if (error || !tag) {
@@ -41,14 +43,15 @@ export class TagService {
   }
 
   // Create new tag
-  async createTag(data: CreateTagDto) {
+  async createTag(data: CreateTagDto, userId: string) {
     const { name, color } = data;
 
-    // Check if tag with same name already exists
+    // Check if tag with same name already exists for this user
     const { data: existing } = await supabase
       .from('tags')
       .select('id')
       .eq('name', name)
+      .eq('userId', userId)
       .single();
 
     if (existing) {
@@ -62,6 +65,7 @@ export class TagService {
       .from('tags')
       .insert({
         id,
+        userId,
         name,
         color,
         createdAt: new Date().toISOString(),
@@ -75,14 +79,15 @@ export class TagService {
   }
 
   // Update tag
-  async updateTag(id: string, data: UpdateTagDto) {
+  async updateTag(id: string, data: UpdateTagDto, userId: string) {
     const { name, color } = data;
 
-    // Check if tag exists
+    // Check if tag exists and belongs to user
     const { data: existing } = await supabase
       .from('tags')
       .select('*')
       .eq('id', id)
+      .eq('userId', userId)
       .single();
 
     if (!existing) {
@@ -95,6 +100,7 @@ export class TagService {
         .from('tags')
         .select('id')
         .eq('name', name)
+        .eq('userId', userId)
         .single();
 
       if (nameExists) {
@@ -119,7 +125,7 @@ export class TagService {
   }
 
   // Delete tag
-  async deleteTag(id: string) {
+  async deleteTag(id: string, userId: string) {
     // Check if tag exists and count notes
     const { count: noteCount } = await supabase
       .from('_NoteToTag')
@@ -130,6 +136,7 @@ export class TagService {
       .from('tags')
       .select('id')
       .eq('id', id)
+      .eq('userId', userId)
       .single();
 
     if (!existing) {
