@@ -131,7 +131,7 @@ export function NoteEditView() {
 
   // Extract hashtags from content
   const extractHashtags = (content: string): string[] => {
-    const hashtagRegex = /#(\\w+)(?!\\s)/g;
+    const hashtagRegex = /#(\w+)/g;
     const matches = content.match(hashtagRegex);
     if (!matches) return [];
     return [...new Set(matches.map(tag => tag.substring(1).toLowerCase()))];
@@ -139,7 +139,7 @@ export function NoteEditView() {
 
   // Remove hashtags from content after processing
   const removeHashtags = (content: string): string => {
-    const hashtagRegex = /#(\\w+)(?!\\s)/g;
+    const hashtagRegex = /#(\w+)/g;
     return content.replace(hashtagRegex, '').trim();
   };
 
