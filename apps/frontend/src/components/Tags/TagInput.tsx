@@ -29,7 +29,7 @@ export function TagInput() {
         onClick={() => setIsOpen(true)}
         className="px-4 py-2 text-sm font-medium text-primary-700 bg-primary-50 rounded-md hover:bg-primary-100"
       >
-        + Nieuwe tag
+        + New tag
       </button>
     );
   }
@@ -38,13 +38,13 @@ export function TagInput() {
     <form onSubmit={handleSubmit} className="flex items-end gap-2">
       <div className="flex-1">
         <label className="block text-sm font-medium text-gray-700 mb-1">
-          Tag naam
+          Tag name
         </label>
         <input
           type="text"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          placeholder="bijv. Werk"
+          placeholder="e.g. Work"
           className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-primary-500 focus:border-primary-500"
           autoFocus
           maxLength={50}
@@ -53,7 +53,7 @@ export function TagInput() {
 
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">
-          Kleur
+          Color
         </label>
         <input
           type="color"
@@ -68,7 +68,7 @@ export function TagInput() {
         disabled={!name.trim() || createTag.isPending}
         className="px-4 py-2 text-sm font-medium text-white bg-primary-600 rounded-md hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed"
       >
-        {createTag.isPending ? 'Bezig...' : 'Opslaan'}
+        {createTag.isPending ? 'Saving...' : 'Save'}
       </button>
 
       <button
@@ -80,7 +80,7 @@ export function TagInput() {
         }}
         className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
       >
-        Annuleer
+        Cancel
       </button>
     </form>
   );

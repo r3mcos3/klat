@@ -1,78 +1,86 @@
 # klat
 
-Een kalender-stijl kladblok webapp met maandweergave, markdown ondersteuning en zoekfunctionaliteit.
+A calendar-style notepad web application with monthly views, markdown support, and robust search functionality.
+
+![License](https://img.shields.io/badge/license-MIT-blue.svg)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue)
+![React](https://img.shields.io/badge/React-18-blue)
+![Node](https://img.shields.io/badge/Node-18+-green)
 
 ## Features
 
-- 📅 Maandkalender weergave met notities per dag
-- ✍️ Markdown editor met auto-save
-- 🔍 Zoeken door alle notities
-- 🏷️ Tags en categorieën
-- 💾 Opslag via Supabase
+- 📅 **Monthly Calendar View:** visually manage notes day by day.
+- ✍️ **Markdown Editor:** rich text editing with auto-save capabilities.
+- 🔍 **Search:** full-text search across all your notes.
+- 🏷️ **Tags:** organize content with custom tags and categories.
+- 💾 **Cloud Storage:** secure data persistence via Supabase (PostgreSQL).
 
 ## Tech Stack
 
-### Frontend
-- React 18 + TypeScript
-- Vite
-- Tailwind CSS
-- React Query + Zustand
-- Markdown editor
+The project is a monorepo managed by npm workspaces.
 
-### Backend
-- Node.js + Express + TypeScript
-- Prisma ORM
-- Supabase (PostgreSQL)
-- Zod validation
+### Frontend (`apps/frontend`)
+- **Core:** React 18, TypeScript, Vite
+- **State:** React Query (Server State), Zustand (Client State)
+- **Styling:** Tailwind CSS
+- **Editor:** @uiw/react-md-editor
 
-## Project Structuur
+### Backend (`apps/backend`)
+- **Core:** Node.js, Express, TypeScript
+- **Database:** PostgreSQL (via Supabase), Prisma ORM
+- **Validation:** Zod
 
-```
-klat/
-├── apps/
-│   ├── frontend/    # React webapp
-│   └── backend/     # Express API
-└── packages/
-    └── types/       # Shared TypeScript types
-```
+### Shared (`packages/types`)
+- Shared TypeScript interfaces and DTOs.
 
-## Development
+## Getting Started
 
 ### Prerequisites
 - Node.js 18+
 - npm
-- Supabase account
+- A generic Supabase account
 
-### Setup
+### Quick Start
+1.  **Install dependencies:**
+    ```bash
+    npm install
+    ```
+2.  **Setup Environment:**
+    Create `apps/backend/.env` and add your Supabase credentials (see `SETUP.md`).
+3.  **Run Migrations:**
+    ```bash
+    cd apps/backend && npm run migrate
+    ```
+4.  **Start Development:**
+    ```bash
+    npm run dev
+    ```
 
-1. Clone repository
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
+For detailed instructions, see [QUICKSTART.md](./QUICKSTART.md) or [SETUP.md](./SETUP.md).
 
-3. Setup environment variables:
-   - Create `.env` in `apps/backend/`
-   - Add `DATABASE_URL` from Supabase
+## Development Commands
 
-4. Run database migrations:
-   ```bash
-   npm run backend:migrate
-   ```
+Run these from the project root:
 
-5. Start development servers:
-   ```bash
-   npm run dev
-   ```
+| Command | Description |
+|---------|-------------|
+| `npm run dev` | Start both frontend and backend in development mode |
+| `npm run build` | Build all packages for production |
+| `npm run lint` | Run ESLint across all packages |
+| `npm run format` | Format code with Prettier |
+| `npm run backend:dev` | Start only the backend server |
+| `npm run frontend:dev` | Start only the frontend server |
 
-### Scripts
+## Project Structure
 
-- `npm run dev` - Start all development servers
-- `npm run backend:dev` - Start backend only
-- `npm run frontend:dev` - Start frontend only
-- `npm run build` - Build all packages
-- `npm run lint` - Lint all packages
-- `npm run format` - Format code with Prettier
+```
+klat/
+├── apps/
+│   ├── backend/     # Express API & Prisma
+│   └── frontend/    # React Application
+└── packages/
+    └── types/       # Shared TypeScript definitions
+```
 
 ## License
 

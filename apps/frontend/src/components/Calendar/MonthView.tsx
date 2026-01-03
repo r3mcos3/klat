@@ -40,9 +40,9 @@ export function MonthView() {
   if (error) {
     return (
       <div className="p-8 text-center">
-        <p className="text-red-600">Fout bij het laden van notities</p>
+        <p className="text-red-600">Error loading notes</p>
         <p className="text-sm text-gray-500 mt-2">
-          {error instanceof Error ? error.message : 'Onbekende fout'}
+          {error instanceof Error ? error.message : 'Unknown error'}
         </p>
       </div>
     );

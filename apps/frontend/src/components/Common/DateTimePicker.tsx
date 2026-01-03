@@ -1,11 +1,11 @@
 import { forwardRef } from 'react';
 import DatePicker, { registerLocale } from 'react-datepicker';
-import { nl } from 'date-fns/locale';
+import { enGB } from 'date-fns/locale';
 import 'react-datepicker/dist/react-datepicker.css';
 import './DateTimePicker.css';
 
-// Register Dutch locale
-registerLocale('nl', nl);
+// Register English (GB) locale
+registerLocale('en-GB', enGB);
 
 interface DateTimePickerProps {
   selected: Date | null;
@@ -40,7 +40,7 @@ export function DateTimePicker({
   timeFormat = 'HH:mm',
   timeIntervals = 15,
   dateFormat = 'dd-MM-yyyy HH:mm',
-  placeholderText = 'Selecteer datum en tijd',
+  placeholderText = 'Select date and time',
   className = '',
 }: DateTimePickerProps) {
   return (
@@ -51,7 +51,7 @@ export function DateTimePicker({
       timeFormat={timeFormat}
       timeIntervals={timeIntervals}
       dateFormat={dateFormat}
-      locale="nl"
+      locale="en-GB"
       placeholderText={placeholderText}
       customInput={<CustomInput />}
       className={className}

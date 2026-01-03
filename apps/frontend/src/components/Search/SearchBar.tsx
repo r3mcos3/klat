@@ -5,7 +5,7 @@ interface SearchBarProps {
   placeholder?: string;
 }
 
-export function SearchBar({ onSearch, placeholder = 'Zoek in notities...' }: SearchBarProps) {
+export function SearchBar({ onSearch, placeholder = 'Search in notes...' }: SearchBarProps) {
   const [query, setQuery] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {

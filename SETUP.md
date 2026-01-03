@@ -1,22 +1,22 @@
-# klat - Setup Instructies
+# klat - Setup Instructions
 
-Deze guide helpt je om het klat project van scratch op te zetten.
+This guide helps you set up the klat project from scratch.
 
 ## Prerequisites
 
-- Node.js 18 of hoger
+- Node.js 18 or higher
 - npm
-- Een Supabase account (gratis tier is prima)
+- A Supabase account (free tier is fine)
 
-## 1. Dependencies Installeren
+## 1. Install Dependencies
 
-Installeer alle dependencies voor de monorepo:
+Install all dependencies for the monorepo:
 
 ```bash
 npm install
 ```
 
-Dit installeert dependencies voor:
+This installs dependencies for:
 - Root workspace
 - Backend (`apps/backend`)
 - Frontend (`apps/frontend`)
@@ -24,174 +24,110 @@ Dit installeert dependencies voor:
 
 ## 2. Supabase Database Setup
 
-### Stap 1: Maak een Supabase Project aan
+### Step 1: Create a Supabase Project
 
-1. Ga naar [https://supabase.com](https://supabase.com)
-2. Maak een gratis account of log in
-3. Klik op "New Project"
-4. Vul de volgende gegevens in:
-   - Project naam: `klat` (of een andere naam)
-   - Database wachtwoord: Kies een sterk wachtwoord (bewaar dit!)
-   - Region: Kies een regio dichtbij jou
-5. Wacht tot het project is aangemaakt (~2 minuten)
+1. Go to [https://supabase.com](https://supabase.com).
+2. Create a free account or log in.
+3. Click on "New Project".
+4. Fill in the details:
+   - **Name:** `klat`
+   - **Password:** Choose a strong password (save this!)
+   - **Region:** Choose a region close to you.
+5. Wait for the project to be created (~2 minutes).
 
-### Stap 2: Haal de Database Connection Strings op
+### Step 2: Get Connection Strings
 
-1. Ga naar je Supabase project dashboard
-2. Klik op het **Settings** tandwiel icoon (linksonder)
-3. Ga naar **Database** in het menu
-4. Scroll naar beneden naar **Connection string**
-5. Kopieer de volgende strings:
+1. Go to your Supabase project dashboard.
+2. Click **Settings** (gear icon) → **Database**.
+3. Scroll to **Connection string**.
 
-**Voor `DATABASE_URL`** (met connection pooling):
-- Selecteer "URI" tab
-- Kopieer de connection string
-- Vervang `[YOUR-PASSWORD]` met je database wachtwoord
-- Deze URL bevat `?pgbouncer=true` aan het einde
+**For `DATABASE_URL`** (Transaction Mode - Port 6543):
+- Ensure "Use connection pooling" is **ON**.
+- Mode: **Transaction**.
+- Copy the URI. Replace `[YOUR-PASSWORD]` with your actual password.
 
-**Voor `DIRECT_URL`** (directe verbinding, voor migraties):
-- Selecteer "URI" tab bij **Connection pooling**
-- Schakel "Use connection pooling" UIT
-- Kopieer deze connection string
-- Vervang `[YOUR-PASSWORD]` met je database wachtwoord
+**For `DIRECT_URL`** (Session Mode - Port 5432):
+- Toggle "Use connection pooling" **OFF**.
+- Copy the URI. Replace `[YOUR-PASSWORD]` with your actual password.
 
-### Stap 3: Backend Environment Variables
+### Step 3: Backend Environment Variables
 
-1. Kopieer de `.env.example` in de backend folder:
+1. Copy the example file:
    ```bash
    cp apps/backend/.env.example apps/backend/.env
    ```
 
-2. Open `apps/backend/.env` en vul de Supabase connection strings in:
+2. Open `apps/backend/.env` and configure:
    ```env
+   # Transaction mode (pgbouncer) for the application
    DATABASE_URL="postgresql://postgres.xxxx:[YOUR-PASSWORD]@aws-0-eu-central-1.pooler.supabase.com:6543/postgres?pgbouncer=true"
+   
+   # Direct connection for migrations
    DIRECT_URL="postgresql://postgres.xxxx:[YOUR-PASSWORD]@aws-0-eu-central-1.pooler.supabase.com:5432/postgres"
+   
    PORT=3001
    NODE_ENV=development
    CORS_ORIGIN=http://localhost:5173
    ```
 
-## 3. Database Schema Migreren
+## 3. Migrate Database Schema
 
-Nu gaan we de Prisma schema naar Supabase pushen:
+Push the Prisma schema to your Supabase database:
 
 ```bash
 cd apps/backend
 npm run migrate
 ```
 
-Dit:
-1. Maakt de `notes` en `tags` tabellen aan in Supabase
-2. Zet de relaties en indexes op
-3. Genereert de Prisma client
+This will:
+1. Create `notes` and `tags` tables.
+2. Generate the Prisma Client.
 
-Je kunt de tabellen bekijken in Supabase:
-- Ga naar je Supabase project
-- Klik op **Table Editor** in het menu
-- Je zou de `notes` en `tags` tabellen moeten zien
+## 4. Start the Project
 
-## 4. Project Starten
+### Option 1: Run All (Recommended)
 
-Nu kun je het hele project starten!
-
-### Optie 1: Beide servers tegelijk (aanbevolen)
-
-Vanuit de root folder:
+From the root folder:
 ```bash
 npm run dev
 ```
+- Backend: http://localhost:3001
+- Frontend: http://localhost:5173
 
-Dit start:
-- Backend API op http://localhost:3001
-- Frontend webapp op http://localhost:5173
-
-### Optie 2: Servers apart
+### Option 2: Run Separately
 
 **Backend:**
 ```bash
 npm run backend:dev
 ```
 
-**Frontend (in een andere terminal):**
+**Frontend:**
 ```bash
 npm run frontend:dev
 ```
 
-## 5. Verifiëren dat alles werkt
+## 5. Verification
 
-### Backend checken:
-
-Open http://localhost:3001/health in je browser. Je zou moeten zien:
-```json
-{
-  "status": "ok",
-  "timestamp": "2024-01-01T12:00:00.000Z"
-}
-```
-
-### Frontend checken:
-
-Open http://localhost:5173 in je browser. Je zou de klat homepage moeten zien.
-
-### Database checken:
-
-Je kunt Prisma Studio gebruiken om je database te inspecteren:
-```bash
-cd apps/backend
-npm run prisma:studio
-```
-
-Dit opent een UI op http://localhost:5555 waar je:
-- Notes kunt aanmaken, bewerken en verwijderen
-- Tags kunt beheren
-- Je database kunt inspecteren
+1. **Backend Health:** Visit http://localhost:3001/health. You should see `{"status":"ok"}`.
+2. **Frontend:** Visit http://localhost:5173. The app should load without errors.
+3. **Database:** Run `cd apps/backend && npm run prisma:studio` to view your data at http://localhost:5555.
 
 ## Troubleshooting
 
-### "Environment variable not found: DATABASE_URL"
-- Zorg dat je `.env` bestand in `apps/backend/` staat
-- Check of de DATABASE_URL en DIRECT_URL correct zijn ingevuld
+- **`Environment variable not found`**: Ensure `.env` is in `apps/backend/`.
+- **`Can't reach database server`**: Check your password and ensure the project is not paused in Supabase.
+- **Prisma Migration Fails**: Ensure `DIRECT_URL` is correct (port 5432) and you have internet access.
 
-### "Can't reach database server"
-- Check of je Supabase project actief is
-- Verifieer dat je wachtwoord correct is in de connection strings
-- Zorg dat `?pgbouncer=true` aan het einde van DATABASE_URL staat
+## Deployment
 
-### "Port 3001 is already in use"
-- Er draait al iets op port 3001
-- Wijzig `PORT=3001` naar een andere port in `apps/backend/.env`
-- Of stop het andere proces
+### Backend
+Deploy to a Node.js compatible host (Railway, Render, Fly.io).
+- Set `DATABASE_URL` and `DIRECT_URL` in the host's environment variables.
+- Build command: `npm run build`.
+- Start command: `npm run start` (inside `apps/backend`).
 
-### Prisma migrate faalt
-- Zorg dat je `DIRECT_URL` gebruikt (zonder pgbouncer)
-- Check of de connection string geldig is
-- Verifieer dat je database wachtwoord correct is
-
-## Volgende Stappen
-
-Nu de setup compleet is, kun je:
-
-1. **Backend API's bouwen**: Voeg endpoints toe in `apps/backend/src/routes/`
-2. **Frontend componenten maken**: Bouw de kalender in `apps/frontend/src/components/`
-3. **Types uitbreiden**: Voeg nieuwe types toe in `packages/types/src/`
-
-Zie het implementatieplan in `C:\Users\r3mco\.claude\plans\eager-mapping-rose.md` voor de volledige roadmap!
-
-## Handige Commands
-
-```bash
-# Root level
-npm run dev              # Start alle dev servers
-npm run build            # Build alle packages
-npm run lint             # Lint alle packages
-npm run format           # Format code met Prettier
-
-# Backend
-npm run backend:dev      # Start backend dev server
-cd apps/backend && npm run migrate        # Run database migraties
-cd apps/backend && npm run prisma:studio  # Open Prisma Studio
-cd apps/backend && npm run prisma:generate # Genereer Prisma client
-
-# Frontend
-npm run frontend:dev     # Start frontend dev server
-```
+### Frontend
+Deploy to a static host (Vercel, Netlify).
+- Set `VITE_API_URL` to your production backend URL.
+- Build command: `npm run build`.
+- Output directory: `apps/frontend/dist`.

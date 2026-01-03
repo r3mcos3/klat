@@ -42,11 +42,11 @@ export function SearchView() {
                 d="M15 19l-7-7 7-7"
               />
             </svg>
-            Terug naar overzicht
+            Back to overview
           </Link>
 
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Zoeken</h1>
-          <p className="text-gray-600">Doorzoek al je notities</p>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">Search</h1>
+          <p className="text-gray-600">Search all your notes</p>
         </div>
 
         {/* Search Bar */}
@@ -76,9 +76,9 @@ export function SearchView() {
                 d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
               />
             </svg>
-            <h3 className="mt-4 text-lg font-medium text-gray-900">Begin met zoeken</h3>
+            <h3 className="mt-4 text-lg font-medium text-gray-900">Start searching</h3>
             <p className="mt-2 text-sm text-gray-500">
-              Voer een zoekterm in om door je notities te zoeken
+              Enter a search term to search through your notes
             </p>
           </div>
         )}

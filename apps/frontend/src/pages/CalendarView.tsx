@@ -9,7 +9,7 @@ export function CalendarView() {
         <div className="flex items-center justify-between mb-8">
           <div>
             <h1 className="text-4xl font-bold text-gray-900">klat</h1>
-            <p className="text-gray-600 mt-1">Je persoonlijke dagboek-kalender</p>
+            <p className="text-gray-600 mt-1">Your personal diary calendar</p>
           </div>
 
           <div className="flex gap-3">
@@ -25,7 +25,7 @@ export function CalendarView() {
                   d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
                 />
               </svg>
-              Zoeken
+              Search
             </Link>
             <Link
               to="/tags"
@@ -51,7 +51,7 @@ export function CalendarView() {
 
         {/* Footer */}
         <div className="mt-8 text-center text-sm text-gray-500">
-          <p>Klik op een dag om een notitie te schrijven of te bewerken</p>
+          <p>Click a day to write or edit a note</p>
         </div>
       </div>
     </div>

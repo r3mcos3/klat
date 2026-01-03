@@ -10,7 +10,7 @@ interface TagListProps {
 export function TagList({ tags, selectedTags = [], onToggle, readonly = false }: TagListProps) {
   if (tags.length === 0) {
     return (
-      <div className="text-sm text-gray-500 italic">Geen tags beschikbaar</div>
+      <div className="text-sm text-gray-500 italic">No tags available</div>
     );
   }
 

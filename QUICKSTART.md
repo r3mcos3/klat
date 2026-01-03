@@ -1,41 +1,41 @@
 # klat - Quick Start Guide
 
-## Snelle Setup (5 minuten)
+## Quick Setup (5 minutes)
 
 ### 1. Supabase Database Setup
 
-1. **Ga naar** [supabase.com](https://supabase.com) en maak een gratis account
-2. **Klik** op "New Project"
-3. **Vul in**:
-   - Project naam: `klat`
-   - Database wachtwoord: Kies een sterk wachtwoord (**BEWAAR DIT!**)
-   - Region: EU West (of dichtst bij jou)
-4. **Wacht** ~2 minuten tot project klaar is
+1. **Go to** [supabase.com](https://supabase.com) and create a free account.
+2. **Click** "New Project".
+3. **Fill in**:
+   - Project Name: `klat`
+   - Database Password: Choose a strong password (**SAVE THIS!**)
+   - Region: Select the region closest to you.
+4. **Wait** ~2 minutes for the project to provision.
 
-### 2. Connection Strings Ophalen
+### 2. Get Connection Strings
 
-1. **Ga naar** Settings (tandwiel icoon linksonder) → Database
-2. **Scroll** naar "Connection string"
-3. **Kopieer beide strings**:
+1. **Go to** Settings (gear icon bottom left) → Database.
+2. **Scroll** to "Connection string".
+3. **Copy both strings**:
 
-**Connection pooling (voor DATABASE_URL):**
+**Connection pooling (for DATABASE_URL):**
 ```
-Selecteer "URI" tab
-Kopieer de string
-Vervang [YOUR-PASSWORD] met je database wachtwoord
-```
-
-**Direct connection (voor DIRECT_URL):**
-```
-Schakel "Use connection pooling" UIT
-Kopieer de nieuwe URI
-Vervang [YOUR-PASSWORD] met je database wachtwoord
+Select "URI" tab
+Copy the string (port 6543)
+Replace [YOUR-PASSWORD] with your database password
 ```
 
-### 3. Backend .env Configureren
+**Direct connection (for DIRECT_URL):**
+```
+Toggle "Use connection pooling" OFF
+Copy the new URI (port 5432)
+Replace [YOUR-PASSWORD] with your database password
+```
 
-1. **Open** `apps/backend/.env` (bestand bestaat al)
-2. **Vervang** de DATABASE_URL en DIRECT_URL met jouw strings:
+### 3. Configure Backend .env
+
+1. **Create** `apps/backend/.env` (use `.env.example` as a template).
+2. **Fill in** the `DATABASE_URL` and `DIRECT_URL` with your strings:
 
 ```env
 DATABASE_URL="postgresql://postgres.xxxx:[YOUR-PASSWORD]@aws-0-eu-central-1.pooler.supabase.com:6543/postgres?pgbouncer=true"
@@ -45,96 +45,65 @@ NODE_ENV=development
 CORS_ORIGIN=http://localhost:5173
 ```
 
-### 4. Database Migraties Draaien
+### 4. Install & Migrate
+
+**From the root folder of klat:**
 
 ```bash
+# 1. Install dependencies
+npm install
+
+# 2. Run database migrations (from backend folder)
 cd apps/backend
 npm run migrate
+cd ../..
 ```
 
-Je zou moeten zien:
-```
-✔ Generated Prisma Client
-✔ Migration completed
-```
+### 5. Start Project
 
-### 5. Project Starten
-
-**In de root folder van klat:**
+**From the root folder of klat:**
 ```bash
 npm run dev
 ```
 
-Dit start:
-- ✅ Backend API op http://localhost:3001
-- ✅ Frontend app op http://localhost:5173
+This starts:
+- ✅ Backend API at http://localhost:3001
+- ✅ Frontend app at http://localhost:5173
 
-### 6. Verifiëren
+### 6. Verify
 
-**Open je browser:**
+**Open your browser:**
 - Frontend: http://localhost:5173
 - Backend health: http://localhost:3001/health
 
-Je zou de klat kalender moeten zien! 🎉
+You should see the klat calendar! 🎉
 
-## Veelvoorkomende Problemen
+## Common Issues
 
 ### "Environment variable not found: DATABASE_URL"
-➜ Check of `apps/backend/.env` bestaat en correct is ingevuld
+➜ Check if `apps/backend/.env` exists and is filled in correctly.
 
 ### "Can't reach database server"
-➜ Verifieer dat je wachtwoord correct is in beide connection strings
-➜ Check of je Supabase project actief is
+➜ Verify your password is correct in both connection strings.
+➜ Check if your Supabase project is active.
 
-### "Port 3001 already in use"
-➜ Wijzig `PORT=3001` naar een andere port in `.env`
+### Prisma migrate fails
+➜ Use `DIRECT_URL` (without `?pgbouncer=true`, port 5432) for migrations if having issues.
+➜ Check if your password is correct.
 
-### Prisma migrate faalt
-➜ Gebruik DIRECT_URL (zonder `?pgbouncer=true`)
-➜ Check of je wachtwoord klopt
-
-## Volgende Stappen
-
-1. **Maak je eerste notitie** - Klik op een datum in de kalender
-2. **Voeg tags toe** - Klik op "Tags" in de header
-3. **Zoek door notities** - Gebruik de zoekbalk
-4. **Auto-save werkt!** - Type gewoon, alles wordt automatisch opgeslagen
-
-## Handige Commands
+## Useful Commands
 
 ```bash
-# Development
-npm run dev              # Start alles
-npm run backend:dev      # Alleen backend
-npm run frontend:dev     # Alleen frontend
+# Development (from root)
+npm run dev              # Start everything
+npm run build            # Build everything
+npm run format           # Format code
 
-# Database
-cd apps/backend
-npm run migrate          # Run migrations
-npm run prisma:studio    # Open database UI
-npm run prisma:generate  # Regenerate Prisma client
-
-# Build voor productie
-npm run build
+# Backend Specific
+npm run backend:dev      # Backend server only
+cd apps/backend && npm run prisma:studio    # Open database UI
 ```
 
-## Productie Deployment
+## More Info
 
-**Backend:**
-- Deploy naar Railway, Render of Fly.io
-- Database blijft op Supabase (gratis tier is prima)
-
-**Frontend:**
-- Deploy naar Vercel of Netlify
-- Configureer `VITE_API_URL` environment variable
-
-Zie `SETUP.md` voor gedetailleerde deployment instructies.
-
-## Hulp Nodig?
-
-Check de volledige documentatie in:
-- `README.md` - Project overzicht
-- `SETUP.md` - Gedetailleerde setup instructies
-- `C:\Users\r3mco\.claude\plans\eager-mapping-rose.md` - Implementatie plan
-
-Veel plezier met klat! 📝✨
+See `SETUP.md` for detailed setup and deployment instructions.

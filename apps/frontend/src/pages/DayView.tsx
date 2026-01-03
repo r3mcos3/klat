@@ -4,7 +4,7 @@ import { TagList } from '@/components/Tags/TagList';
 import { ConfirmDialog } from '@/components/Common/ConfirmDialog';
 import { useNoteByDate, useCreateNote, useUpdateNote, useDeleteNote } from '@/hooks/useNotes';
 import { useAllTags, tagKeys } from '@/hooks/useTags';
-import { formatDateNL, stringToDate } from '@/utils/dateHelpers';
+import { formatDateNL, stringToDate, formatCompletedAt } from '@/utils/dateHelpers';
 import { useState, useEffect } from 'react';
 import { tagApi } from '@/services/tagApi';
 import type { Tag } from '@klat/types';
@@ -57,10 +57,11 @@ export function DayView() {
   const queryClient = useQueryClient();
   const [selectedTagIds, setSelectedTagIds] = useState<string[]>([]);
   const [deadline, setDeadline] = useState<string>('');
+  const [completedAt, setCompletedAt] = useState<string>('');
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   if (!date) {
-    return <div>Ongeldige datum</div>;
+    return <div>Invalid date</div>;
   }
 
   const { data: note, isLoading: noteLoading } = useNoteByDate(date);
@@ -71,7 +72,7 @@ export function DayView() {
 
   const dateObj = stringToDate(date);
 
-  // Initialize selectedTagIds and deadline with note's data when note loads
+  // Initialize selectedTagIds, deadline, and completedAt with note's data when note loads
   useEffect(() => {
     if (note?.tags) {
       setSelectedTagIds(note.tags.map((t) => t.id));
@@ -86,7 +87,12 @@ export function DayView() {
     } else {
       setDeadline('');
     }
-  }, [note?.id, note?.deadline]);
+    if (note?.completedAt) {
+      setCompletedAt(note.completedAt);
+    } else {
+      setCompletedAt('');
+    }
+  }, [note?.id, note?.deadline, note?.completedAt]);
 
   const handleSaveComplete = () => {
     navigate('/');
@@ -96,6 +102,20 @@ export function DayView() {
     setSelectedTagIds((prev) =>
       prev.includes(tagId) ? prev.filter((id) => id !== tagId) : [...prev, tagId]
     );
+  };
+
+  const handleToggleDone = async () => {
+    if (!note) return;
+
+    const newCompletedAt = completedAt ? '' : new Date().toISOString();
+    setCompletedAt(newCompletedAt);
+
+    await updateNote.mutateAsync({
+      id: note.id,
+      data: {
+        completedAt: newCompletedAt || undefined,
+      },
+    });
   };
 
   // Extract hashtags from content
@@ -198,6 +218,7 @@ export function DayView() {
         data: {
           content: cleanedContent,
           deadline: deadlineISO,
+          completedAt: completedAt || undefined,
           tagIds: allTagIds,
         },
       });
@@ -221,6 +242,7 @@ export function DayView() {
       date: data.date,
       content: cleanedContent,
       deadline: deadlineISO,
+      completedAt: completedAt || undefined,
       tagIds: allTagIds,
     });
   };
@@ -246,7 +268,7 @@ export function DayView() {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto" />
-          <p className="mt-4 text-gray-600">Laden...</p>
+          <p className="mt-4 text-gray-600">Loading...</p>
         </div>
       </div>
     );
@@ -270,7 +292,7 @@ export function DayView() {
                   d="M15 19l-7-7 7-7"
                 />
               </svg>
-              Terug naar overzicht
+              Back to overview
             </Link>
 
             {note && (
@@ -286,7 +308,7 @@ export function DayView() {
                     d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
                   />
                 </svg>
-                Verwijderen
+                Delete
               </button>
             )}
           </div>
@@ -307,7 +329,7 @@ export function DayView() {
             />
           ) : (
             <div className="text-sm text-gray-500">
-              Nog geen tags. <Link to="/tags" className="text-primary-600 hover:underline">Maak er één aan</Link>
+              No tags yet. <Link to="/tags" className="text-primary-600 hover:underline">Create one</Link>
             </div>
           )}
         </div>
@@ -323,7 +345,7 @@ export function DayView() {
                 d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
               />
             </svg>
-            <h3 className="text-lg font-semibold text-gray-900">Deadline (optioneel)</h3>
+            <h3 className="text-lg font-semibold text-gray-900">Deadline (optional)</h3>
           </div>
           <div className="flex items-center gap-4">
             <input
@@ -337,11 +359,41 @@ export function DayView() {
                 onClick={() => setDeadline('')}
                 className="px-4 py-2 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
               >
-                Wissen
+                Clear
               </button>
             )}
           </div>
         </div>
+
+        {/* Done Button Section */}
+        {note && (
+          <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <svg className="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+                <h3 className="text-lg font-semibold text-gray-900">Completed</h3>
+              </div>
+              <button
+                onClick={handleToggleDone}
+                className={`
+                  px-4 py-2 rounded-lg font-medium transition-colors
+                  ${completedAt
+                    ? 'bg-green-100 text-green-700 hover:bg-green-200'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}
+                `}
+              >
+                {completedAt ? '✓ Completed' : 'Mark as completed'}
+              </button>
+            </div>
+            {completedAt && (
+              <p className="mt-3 text-sm text-gray-600">
+                Completed on: {formatCompletedAt(completedAt)}
+              </p>
+            )}
+          </div>
+        )}
 
         {/* Editor Section */}
         <div className="bg-white rounded-lg shadow-sm p-6">
@@ -356,18 +408,18 @@ export function DayView() {
 
         {/* Helper text */}
         <div className="mt-4 text-sm text-gray-500 text-center space-y-1">
-          <p>💡 Je notitie wordt elke 30 seconden automatisch opgeslagen, of gebruik de "Opslaan" knop</p>
-          <p>🏷️ Gebruik #hashtags in je notitie om automatisch tags aan te maken (de # wordt daarna verwijderd)</p>
+          <p>💡 Your note auto-saves every 30 seconds, or use the 'Save' button</p>
+          <p>🏷️ Use #hashtags in your note to automatically create tags (the # will be removed)</p>
         </div>
       </div>
 
       {/* Delete Confirmation Dialog */}
       <ConfirmDialog
         isOpen={showDeleteDialog}
-        title="Notitie verwijderen?"
-        message="Weet je zeker dat je deze notitie wilt verwijderen? Dit kan niet ongedaan worden gemaakt."
-        confirmText="Verwijderen"
-        cancelText="Annuleren"
+        title="Delete note?"
+        message="Are you sure you want to delete this note? This action cannot be undone."
+        confirmText="Delete"
+        cancelText="Cancel"
         onConfirm={handleDeleteConfirm}
         onCancel={handleDeleteCancel}
         danger={true}

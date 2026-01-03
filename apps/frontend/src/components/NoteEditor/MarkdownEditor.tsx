@@ -15,9 +15,9 @@ function SaveStatusIndicator({ status }: { status: SaveStatus }) {
   if (status === 'idle') return null;
 
   const statusConfig = {
-    saving: { text: 'Opslaan...', color: 'text-blue-600' },
-    saved: { text: 'Opgeslagen', color: 'text-green-600' },
-    error: { text: 'Fout bij opslaan', color: 'text-red-600' },
+    saving: { text: 'Saving...', color: 'text-blue-600' },
+    saved: { text: 'Saved', color: 'text-green-600' },
+    error: { text: 'Error saving', color: 'text-red-600' },
   };
 
   const config = statusConfig[status];
@@ -135,7 +135,7 @@ export function MarkdownEditor({ note, date, onSave, onCreate, onSaveComplete }:
   return (
     <div className="w-full">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-semibold text-gray-900">Notitie</h3>
+        <h3 className="text-lg font-semibold text-gray-900">Note</h3>
         <div className="flex items-center gap-3">
           <SaveStatusIndicator status={status} />
           <button
@@ -143,7 +143,7 @@ export function MarkdownEditor({ note, date, onSave, onCreate, onSaveComplete }:
             disabled={isSaving}
             className="px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm font-medium"
           >
-            {isSaving ? 'Opslaan...' : 'Opslaan'}
+            {isSaving ? 'Saving...' : 'Save'}
           </button>
         </div>
       </div>
@@ -157,13 +157,13 @@ export function MarkdownEditor({ note, date, onSave, onCreate, onSaveComplete }:
           hideToolbar={false}
           enableScroll={true}
           textareaProps={{
-            placeholder: 'Begin met typen... (Markdown wordt ondersteund)',
+            placeholder: 'Start typing... (Markdown supported)',
           }}
         />
       </div>
 
       <div className="mt-2 text-xs text-gray-500">
-        💡 Tip: Gebruik Markdown voor opmaak. De notitie wordt elke 30 seconden automatisch opgeslagen, of klik op "Opslaan" om direct op te slaan.
+        💡 Tip: Use Markdown for formatting. Auto-saves every 30 seconds, or click 'Save' to save immediately.
       </div>
     </div>
   );

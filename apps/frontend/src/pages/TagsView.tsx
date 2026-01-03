@@ -23,7 +23,7 @@ export function TagsView() {
       setTagToDelete(null);
       setDeleteError('');
     } catch (error: any) {
-      setDeleteError(error.response?.data?.message || 'Fout bij verwijderen van tag');
+      setDeleteError(error.response?.data?.message || 'Error deleting tag');
     }
   };
 
@@ -49,23 +49,23 @@ export function TagsView() {
                 d="M15 19l-7-7 7-7"
               />
             </svg>
-            Terug naar overzicht
+            Back to overview
           </Link>
 
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Tags beheren</h1>
-          <p className="text-gray-600">Organiseer je notities met tags</p>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">Manage Tags</h1>
+          <p className="text-gray-600">Organize your notes with tags</p>
         </div>
 
         {/* Create Tag */}
         <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Nieuwe tag aanmaken</h2>
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">Create new tag</h2>
           <TagInput />
         </div>
 
         {/* Tags List */}
         <div className="bg-white rounded-lg shadow-sm p-6">
           <h2 className="text-lg font-semibold text-gray-900 mb-4">
-            Je tags ({tags.length})
+            Your tags ({tags.length})
           </h2>
 
           {isLoading ? (
@@ -76,7 +76,7 @@ export function TagsView() {
             </div>
           ) : tags.length === 0 ? (
             <p className="text-gray-500 text-center py-8">
-              Nog geen tags. Maak er hierboven één aan!
+              No tags yet. Create one above!
             </p>
           ) : (
             <div className="space-y-3">
@@ -92,7 +92,7 @@ export function TagsView() {
                     />
                     <div>
                       <h3 className="font-medium text-gray-900">{tag.name}</h3>
-                      <p className="text-sm text-gray-500">{tag.color || 'Geen kleur'}</p>
+                      <p className="text-sm text-gray-500">{tag.color || 'No color'}</p>
                     </div>
                   </div>
 
@@ -101,7 +101,7 @@ export function TagsView() {
                     disabled={deleteTag.isPending}
                     className="px-3 py-1.5 text-sm font-medium text-red-600 hover:bg-red-50 rounded-md disabled:opacity-50"
                   >
-                    Verwijderen
+                    Delete
                   </button>
                 </div>
               ))}
@@ -113,18 +113,18 @@ export function TagsView() {
       {/* Delete Confirmation Dialog */}
       <ConfirmDialog
         isOpen={!!tagToDelete}
-        title="Tag verwijderen?"
+        title="Delete tag?"
         message={
           deleteError
             ? deleteError
-            : `Weet je zeker dat je de tag "${tagToDelete?.name}" wilt verwijderen?${
+            : `Are you sure you want to delete the tag "${tagToDelete?.name}"?${
                 tags.find((t) => t.id === tagToDelete?.id)?._count?.notes
-                  ? ' Deze tag is nog in gebruik bij notities.'
+                  ? ' This tag is still in use in notes.'
                   : ''
               }`
         }
-        confirmText="Verwijderen"
-        cancelText="Annuleren"
+        confirmText="Delete"
+        cancelText="Cancel"
         onConfirm={handleDeleteConfirm}
         onCancel={handleDeleteCancel}
         danger={true}

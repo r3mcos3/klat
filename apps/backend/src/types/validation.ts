@@ -5,12 +5,14 @@ export const createNoteSchema = z.object({
   date: z.string().datetime('Date must be a valid ISO datetime'),
   content: z.string().min(0),
   deadline: z.string().datetime().optional(),
+  completedAt: z.string().datetime().optional(),
   tagIds: z.array(z.string()).optional(),
 });
 
 export const updateNoteSchema = z.object({
   content: z.string().min(0).optional(),
   deadline: z.string().datetime().optional(),
+  completedAt: z.string().datetime().optional(),
   tagIds: z.array(z.string()).optional(),
 });
 

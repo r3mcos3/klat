@@ -6,6 +6,7 @@ export interface Note {
   date: string; // ISO 8601 date string (YYYY-MM-DD)
   content: string; // Markdown content
   deadline?: string; // Optional deadline ISO 8601 datetime string
+  completedAt?: string; // Optional completion timestamp ISO 8601 datetime string
   tags: Tag[];
   createdAt: string; // ISO 8601 datetime string
   updatedAt: string; // ISO 8601 datetime string
@@ -23,12 +24,14 @@ export interface CreateNoteDto {
   date: string; // ISO 8601 date string (YYYY-MM-DD)
   content: string; // Markdown content
   deadline?: string; // Optional deadline ISO 8601 datetime string
+  completedAt?: string; // Optional completion timestamp ISO 8601 datetime string
   tagIds?: string[]; // Array of tag IDs to associate with the note
 }
 
 export interface UpdateNoteDto {
   content?: string; // Markdown content
   deadline?: string; // Optional deadline ISO 8601 datetime string
+  completedAt?: string; // Optional completion timestamp ISO 8601 datetime string
   tagIds?: string; // Array of tag IDs to associate with the note
 }
 

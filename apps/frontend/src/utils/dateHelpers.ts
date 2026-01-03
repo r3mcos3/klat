@@ -11,14 +11,19 @@ import {
   addMonths,
   subMonths,
 } from 'date-fns';
-import { nl } from 'date-fns/locale';
+import { enGB } from 'date-fns/locale';
 
 export const formatDate = (date: Date, formatStr: string = 'yyyy-MM-dd'): string => {
   return format(date, formatStr);
 };
 
 export const formatDateNL = (date: Date, formatStr: string = 'd MMMM yyyy'): string => {
-  return format(date, formatStr, { locale: nl });
+  return format(date, formatStr, { locale: enGB });
+};
+
+export const formatCompletedAt = (dateString: string): string => {
+  const date = new Date(dateString);
+  return format(date, 'dd-MM-yy HH:mm', { locale: enGB });
 };
 
 export const getMonthDays = (date: Date): Date[] => {
@@ -31,11 +36,11 @@ export const getMonthDays = (date: Date): Date[] => {
 };
 
 export const getMonthName = (date: Date): string => {
-  return format(date, 'MMMM yyyy', { locale: nl });
+  return format(date, 'MMMM yyyy', { locale: enGB });
 };
 
 export const getWeekDays = (): string[] => {
-  return ['Ma', 'Di', 'Wo', 'Do', 'Vr', 'Za', 'Zo'];
+  return ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 };
 
 export const isSameDayUtil = (date1: Date, date2: Date): boolean => {
