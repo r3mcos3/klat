@@ -2,6 +2,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAllNotes, useUpdateNote, useDeleteNote } from '@/hooks/useNotes';
 import { formatDateNL } from '@/utils/dateHelpers';
 import { ConfirmDialog } from '@/components/Common/ConfirmDialog';
+import { LiveDateTime } from '@/components/Common/LiveDateTime';
 import { useState } from 'react';
 import type { Note } from '@klat/types';
 
@@ -117,6 +118,11 @@ export function CardStackView() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
       <div className="container mx-auto px-4 py-4 max-w-5xl">
+        {/* Live Clock & Date */}
+        <div className="mb-6">
+          <LiveDateTime />
+        </div>
+
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <div>
