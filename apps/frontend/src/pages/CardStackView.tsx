@@ -13,14 +13,31 @@ export function CardStackView() {
   
   const [noteToDelete, setNoteToDelete] = useState<Note | null>(null);
 
-  // Sort notes: uncompleted first (by date), then completed (by date)
+  // Sort notes: by importance (HIGH -> MEDIUM -> LOW -> none), then completed at bottom
   const sortedNotes = [...notes].sort((a, b) => {
     // First, sort by completion status (uncompleted first)
     const aCompleted = !!a.completedAt;
     const bCompleted = !!b.completedAt;
 
     if (aCompleted !== bCompleted) {
-      return aCompleted ? 1 : -1; // Uncompleted (false) comes before completed (true)
+      return aCompleted ? 1 : -1; // Uncompleted comes before completed
+    }
+
+    // For uncompleted notes, sort by importance level
+    if (!aCompleted && !bCompleted) {
+      const importanceOrder: { [key: string]: number } = {
+        'HIGH': 1,
+        'MEDIUM': 2,
+        'LOW': 3,
+        '': 4, // No importance
+      };
+
+      const aImportance = importanceOrder[a.importance || ''];
+      const bImportance = importanceOrder[b.importance || ''];
+
+      if (aImportance !== bImportance) {
+        return aImportance - bImportance; // Lower number (higher priority) comes first
+      }
     }
 
     // Then sort by date (newest first) within each group
