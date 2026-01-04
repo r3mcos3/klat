@@ -144,3 +144,7 @@
 .dark .react-datepicker__month-year-read-view--down-arrow {
   border-color: #f3f4f6 !important;
 }
+
+.dark .react-datepicker__input-container input {
+  color: #f3f4f6 !important;
+}
