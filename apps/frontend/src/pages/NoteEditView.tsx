@@ -9,7 +9,6 @@ import { formatDateNL, formatCompletedAt } from '@/utils/dateHelpers';
 import { getUnusedColor } from '@/utils/colorHelpers';
 import { useState, useEffect } from 'react';
 import { tagApi } from '@/services/tagApi';
-import type { Tag } from '@klat/types';
 import { useQueryClient } from '@tanstack/react-query';
 
 export function NoteEditView() {
