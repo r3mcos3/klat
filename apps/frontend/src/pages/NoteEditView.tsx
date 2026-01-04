@@ -137,6 +137,15 @@ export function NoteEditView() {
       );
 
       if (existingTag) {
+        // If tag exists but capitalization is different, update it
+        if (existingTag.name !== hashtag) {
+          try {
+            await tagApi.updateTag(existingTag.id, { name: hashtag });
+            tagsCreated = true;
+          } catch (error) {
+            console.error('Error updating tag capitalization:', error);
+          }
+        }
         tagIds.push(existingTag.id);
       } else {
         try {
