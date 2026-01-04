@@ -117,11 +117,8 @@ export function MarkdownEditor({ note, date, onSave, onCreate, onSaveComplete }:
         // Create new note (only if there's content and not already creating)
         try {
           setIsCreating(true);
-          const createdNoteId = await onCreate({ date, ...value });
-          // After auto-save creates a note, navigate to it
-          if (onSaveComplete && createdNoteId) {
-            onSaveComplete(createdNoteId);
-          }
+          await onCreate({ date, ...value });
+          // Don't call onSaveComplete here - we don't want to navigate away during auto-save
         } catch (error) {
           setIsCreating(false);
           throw error;
