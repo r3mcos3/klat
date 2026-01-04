@@ -28,7 +28,10 @@ export function TagsView() {
       setTagToDelete(null);
       setDeleteError('');
     } catch (error: any) {
-      setDeleteError(error.response?.data?.message || 'Error deleting tag');
+      // Backend returns { error: "message" } format
+      const errorMessage = error.response?.data?.error || error.response?.data?.message || 'Error deleting tag';
+      setDeleteError(errorMessage);
+      // Don't close the dialog so user can see the error
     }
   };
 
