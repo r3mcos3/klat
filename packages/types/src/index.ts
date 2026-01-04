@@ -32,9 +32,9 @@ export interface CreateNoteDto {
 
 export interface UpdateNoteDto {
   content?: string; // Markdown content
-  deadline?: string; // Optional deadline ISO 8601 datetime string
-  completedAt?: string; // Optional completion timestamp ISO 8601 datetime string
-  importance?: 'LOW' | 'MEDIUM' | 'HIGH';
+  deadline?: string | null; // Optional deadline ISO 8601 datetime string (null to clear)
+  completedAt?: string | null; // Optional completion timestamp ISO 8601 datetime string (null to clear)
+  importance?: 'LOW' | 'MEDIUM' | 'HIGH' | null; // Optional importance level (null to clear)
   tagIds?: string[]; // Array of tag IDs to associate with the note
 }
 
