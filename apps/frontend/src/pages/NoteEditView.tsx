@@ -70,6 +70,16 @@ export function NoteEditView() {
   const updateNote = useUpdateNote();
   const deleteNote = useDeleteNote();
 
+  // Helper to safely parse note date (handles both YYYY-MM-DD and full ISO timestamps)
+  const parseNoteDate = (dateStr: string): Date => {
+    // If it's just YYYY-MM-DD format, append midnight time
+    if (dateStr.match(/^\d{4}-\d{2}-\d{2}$/)) {
+      return new Date(dateStr + 'T00:00:00Z');
+    }
+    // Otherwise parse as-is (full ISO timestamp)
+    return new Date(dateStr);
+  };
+
   // Initialize form state when note loads or for new note
   useEffect(() => {
     if (isNewNote) {
@@ -81,7 +91,7 @@ export function NoteEditView() {
       setImportance(undefined);
     } else if (note) {
       // For existing notes, load from note data
-      setNoteDate(new Date(note.date));
+      setNoteDate(parseNoteDate(note.date));
       if (note.tags) {
         setSelectedTagIds(note.tags.map((t: any) => t.id));
       }

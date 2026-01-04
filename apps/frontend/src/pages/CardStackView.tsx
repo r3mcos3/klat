@@ -22,6 +22,20 @@ export function CardStackView() {
     navigate('/login');
   };
 
+  // Helper function to safely parse dates (handles both YYYY-MM-DD and full ISO timestamps)
+  const parseNoteDate = (dateStr: string): number => {
+    try {
+      // If it's just YYYY-MM-DD format, append midnight time
+      if (dateStr.match(/^\d{4}-\d{2}-\d{2}$/)) {
+        return new Date(dateStr + 'T00:00:00Z').getTime();
+      }
+      // Otherwise parse as-is (full ISO timestamp)
+      return new Date(dateStr).getTime();
+    } catch {
+      return 0; // Fallback for invalid dates
+    }
+  };
+
   // Sort notes: by importance (HIGH -> MEDIUM -> LOW -> none), then completed at bottom
   const sortedNotes = [...notes].sort((a, b) => {
     // First, sort by completion status (uncompleted first)
@@ -50,7 +64,7 @@ export function CardStackView() {
     }
 
     // Then sort by date (newest first) within each group
-    return new Date(b.date).getTime() - new Date(a.date).getTime();
+    return parseNoteDate(b.date) - parseNoteDate(a.date);
   });
 
   const handleToggleDone = async (e: React.MouseEvent, note: Note) => {
