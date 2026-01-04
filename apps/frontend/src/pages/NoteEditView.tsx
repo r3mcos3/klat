@@ -58,7 +58,7 @@ export function NoteEditView() {
   const [selectedTagIds, setSelectedTagIds] = useState<string[]>([]);
   const [deadline, setDeadline] = useState<Date | null>(null);
   const [completedAt, setCompletedAt] = useState<string>('');
-  const [importance, setImportance] = useState<'LOW' | 'MEDIUM' | 'HIGH' | undefined>(undefined);
+  const [importance, setImportance] = useState<'LOW' | 'MEDIUM' | 'HIGH' | null | undefined>(undefined);
   const [noteDate, setNoteDate] = useState<Date | null>(null);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
