@@ -6,50 +6,11 @@ import { DateTimePicker } from '@/components/Common/DateTimePicker';
 import { useNoteById, useCreateNote, useUpdateNote, useDeleteNote } from '@/hooks/useNotes';
 import { useAllTags, tagKeys } from '@/hooks/useTags';
 import { formatDateNL, formatCompletedAt } from '@/utils/dateHelpers';
+import { getUnusedColor } from '@/utils/colorHelpers';
 import { useState, useEffect } from 'react';
 import { tagApi } from '@/services/tagApi';
 import type { Tag } from '@klat/types';
 import { useQueryClient } from '@tanstack/react-query';
-
-// Predefined color palette for tags
-const TAG_COLORS = [
-  '#EF4444', // Red
-  '#F59E0B', // Orange
-  '#10B981', // Green
-  '#3B82F6', // Blue
-  '#6366F1', // Indigo
-  '#8B5CF6', // Purple
-  '#EC4899', // Pink
-  '#14B8A6', // Teal
-  '#F97316', // Orange
-  '#84CC16', // Lime
-];
-
-// Convert hex color to RGB
-const hexToRgb = (hex: string): { r: number; g: number; b: number } => {
-  const result = /^#?([a-f\\d]{2})([a-f\\d]{2})([a-f\\d]{2})$/i.exec(hex);
-  return result
-    ? {
-        r: parseInt(result[1], 16),
-        g: parseInt(result[2], 16),
-        b: parseInt(result[3], 16),
-      }
-    : { r: 0, g: 0, b: 0 };
-};
-
-// Calculate color distance using Euclidean distance in RGB space
-const colorDistance = (hex1: string, hex2: string): number => {
-  const rgb1 = hexToRgb(hex1);
-  const rgb2 = hexToRgb(hex2);
-  return Math.sqrt(
-    Math.pow(rgb1.r - rgb2.r, 2) +
-    Math.pow(rgb1.g - rgb2.g, 2) +
-    Math.pow(rgb1.b - rgb2.b, 2)
-  );
-};
-
-// Minimum color distance threshold (0-441, higher = more different)
-const MIN_COLOR_DISTANCE = 50;
 
 export function NoteEditView() {
   const { id } = useParams<{ id: string }>();
@@ -153,23 +114,6 @@ export function NoteEditView() {
     return content.replace(hashtagRegex, '').trim();
   };
 
-  // Get an unused color from the palette
-  const getUnusedColor = (existingTags: Tag[], usedInCurrentOperation: Set<string>): string => {
-    const allUsedColors = [
-      ...existingTags.map(tag => tag.color).filter(Boolean),
-      ...Array.from(usedInCurrentOperation)
-    ];
-
-    const availableColors = TAG_COLORS.filter(candidateColor => {
-      return !allUsedColors.some(usedColor => {
-        const distance = colorDistance(candidateColor, usedColor as string);
-        return distance < MIN_COLOR_DISTANCE;
-      });
-    });
-
-    return availableColors[0] || TAG_COLORS[Math.floor(Math.random() * TAG_COLORS.length)];
-  };
-
   // Process hashtags: create tags that don't exist and return all tag IDs
   const processHashtags = async (content: string): Promise<string[]> => {
     const hashtags = extractHashtags(content);
@@ -188,7 +132,7 @@ export function NoteEditView() {
         tagIds.push(existingTag.id);
       } else {
         try {
-          const color = getUnusedColor(allTags, usedColorsInOperation);
+          const color = getUnusedColor(allTags.map(t => t.color), usedColorsInOperation);
           const newTag = await tagApi.createTag({
             name: hashtag,
             color: color,
