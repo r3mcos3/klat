@@ -30,7 +30,7 @@ export function TagsView() {
     } catch (error: any) {
       // 409 = tag is still in use
       if (error.response?.status === 409) {
-        setDeleteError('Tag is nog in gebruik. Je kunt hem niet wissen. Verwijder eerst de tag van alle notities.');
+        setDeleteError('This tag is still in use. Remove it from all notes before deleting.');
       } else {
         // Try to get error message from response
         const errorMessage = error.response?.data?.error || error.response?.data?.message || 'Error deleting tag';
