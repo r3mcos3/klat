@@ -24,9 +24,9 @@ export interface Tag {
 export interface CreateNoteDto {
   date: string; // ISO 8601 date string (YYYY-MM-DD)
   content: string; // Markdown content
-  deadline?: string; // Optional deadline ISO 8601 datetime string
-  completedAt?: string; // Optional completion timestamp ISO 8601 datetime string
-  importance?: 'LOW' | 'MEDIUM' | 'HIGH';
+  deadline?: string | null; // Optional deadline ISO 8601 datetime string
+  completedAt?: string | null; // Optional completion timestamp ISO 8601 datetime string
+  importance?: 'LOW' | 'MEDIUM' | 'HIGH' | null;
   tagIds?: string[]; // Array of tag IDs to associate with the note
 }
 
