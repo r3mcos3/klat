@@ -223,7 +223,7 @@ export function NoteEditView() {
     const deadlineISO = deadline ? deadline.toISOString() : undefined;
 
     const newNote = await createNote.mutateAsync({
-      date: noteDate.toISOString(),
+      date: noteDate.toISOString().split('T')[0], // Format as YYYY-MM-DD
       content: cleanedContent,
       deadline: deadlineISO,
       completedAt: completedAt || undefined,
