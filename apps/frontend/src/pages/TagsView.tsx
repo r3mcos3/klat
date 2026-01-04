@@ -28,9 +28,14 @@ export function TagsView() {
       setTagToDelete(null);
       setDeleteError('');
     } catch (error: any) {
-      // Backend returns { error: "message" } format
-      const errorMessage = error.response?.data?.error || error.response?.data?.message || 'Error deleting tag';
-      setDeleteError(errorMessage);
+      // 409 = tag is still in use
+      if (error.response?.status === 409) {
+        setDeleteError('Tag is nog in gebruik. Je kunt hem niet wissen. Verwijder eerst de tag van alle notities.');
+      } else {
+        // Try to get error message from response
+        const errorMessage = error.response?.data?.error || error.response?.data?.message || 'Error deleting tag';
+        setDeleteError(errorMessage);
+      }
       // Don't close the dialog so user can see the error
     }
   };
