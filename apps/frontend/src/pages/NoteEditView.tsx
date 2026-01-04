@@ -129,6 +129,7 @@ export function NoteEditView() {
 
     const tagIds: string[] = [];
     const usedColorsInOperation = new Set<string>();
+    const newlyCreatedTags: { id: string; name: string; color: string }[] = [];
     let tagsCreated = false;
 
     for (const hashtag of hashtags) {
@@ -147,15 +148,25 @@ export function NoteEditView() {
           }
         }
         tagIds.push(existingTag.id);
+        // Add existing tag color to used colors
+        if (existingTag.color) {
+          usedColorsInOperation.add(existingTag.color);
+        }
       } else {
         try {
-          const color = getUnusedColor(allTags.map(t => t.color), usedColorsInOperation);
+          // Combine existing tag colors with newly created tag colors
+          const allExistingColors = [
+            ...allTags.map(t => t.color),
+            ...newlyCreatedTags.map(t => t.color),
+          ];
+          const color = getUnusedColor(allExistingColors, usedColorsInOperation);
           const newTag = await tagApi.createTag({
             name: hashtag,
             color: color,
           });
           tagIds.push(newTag.id);
           usedColorsInOperation.add(color);
+          newlyCreatedTags.push({ id: newTag.id, name: newTag.name, color: newTag.color });
           tagsCreated = true;
         } catch (error) {
           console.error('Error creating tag from hashtag:', error);
