@@ -53,6 +53,7 @@ export const useAllNotes = () => {
   return useQuery({
     queryKey: noteKeys.all,
     queryFn: () => noteApi.getAllNotes(),
+    refetchInterval: 30000, // Auto-refresh every 30 seconds
   });
 };
 
