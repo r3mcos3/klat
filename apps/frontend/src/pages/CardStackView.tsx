@@ -242,8 +242,15 @@ export function CardStackView() {
           <div className="relative">
             <div className="flex flex-col space-y-6">
               {sortedNotes.map((note, _index) => {
-                const dateStr = note.date.split('T')[0];
-                const dateObj = new Date(dateStr + 'T12:00:00');
+                // Safely parse date (handles both YYYY-MM-DD and full ISO timestamps)
+                const dateObj = (() => {
+                  try {
+                    const dateStr = note.date.includes('T') ? note.date.split('T')[0] : note.date;
+                    return new Date(dateStr + 'T12:00:00Z');
+                  } catch {
+                    return new Date(); // Fallback to today
+                  }
+                })();
                 const hasContent = note.content.trim().length > 0;
 
                 // Get border color based on importance
