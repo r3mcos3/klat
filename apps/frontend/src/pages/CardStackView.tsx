@@ -69,12 +69,12 @@ export function CardStackView() {
 
   const handleToggleDone = async (e: React.MouseEvent, note: Note) => {
     e.stopPropagation();
-    const newCompletedAt = note.completedAt ? '' : new Date().toISOString();
+    const newCompletedAt = note.completedAt ? null : new Date().toISOString();
 
     await updateNote.mutateAsync({
       id: note.id,
       data: {
-        completedAt: newCompletedAt || undefined,
+        completedAt: newCompletedAt,
       },
     });
   };
@@ -307,33 +307,43 @@ export function CardStackView() {
                           <div className="flex flex-wrap items-center gap-3 text-xs text-gray-500 dark:text-gray-400">
                             {note.createdAt && (() => {
                               try {
-                                const date = new Date(note.createdAt + (note.createdAt.endsWith('Z') ? '' : 'Z'));
-                                if (isNaN(date.getTime())) return null;
+                                // Parse ISO timestamp
+                                const date = new Date(note.createdAt);
+                                if (isNaN(date.getTime())) {
+                                  console.warn('Invalid createdAt date:', note.createdAt);
+                                  return null;
+                                }
                                 return (
                                   <span className="flex items-center gap-1">
                                     <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                                     </svg>
-                                    Created: {formatDateNL(date, 'd MMM yyyy, HH:mm')}
+                                    Created: {formatDateNL(date, 'd MMM yyyy HH:mm')}
                                   </span>
                                 );
-                              } catch {
+                              } catch (error) {
+                                console.error('Error parsing createdAt:', error, note.createdAt);
                                 return null;
                               }
                             })()}
                             {note.updatedAt && (() => {
                               try {
-                                const date = new Date(note.updatedAt + (note.updatedAt.endsWith('Z') ? '' : 'Z'));
-                                if (isNaN(date.getTime())) return null;
+                                // Parse ISO timestamp
+                                const date = new Date(note.updatedAt);
+                                if (isNaN(date.getTime())) {
+                                  console.warn('Invalid updatedAt date:', note.updatedAt);
+                                  return null;
+                                }
                                 return (
                                   <span className="flex items-center gap-1">
                                     <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                                     </svg>
-                                    Updated: {formatDateNL(date, 'd MMM yyyy, HH:mm')}
+                                    Updated: {formatDateNL(date, 'd MMM yyyy HH:mm')}
                                   </span>
                                 );
-                              } catch {
+                              } catch (error) {
+                                console.error('Error parsing updatedAt:', error, note.updatedAt);
                                 return null;
                               }
                             })()}

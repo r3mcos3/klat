@@ -128,13 +128,13 @@ export function NoteEditView() {
   const handleToggleDone = async () => {
     if (!note) return;
 
-    const newCompletedAt = completedAt ? '' : new Date().toISOString();
-    setCompletedAt(newCompletedAt);
+    const newCompletedAt = completedAt ? null : new Date().toISOString();
+    setCompletedAt(newCompletedAt || '');
 
     await updateNote.mutateAsync({
       id: note.id,
       data: {
-        completedAt: newCompletedAt || undefined,
+        completedAt: newCompletedAt,
       },
     });
   };
