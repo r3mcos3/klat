@@ -340,13 +340,26 @@ export function NoteEditView() {
         )}
 
         {/* Timestamps for existing notes */}
-        {!isNewNote && note && (
+        {!isNewNote && note && (note.createdAt || note.updatedAt) && (
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 mb-6">
             <div className="space-y-2">
               {note.createdAt && (() => {
                 try {
-                  const date = new Date(note.createdAt + (note.createdAt.endsWith('Z') ? '' : 'Z'));
-                  if (isNaN(date.getTime())) return null;
+                  // Handle various date formats
+                  let dateStr = note.createdAt;
+                  if (typeof dateStr === 'string') {
+                    // If no timezone info, assume UTC
+                    if (!dateStr.endsWith('Z') && !dateStr.includes('+') && !dateStr.includes('T')) {
+                      dateStr = dateStr + 'T00:00:00Z';
+                    } else if (dateStr.includes('T') && !dateStr.endsWith('Z') && !dateStr.includes('+')) {
+                      dateStr = dateStr + 'Z';
+                    }
+                  }
+                  const date = new Date(dateStr);
+                  if (isNaN(date.getTime())) {
+                    console.warn('Invalid createdAt:', note.createdAt);
+                    return null;
+                  }
                   return (
                     <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -360,14 +373,28 @@ export function NoteEditView() {
                       <span>Created: {formatDateNL(date, 'd MMMM yyyy, HH:mm')}</span>
                     </div>
                   );
-                } catch {
+                } catch (err) {
+                  console.error('Error parsing createdAt:', note.createdAt, err);
                   return null;
                 }
               })()}
               {note.updatedAt && (() => {
                 try {
-                  const date = new Date(note.updatedAt + (note.updatedAt.endsWith('Z') ? '' : 'Z'));
-                  if (isNaN(date.getTime())) return null;
+                  // Handle various date formats
+                  let dateStr = note.updatedAt;
+                  if (typeof dateStr === 'string') {
+                    // If no timezone info, assume UTC
+                    if (!dateStr.endsWith('Z') && !dateStr.includes('+') && !dateStr.includes('T')) {
+                      dateStr = dateStr + 'T00:00:00Z';
+                    } else if (dateStr.includes('T') && !dateStr.endsWith('Z') && !dateStr.includes('+')) {
+                      dateStr = dateStr + 'Z';
+                    }
+                  }
+                  const date = new Date(dateStr);
+                  if (isNaN(date.getTime())) {
+                    console.warn('Invalid updatedAt:', note.updatedAt);
+                    return null;
+                  }
                   return (
                     <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -381,7 +408,8 @@ export function NoteEditView() {
                       <span>Last updated: {formatDateNL(date, 'd MMMM yyyy, HH:mm')}</span>
                     </div>
                   );
-                } catch {
+                } catch (err) {
+                  console.error('Error parsing updatedAt:', note.updatedAt, err);
                   return null;
                 }
               })()}
