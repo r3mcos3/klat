@@ -166,7 +166,7 @@ export function NoteEditView() {
           });
           tagIds.push(newTag.id);
           usedColorsInOperation.add(color);
-          newlyCreatedTags.push({ id: newTag.id, name: newTag.name, color: newTag.color });
+          newlyCreatedTags.push({ id: newTag.id, name: newTag.name, color: color });
           tagsCreated = true;
         } catch (error) {
           console.error('Error creating tag from hashtag:', error);
