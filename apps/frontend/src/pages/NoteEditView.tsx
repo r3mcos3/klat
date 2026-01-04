@@ -96,7 +96,12 @@ export function NoteEditView() {
         setSelectedTagIds(note.tags.map((t: any) => t.id));
       }
       if (note.deadline) {
-        setDeadline(new Date(note.deadline));
+        try {
+          const deadlineDate = new Date(note.deadline);
+          setDeadline(isNaN(deadlineDate.getTime()) ? null : deadlineDate);
+        } catch {
+          setDeadline(null);
+        }
       } else {
         setDeadline(null);
       }
@@ -338,38 +343,48 @@ export function NoteEditView() {
         {!isNewNote && note && (
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 mb-6">
             <div className="space-y-2">
-              {note.createdAt && (
-                <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-                    />
-                  </svg>
-                  <span>Created: {(() => {
-                    const date = new Date(note.createdAt + (note.createdAt.endsWith('Z') ? '' : 'Z'));
-                    return formatDateNL(date, 'd MMMM yyyy, HH:mm');
-                  })()}</span>
-                </div>
-              )}
-              {note.updatedAt && (
-                <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-                    />
-                  </svg>
-                  <span>Last updated: {(() => {
-                    const date = new Date(note.updatedAt + (note.updatedAt.endsWith('Z') ? '' : 'Z'));
-                    return formatDateNL(date, 'd MMMM yyyy, HH:mm');
-                  })()}</span>
-                </div>
-              )}
+              {note.createdAt && (() => {
+                try {
+                  const date = new Date(note.createdAt + (note.createdAt.endsWith('Z') ? '' : 'Z'));
+                  if (isNaN(date.getTime())) return null;
+                  return (
+                    <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                        />
+                      </svg>
+                      <span>Created: {formatDateNL(date, 'd MMMM yyyy, HH:mm')}</span>
+                    </div>
+                  );
+                } catch {
+                  return null;
+                }
+              })()}
+              {note.updatedAt && (() => {
+                try {
+                  const date = new Date(note.updatedAt + (note.updatedAt.endsWith('Z') ? '' : 'Z'));
+                  if (isNaN(date.getTime())) return null;
+                  return (
+                    <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                        />
+                      </svg>
+                      <span>Last updated: {formatDateNL(date, 'd MMMM yyyy, HH:mm')}</span>
+                    </div>
+                  );
+                } catch {
+                  return null;
+                }
+              })()}
             </div>
           </div>
         )}
