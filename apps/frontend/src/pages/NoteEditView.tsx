@@ -99,12 +99,21 @@ export function NoteEditView() {
     });
   };
 
-  // Extract hashtags from content
+  // Extract hashtags from content (preserves original capitalization)
   const extractHashtags = (content: string): string[] => {
     const hashtagRegex = /#(\w+)/g;
     const matches = content.match(hashtagRegex);
     if (!matches) return [];
-    return [...new Set(matches.map(tag => tag.substring(1).toLowerCase()))];
+    // Remove duplicates case-insensitively but preserve first occurrence capitalization
+    const seen = new Map<string, string>();
+    matches.forEach(tag => {
+      const tagName = tag.substring(1);
+      const lowerName = tagName.toLowerCase();
+      if (!seen.has(lowerName)) {
+        seen.set(lowerName, tagName);
+      }
+    });
+    return Array.from(seen.values());
   };
 
   // Remove hashtags from content after processing
