@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { useAuthStore } from '@/store/authStore';
+import { useAutoLogout } from '@/hooks/useAutoLogout';
 
 interface AuthProviderProps {
   children: React.ReactNode;
@@ -11,6 +12,14 @@ interface AuthProviderProps {
  */
 export function AuthProvider({ children }: AuthProviderProps) {
   const { initialize, isInitialized } = useAuthStore();
+
+  // Auto-logout after 12 hours of session time
+  // Optional: Add inactivityTimeout if you want to logout on inactivity
+  // Example: useAutoLogout({ inactivityTimeout: 30 * 60 * 1000 }) // 30 minutes
+  useAutoLogout({
+    sessionTimeout: 12 * 60 * 60 * 1000, // 12 hours
+    debug: false, // Set to true to see debug logs
+  });
 
   useEffect(() => {
     if (!isInitialized) {
