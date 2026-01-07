@@ -6,6 +6,7 @@ export const createNoteSchema = z.object({
   content: z.string().min(0),
   deadline: z.string().datetime().nullable().optional(),
   completedAt: z.string().datetime().nullable().optional(),
+  inProgress: z.boolean().optional(),
   importance: z.enum(['LOW', 'MEDIUM', 'HIGH']).nullable().optional(),
   tagIds: z.array(z.string()).optional(),
 });
@@ -14,6 +15,7 @@ export const updateNoteSchema = z.object({
   content: z.string().min(0).optional(),
   deadline: z.string().datetime().nullable().optional(),
   completedAt: z.string().datetime().nullable().optional(),
+  inProgress: z.boolean().optional(),
   importance: z.enum(['LOW', 'MEDIUM', 'HIGH']).nullable().optional(),
   tagIds: z.array(z.string()).optional(),
 });

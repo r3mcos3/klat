@@ -5,7 +5,7 @@ import { AppError } from '../middleware/errorHandler';
 export class NoteService {
   // Create a new note (multiple notes per day allowed)
   async createNote(data: CreateNoteDto, userId: string) {
-    const { date, content, deadline, completedAt, importance, tagIds } = data;
+    const { date, content, deadline, completedAt, inProgress, importance, tagIds } = data;
 
     // Generate a unique ID
     const id = `note_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
@@ -23,6 +23,7 @@ export class NoteService {
         content,
         deadline: deadline || null,
         completedAt: completedAt || null,
+        inProgress: inProgress || false,
         importance: importance || null,
         createdAt: now,
         updatedAt: now,
@@ -122,7 +123,7 @@ export class NoteService {
 
   // Update note
   async updateNote(id: string, data: UpdateNoteDto, userId: string) {
-    const { content, deadline, completedAt, importance, tagIds } = data;
+    const { content, deadline, completedAt, inProgress, importance, tagIds } = data;
 
     // Check if note exists and belongs to user
     const { data: existing } = await supabase
@@ -136,8 +137,8 @@ export class NoteService {
       throw new AppError('Notitie niet gevonden', 404);
     }
 
-    // Update note content/deadline/completedAt/importance if provided
-    if (content !== undefined || deadline !== undefined || completedAt !== undefined || importance !== undefined) {
+    // Update note content/deadline/completedAt/importance/inProgress if provided
+    if (content !== undefined || deadline !== undefined || completedAt !== undefined || inProgress !== undefined || importance !== undefined) {
       const now = new Date().toISOString();
       const updateData: any = {
         updatedAt: now,
@@ -153,6 +154,10 @@ export class NoteService {
 
       if (completedAt !== undefined) {
         updateData.completedAt = completedAt || null;
+      }
+
+      if (inProgress !== undefined) {
+        updateData.inProgress = inProgress;
       }
 
       if (importance !== undefined) {

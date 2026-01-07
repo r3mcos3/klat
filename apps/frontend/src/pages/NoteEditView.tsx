@@ -18,6 +18,7 @@ export function NoteEditView() {
   const [selectedTagIds, setSelectedTagIds] = useState<string[]>([]);
   const [deadline, setDeadline] = useState<Date | null>(null);
   const [completedAt, setCompletedAt] = useState<string>('');
+  const [inProgress, setInProgress] = useState<boolean>(false);
   const [importance, setImportance] = useState<'LOW' | 'MEDIUM' | 'HIGH' | null | undefined>(undefined);
   const [noteDate, setNoteDate] = useState<Date | null>(null);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
@@ -48,6 +49,7 @@ export function NoteEditView() {
       setSelectedTagIds([]);
       setDeadline(null);
       setCompletedAt('');
+      setInProgress(false);
       setImportance(undefined);
     } else if (note) {
       // For existing notes, load from note data
@@ -70,6 +72,7 @@ export function NoteEditView() {
       } else {
         setCompletedAt('');
       }
+      setInProgress(note.inProgress || false);
       setImportance(note.importance);
     }
   }, [note?.id, isNewNote]);
@@ -194,6 +197,7 @@ export function NoteEditView() {
           content: cleanedContent,
           deadline: deadlineISO,
           completedAt: completedAt || undefined,
+          inProgress: inProgress,
           importance: importance,
           tagIds: allTagIds,
         },
@@ -214,6 +218,7 @@ export function NoteEditView() {
       content: cleanedContent,
       deadline: deadlineISO,
       completedAt: completedAt || undefined,
+      inProgress: inProgress,
       importance: importance,
       tagIds: allTagIds,
     });
@@ -473,7 +478,7 @@ export function NoteEditView() {
         {/* Done Button Section */}
         {!isNewNote && note && (
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 mb-6">
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
                 <svg className="w-5 h-5 text-gray-700 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
@@ -493,10 +498,31 @@ export function NoteEditView() {
               </button>
             </div>
             {completedAt && (
-              <p className="mt-3 text-sm text-gray-600 dark:text-gray-400">
+              <p className="mb-4 text-sm text-gray-600 dark:text-gray-400">
                 Completed on: {formatCompletedAt(completedAt)}
               </p>
             )}
+
+            <div className="border-t border-gray-200 dark:border-gray-700 pt-4 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <svg className="w-5 h-5 text-gray-700 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">In Progress</h3>
+              </div>
+              <button
+                onClick={() => setInProgress(!inProgress)}
+                className={`
+                  px-4 py-2 rounded-lg font-medium transition-colors
+                  ${inProgress
+                    ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 hover:bg-blue-200 dark:hover:bg-blue-900/50'
+                    : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'}
+                `}
+              >
+                {inProgress ? '⏸ In Progress' : '▶ Start'}
+              </button>
+            </div>
           </div>
         )}
 

@@ -15,6 +15,7 @@ model Note {
   content     String    @db.Text // Markdown content
   deadline    DateTime? // Optionele deadline voor to-do's
   completedAt DateTime? // Timestamp wanneer notitie voltooid is
+  inProgress  Boolean   @default(false) // Status of the note
   importance  String?   // 'LOW', 'MEDIUM', 'HIGH'
   tags        Tag[]     @relation("NoteToTag")
   createdAt   DateTime  @default(now())
@@ -24,6 +25,7 @@ model Note {
   @@index([createdAt])
   @@index([deadline])
   @@index([completedAt])
+  @@index([inProgress])
   @@map("notes")
 }
 
