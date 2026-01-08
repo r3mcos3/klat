@@ -1,6 +1,7 @@
 import { supabase } from '../config/supabase';
 import { CreateNoteDto, UpdateNoteDto } from '../types/validation';
 import { AppError } from '../middleware/errorHandler';
+import imageService from './imageService';
 
 export class NoteService {
   // Create a new note (multiple notes per day allowed)
@@ -204,7 +205,10 @@ export class NoteService {
       throw new AppError('Notitie niet gevonden', 404);
     }
 
-    // Delete tag relations first
+    // Delete associated images
+    await imageService.deleteNoteImages(id, userId);
+
+    // Delete tag relations
     await supabase.from('_NoteToTag').delete().eq('A', id);
 
     // Delete note

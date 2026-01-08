@@ -1,6 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import MDEditor from '@uiw/react-md-editor';
 import { useAutoSave, SaveStatus } from '@/hooks/useAutoSave';
+import { ImageUpload } from './ImageUpload';
 import type { Note } from '@klat/types';
 
 interface MarkdownEditorProps {
@@ -70,6 +71,36 @@ export function MarkdownEditor({ note, date, onSave, onCreate, onSaveComplete }:
   const [tagIds, setTagIds] = useState<string[]>(note?.tags?.map((t: any) => t.id) || []);
   const [isCreating, setIsCreating] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+
+  // Handle image URLs insertion
+  const insertImages = useCallback((urls: string[]) => {
+    const imageMarkdown = urls.map((url) => `![](${url})`).join('\n');
+    setContent((prev) => prev + '\n' + imageMarkdown);
+  }, []);
+
+  // Handle clipboard paste for images
+  useEffect(() => {
+    const handlePaste = async (e: ClipboardEvent) => {
+      const items = Array.from(e.clipboardData?.items || []);
+      const imageItems = items.filter((item) => item.type.startsWith('image/'));
+
+      if (imageItems.length > 0 && note?.id) {
+        e.preventDefault();
+        const files = imageItems
+          .map((item) => item.getAsFile())
+          .filter((file): file is File => file !== null);
+
+        if (files.length > 0) {
+          // Images will be handled by ImageUpload component
+          // User needs to use the upload component for now
+          console.log('Paste detected. Please use the image upload component below.');
+        }
+      }
+    };
+
+    document.addEventListener('paste', handlePaste);
+    return () => document.removeEventListener('paste', handlePaste);
+  }, [note?.id]);
 
   // Update content when note changes
   useEffect(() => {
@@ -161,6 +192,23 @@ export function MarkdownEditor({ note, date, onSave, onCreate, onSaveComplete }:
 
       <div className="mt-2 text-xs text-gray-500 dark:text-gray-400">
         💡 Tip: Use Markdown for formatting. Auto-saves every 30 seconds, or click 'Save' to save immediately.
+      </div>
+
+      {/* Image Upload Section */}
+      <div className="mt-8">
+        <h4 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">
+          Upload Images
+        </h4>
+        <ImageUpload
+          noteId={note?.id}
+          onImagesUploaded={insertImages}
+          disabled={!note?.id}
+        />
+        {!note?.id && (
+          <p className="mt-2 text-sm text-amber-600 dark:text-amber-400">
+            ℹ️ Save the note first before uploading images
+          </p>
+        )}
       </div>
     </div>
   );
