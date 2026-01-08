@@ -1,17 +1,37 @@
--- Performance Optimization: Add database indexes for userId queries
+-- Performance Optimization: Add userId columns and indexes
 -- Run this SQL in Supabase SQL Editor
 
--- Add index on notes.userId for faster user-specific queries
-CREATE INDEX IF NOT EXISTS idx_notes_userId ON notes(userId);
+-- Step 1: Add userId column to notes table if it doesn't exist
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM information_schema.columns
+    WHERE table_name = 'notes' AND column_name = 'userid'
+  ) THEN
+    ALTER TABLE notes ADD COLUMN "userId" TEXT;
+    COMMENT ON COLUMN notes."userId" IS 'Foreign key to auth.users';
+  END IF;
+END $$;
 
--- Add index on tags.userId for faster user-specific tag queries
-CREATE INDEX IF NOT EXISTS idx_tags_userId ON tags(userId);
+-- Step 2: Add userId column to tags table if it doesn't exist
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM information_schema.columns
+    WHERE table_name = 'tags' AND column_name = 'userid'
+  ) THEN
+    ALTER TABLE tags ADD COLUMN "userId" TEXT;
+    COMMENT ON COLUMN tags."userId" IS 'Foreign key to auth.users';
+  END IF;
+END $$;
 
--- Composite index for common query pattern: notes by userId and date
-CREATE INDEX IF NOT EXISTS idx_notes_userId_date ON notes(userId, date);
+-- Step 3: Add indexes on userId for faster user-specific queries
+CREATE INDEX IF NOT EXISTS idx_notes_userId ON notes("userId");
+CREATE INDEX IF NOT EXISTS idx_tags_userId ON tags("userId");
 
--- Composite index for common query pattern: notes by userId, sorted by creation date
-CREATE INDEX IF NOT EXISTS idx_notes_userId_createdAt ON notes(userId, createdAt DESC);
+-- Step 4: Composite indexes for common query patterns
+CREATE INDEX IF NOT EXISTS idx_notes_userId_date ON notes("userId", date);
+CREATE INDEX IF NOT EXISTS idx_notes_userId_createdAt ON notes("userId", "createdAt" DESC);
 
 -- Verify indexes were created
 SELECT indexname, indexdef

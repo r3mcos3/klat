@@ -11,6 +11,7 @@ datasource db {
 
 model Note {
   id          String    @id @default(cuid())
+  userId      String    // Foreign key to auth.users
   date        DateTime  // Note date (can have multiple notes per day)
   content     String    @db.Text // Markdown content
   deadline    DateTime? // Optionele deadline voor to-do's
@@ -21,6 +22,9 @@ model Note {
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 
+  @@index([userId])
+  @@index([userId, date])
+  @@index([userId, createdAt])
   @@index([date])
   @@index([createdAt])
   @@index([deadline])
@@ -31,11 +35,13 @@ model Note {
 
 model Tag {
   id        String   @id @default(cuid())
+  userId    String   // Foreign key to auth.users
   name      String   @unique
   color     String? // Hex color voor UI
   notes     Note[]   @relation("NoteToTag")
   createdAt DateTime @default(now())
 
+  @@index([userId])
   @@index([name])
   @@map("tags")
 }
