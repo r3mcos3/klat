@@ -11,18 +11,31 @@ export const api = axios.create({
   timeout: 10000,
 });
 
-// Request interceptor - Attach JWT token to all requests
+// Auth token cache
+let cachedToken: string | null = null;
+let tokenExpiry: number = 0;
+
+// Request interceptor - Attach JWT token to all requests with caching
 api.interceptors.request.use(
   async (config) => {
     try {
-      // Get current session from Supabase
+      const now = Date.now();
+
+      // Use cached token if valid (5-min buffer before expiry)
+      if (cachedToken && tokenExpiry > now + 5 * 60 * 1000) {
+        config.headers.Authorization = `Bearer ${cachedToken}`;
+        return config;
+      }
+
+      // Fetch fresh token
       const {
         data: { session },
       } = await supabase.auth.getSession();
 
-      // Add Bearer token to Authorization header
       if (session?.access_token) {
-        config.headers.Authorization = `Bearer ${session.access_token}`;
+        cachedToken = session.access_token;
+        tokenExpiry = now + 55 * 60 * 1000; // Tokens expire in 60min, cache for 55min
+        config.headers.Authorization = `Bearer ${cachedToken}`;
       }
 
       return config;
@@ -36,15 +49,18 @@ api.interceptors.request.use(
   }
 );
 
-// Response interceptor - Handle 401 errors
+// Response interceptor - Handle 401 errors and clear cache
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
     if (error.response) {
       console.error('API Error:', error.response.data);
 
-      // If 401 Unauthorized, logout user
+      // If 401 Unauthorized, clear token cache and logout user
       if (error.response.status === 401) {
+        cachedToken = null;
+        tokenExpiry = 0;
+
         try {
           await supabase.auth.signOut();
           window.location.href = '/login';
