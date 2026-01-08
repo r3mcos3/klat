@@ -54,7 +54,7 @@ export class NoteService {
       .select(
         `
         *,
-        tags:_NoteToTag(tag:tags(*))
+        tags:_NoteToTag(tag:tags(id, name, color))
       `
       )
       .eq('id', id)
@@ -79,7 +79,7 @@ export class NoteService {
       .select(
         `
         *,
-        tags:_NoteToTag(tag:tags(*))
+        tags:_NoteToTag(tag:tags(id, name, color))
       `
       )
       .eq('date', date)
@@ -105,7 +105,7 @@ export class NoteService {
       .select(
         `
         *,
-        tags:_NoteToTag(tag:tags(*))
+        tags:_NoteToTag(tag:tags(id, name, color))
       `
       )
       .gte('date', startDate)
@@ -222,7 +222,7 @@ export class NoteService {
       .select(
         `
         *,
-        tags:_NoteToTag(tag:tags(*))
+        tags:_NoteToTag(tag:tags(id, name, color))
       `
       )
       .eq('userId', userId)
