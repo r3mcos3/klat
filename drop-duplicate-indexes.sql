@@ -28,7 +28,7 @@ SELECT
 FROM pg_indexes i
 LEFT JOIN pg_stat_user_indexes s
     ON i.schemaname = s.schemaname
-    AND i.tablename = s.tablename
-    AND i.indexname = s.indexname
+    AND i.tablename = s.relname
+    AND i.indexname = s.indexrelname
 WHERE i.schemaname = 'public'
 ORDER BY i.tablename, i.indexname;
