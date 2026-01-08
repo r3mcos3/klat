@@ -30,15 +30,6 @@ export const useNotesByDate = (date: string) => {
   });
 };
 
-// Legacy hook for backward compatibility - returns first note or undefined
-export const useNoteByDate = (date: string) => {
-  const { data: notes, ...rest } = useNotesByDate(date);
-  return {
-    ...rest,
-    data: notes?.[0],
-  };
-};
-
 // Get notes by month
 export const useNotesByMonth = (yearMonth: string) => {
   return useQuery({

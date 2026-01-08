@@ -51,7 +51,7 @@ export class AuthService {
   }
 
   // Logout user
-  async logout(accessToken: string) {
+  async logout(_accessToken: string) {
     // Set the session for this specific logout request
     const { error } = await supabase.auth.signOut();
 

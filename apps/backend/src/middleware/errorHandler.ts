@@ -39,14 +39,6 @@ export const errorHandler = (
     });
   }
 
-  // Prisma errors
-  if (err.name === 'PrismaClientKnownRequestError') {
-    return res.status(400).json({
-      error: 'Database Error',
-      message: 'Er is een fout opgetreden bij het verwerken van de database query',
-    });
-  }
-
   // Default error
   return res.status(500).json({
     error: 'Internal Server Error',
