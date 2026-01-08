@@ -14,21 +14,11 @@ DROP INDEX IF EXISTS public.idx_notes_date;
 -- ✅ notes_in_progress_idx - For future "show in-progress notes" feature
 -- ✅ tags_name_key - Likely used for UNIQUE constraint
 
--- Verify remaining indexes
+-- Verify remaining indexes (simple version)
 SELECT
-    i.schemaname,
-    i.tablename,
-    i.indexname,
-    pg_size_pretty(pg_relation_size(i.indexname::regclass)) as index_size,
-    COALESCE(s.idx_scan, 0) as scans,
-    CASE
-        WHEN COALESCE(s.idx_scan, 0) = 0 THEN '⚠️ Unused (may be new or for future use)'
-        ELSE '✅ Active'
-    END as status
-FROM pg_indexes i
-LEFT JOIN pg_stat_user_indexes s
-    ON i.schemaname = s.schemaname
-    AND i.tablename = s.relname
-    AND i.indexname = s.indexrelname
-WHERE i.schemaname = 'public'
-ORDER BY i.tablename, i.indexname;
+    schemaname,
+    tablename,
+    indexname
+FROM pg_indexes
+WHERE schemaname = 'public'
+ORDER BY tablename, indexname;
