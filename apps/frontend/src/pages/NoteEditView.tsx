@@ -110,6 +110,20 @@ export function NoteEditView() {
     });
   };
 
+  const handleToggleInProgress = async () => {
+    if (!note) return;
+
+    const newInProgress = !inProgress;
+    setInProgress(newInProgress);
+
+    await updateNote.mutateAsync({
+      id: note.id,
+      data: {
+        inProgress: newInProgress,
+      },
+    });
+  };
+
   // Extract hashtags from content (preserves original capitalization)
   const extractHashtags = (content: string): string[] => {
     const hashtagRegex = /#(\w+)/g;
@@ -520,7 +534,7 @@ export function NoteEditView() {
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white">In Progress</h3>
               </div>
               <button
-                onClick={() => setInProgress(!inProgress)}
+                onClick={handleToggleInProgress}
                 className={`
                   px-4 py-2 rounded-lg font-medium transition-colors
                   ${inProgress
