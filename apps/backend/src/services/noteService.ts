@@ -155,6 +155,10 @@ export class NoteService {
 
       if (completedAt !== undefined) {
         updateData.completedAt = completedAt || null;
+        // When marking note as completed, automatically disable "In Progress" status
+        if (completedAt) {
+          updateData.inProgress = false;
+        }
       }
 
       if (inProgress !== undefined) {

@@ -94,11 +94,19 @@ export function NoteEditView() {
     const newCompletedAt = completedAt ? null : new Date().toISOString();
     setCompletedAt(newCompletedAt || '');
 
+    // When marking as done, also disable "In Progress" status
+    const updateData: { completedAt: string | null; inProgress?: boolean } = {
+      completedAt: newCompletedAt,
+    };
+
+    if (newCompletedAt) {
+      setInProgress(false);
+      updateData.inProgress = false;
+    }
+
     await updateNote.mutateAsync({
       id: note.id,
-      data: {
-        completedAt: newCompletedAt,
-      },
+      data: updateData,
     });
   };
 
