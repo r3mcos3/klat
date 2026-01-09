@@ -74,17 +74,3 @@ export const formatFileSize = (bytes: number): string => {
 
   return `${parseFloat((bytes / Math.pow(k, i)).toFixed(2))} ${sizes[i]}`;
 };
-
-/**
- * Extract filename from Supabase storage URL
- */
-export const getFilenameFromUrl = (url: string): string => {
-  try {
-    const urlObj = new URL(url);
-    const pathname = urlObj.pathname;
-    const parts = pathname.split('/');
-    return parts[parts.length - 1] || 'image';
-  } catch {
-    return 'image';
-  }
-};

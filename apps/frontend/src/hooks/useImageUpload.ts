@@ -14,15 +14,3 @@ export const useImageUpload = (noteId: string) => {
     },
   });
 };
-
-export const useImageDelete = () => {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: (imagePath: string) => imageApi.deleteImage(imagePath),
-    onSuccess: () => {
-      // Invalidate all note queries
-      queryClient.invalidateQueries({ queryKey: noteKeys.all });
-    },
-  });
-};

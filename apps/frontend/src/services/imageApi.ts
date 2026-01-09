@@ -22,11 +22,4 @@ export const imageApi = {
 
     return response.data.data.urls;
   },
-
-  /**
-   * Delete a specific image
-   */
-  deleteImage: async (imagePath: string): Promise<void> => {
-    await api.delete(`/images/${encodeURIComponent(imagePath)}`);
-  },
 };
