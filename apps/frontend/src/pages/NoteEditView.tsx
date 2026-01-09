@@ -124,6 +124,20 @@ export function NoteEditView() {
     });
   };
 
+  const handleImportanceChange = async (level: 'LOW' | 'MEDIUM' | 'HIGH') => {
+    if (!note) return;
+
+    const newImportance = importance === level ? null : level;
+    setImportance(newImportance);
+
+    await updateNote.mutateAsync({
+      id: note.id,
+      data: {
+        importance: newImportance,
+      },
+    });
+  };
+
   // Extract hashtags from content (preserves original capitalization)
   const extractHashtags = (content: string): string[] => {
     const hashtagRegex = /#(\w+)/g;
@@ -476,7 +490,7 @@ export function NoteEditView() {
             {(['LOW', 'MEDIUM', 'HIGH'] as const).map((level) => (
               <button
                 key={level}
-                onClick={() => setImportance(importance === level ? null : level)}
+                onClick={() => handleImportanceChange(level)}
                 className={`
                   px-4 py-2 rounded-lg text-sm font-medium border transition-colors flex-1
                   ${importance === level

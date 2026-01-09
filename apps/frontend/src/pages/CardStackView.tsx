@@ -157,12 +157,14 @@ export function CardStackView() {
     }
   };
 
-  const handleImportanceChange = async (e: React.MouseEvent, note: Note, level: 'LOW' | 'MEDIUM' | 'HIGH' | undefined) => {
+  const handleImportanceChange = async (e: React.MouseEvent, note: Note, level: 'LOW' | 'MEDIUM' | 'HIGH') => {
     e.stopPropagation();
+    // Toggle: if clicking the same level, clear it (set to null)
+    const newImportance = note.importance === level ? null : level;
     await updateNote.mutateAsync({
       id: note.id,
       data: {
-        importance: level,
+        importance: newImportance,
       },
     });
   };
