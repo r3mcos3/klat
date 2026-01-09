@@ -1,4 +1,4 @@
-import { useState, useRef, DragEvent, ChangeEvent } from 'react';
+import { useState, useRef, DragEvent, ChangeEvent, forwardRef, useImperativeHandle } from 'react';
 import { useImageUpload } from '@/hooks/useImageUpload';
 import { validateImageFile, createImagePreview, formatFileSize } from '@/utils/imageHelpers';
 
@@ -13,13 +13,44 @@ interface PreviewImage {
   preview: string;
 }
 
-export function ImageUpload({ noteId, onImagesUploaded, disabled }: ImageUploadProps) {
+export interface ImageUploadRef {
+  uploadPendingImages: (noteId?: string) => Promise<string[]>;
+  hasPendingImages: () => boolean;
+}
+
+export const ImageUpload = forwardRef<ImageUploadRef, ImageUploadProps>(
+  ({ noteId, onImagesUploaded, disabled }, ref) => {
   const [previews, setPreviews] = useState<PreviewImage[]>([]);
   const [isDragging, setIsDragging] = useState(false);
   const [errors, setErrors] = useState<string[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const uploadMutation = useImageUpload(noteId || '');
+
+  // Expose methods to parent component
+  useImperativeHandle(ref, () => ({
+    uploadPendingImages: async (overrideNoteId?: string) => {
+      const targetNoteId = overrideNoteId || noteId;
+      if (!targetNoteId || previews.length === 0) return [];
+
+      try {
+        const files = previews.map((p) => p.file);
+        // Use the imageApi directly with the target noteId
+        const { imageApi } = await import('@/services/imageApi');
+        const urls = await imageApi.uploadImages(targetNoteId, files);
+
+        // Clear previews and errors after successful upload
+        setPreviews([]);
+        setErrors([]);
+
+        return urls;
+      } catch (error) {
+        setErrors([`Upload failed: ${error instanceof Error ? error.message : 'Unknown error'}`]);
+        throw error;
+      }
+    },
+    hasPendingImages: () => previews.length > 0,
+  }));
 
   const handleFiles = async (files: FileList | null) => {
     if (!files || files.length === 0) return;
@@ -93,7 +124,7 @@ export function ImageUpload({ noteId, onImagesUploaded, disabled }: ImageUploadP
     }
   };
 
-  const isDisabled = disabled || !noteId || uploadMutation.isPending;
+  const isDisabled = disabled || uploadMutation.isPending;
 
   return (
     <div className="space-y-4">
@@ -228,4 +259,6 @@ export function ImageUpload({ noteId, onImagesUploaded, disabled }: ImageUploadP
       )}
     </div>
   );
-}
+});
+
+ImageUpload.displayName = 'ImageUpload';

@@ -1,7 +1,8 @@
-import { useState, useEffect, useCallback } from 'react';
-import MDEditor from '@uiw/react-md-editor';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useAutoSave, SaveStatus } from '@/hooks/useAutoSave';
-import { ImageUpload } from './ImageUpload';
+import { useUpdateNote } from '@/hooks/useNotes';
+import { extractImageUrlsFromMarkdown } from '@/utils/imageHelpers';
+import { ImageUpload, ImageUploadRef } from './ImageUpload';
 import type { Note } from '@klat/types';
 
 interface MarkdownEditorProps {
@@ -67,49 +68,49 @@ function SaveStatusIndicator({ status }: { status: SaveStatus }) {
 }
 
 export function MarkdownEditor({ note, date, onSave, onCreate, onSaveComplete }: MarkdownEditorProps) {
-  const [content, setContent] = useState(note?.content || '');
+  const [textContent, setTextContent] = useState('');
+  const [imageUrls, setImageUrls] = useState<string[]>([]);
   const [tagIds, setTagIds] = useState<string[]>(note?.tags?.map((t: any) => t.id) || []);
   const [isCreating, setIsCreating] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const imageUploadRef = useRef<ImageUploadRef>(null);
+  const updateNote = useUpdateNote();
+
+  // Extract text and images from note content
+  useEffect(() => {
+    if (note?.content) {
+      const images = extractImageUrlsFromMarkdown(note.content);
+      const textOnly = note.content.replace(/!\[.*?\]\(.*?\)/g, '').trim();
+      setTextContent(textOnly);
+      setImageUrls(images);
+    }
+  }, [note?.content]);
 
   // Handle image URLs insertion
   const insertImages = useCallback((urls: string[]) => {
-    const imageMarkdown = urls.map((url) => `![](${url})`).join('\n');
-    setContent((prev) => prev + '\n' + imageMarkdown);
+    setImageUrls((prev) => [...prev, ...urls]);
   }, []);
 
-  // Handle clipboard paste for images
-  useEffect(() => {
-    const handlePaste = async (e: ClipboardEvent) => {
-      const items = Array.from(e.clipboardData?.items || []);
-      const imageItems = items.filter((item) => item.type.startsWith('image/'));
-
-      if (imageItems.length > 0 && note?.id) {
-        e.preventDefault();
-        const files = imageItems
-          .map((item) => item.getAsFile())
-          .filter((file): file is File => file !== null);
-
-        if (files.length > 0) {
-          // Images will be handled by ImageUpload component
-          // User needs to use the upload component for now
-          console.log('Paste detected. Please use the image upload component below.');
-        }
-      }
-    };
-
-    document.addEventListener('paste', handlePaste);
-    return () => document.removeEventListener('paste', handlePaste);
-  }, [note?.id]);
-
-  // Update content when note changes
+  // Update state when note changes
   useEffect(() => {
     if (note) {
-      setContent(note.content);
+      const images = extractImageUrlsFromMarkdown(note.content);
+      const textOnly = note.content.replace(/!\[.*?\]\(.*?\)/g, '').trim();
+      setTextContent(textOnly);
+      setImageUrls(images);
       setTagIds(note.tags?.map((t: any) => t.id) || []);
       setIsCreating(false); // Reset creating flag when note is loaded
     }
   }, [note?.id]);
+
+  // Helper to combine text and images into markdown
+  const combineContent = useCallback(() => {
+    const imageMarkdown = imageUrls.map((url) => `![](${url})`).join('\n');
+    if (imageMarkdown) {
+      return textContent + '\n' + imageMarkdown;
+    }
+    return textContent;
+  }, [textContent, imageUrls]);
 
   // Save function
   const handleManualSave = async () => {
@@ -118,13 +119,58 @@ export function MarkdownEditor({ note, date, onSave, onCreate, onSaveComplete }:
     setIsSaving(true);
     try {
       let createdNoteId: string | undefined;
+      let currentNoteId = note?.id;
+      let cleanedText = textContent;
 
-      if (note) {
-        await onSave({ content, tagIds });
-      } else if (content.trim().length > 0 && !isCreating) {
+      // If it's a new note, create it first (without images)
+      if (!note && textContent.trim().length > 0 && !isCreating) {
         setIsCreating(true);
+        const content = textContent; // Just text for now
         createdNoteId = await onCreate({ date, content, tagIds });
+        currentNoteId = createdNoteId;
+
+        // After onCreate, hashtags are processed and removed
+        // Update textContent to reflect this
+        cleanedText = content.replace(/#(\w+)/g, '').trim();
+        setTextContent(cleanedText);
       }
+
+      // Now upload any pending images (for both new and existing notes)
+      let allImageUrls = [...imageUrls];
+      if (imageUploadRef.current?.hasPendingImages() && currentNoteId) {
+        // Temporarily set the noteId for upload
+        const newUrls = await imageUploadRef.current.uploadPendingImages(currentNoteId);
+        allImageUrls = [...imageUrls, ...newUrls];
+        // Update state for UI
+        setImageUrls(allImageUrls);
+      }
+
+      // Use the cleaned textContent (hashtags already removed for new notes)
+      const currentText = createdNoteId ? cleanedText : textContent;
+
+      // If we have images, update the note with the complete content (text + images)
+      if (allImageUrls.length > 0 && currentNoteId) {
+        const imageMarkdown = allImageUrls.map((url) => `![](${url})`).join('\n');
+        const content = imageMarkdown ? currentText + '\n' + imageMarkdown : currentText;
+
+        if (note) {
+          // Update existing note
+          await onSave({ content, tagIds });
+        } else {
+          // Update the newly created note with images
+          // Hashtags already processed during onCreate, just add images
+          await updateNote.mutateAsync({
+            id: currentNoteId,
+            data: { content, tagIds }
+          });
+        }
+      } else if (note && !imageUploadRef.current?.hasPendingImages()) {
+        // Just update existing note without new images
+        const imageMarkdown = allImageUrls.map((url) => `![](${url})`).join('\n');
+        const content = imageMarkdown ? textContent + '\n' + imageMarkdown : textContent;
+        await onSave({ content, tagIds });
+      }
+
       // Call completion callback after successful save
       if (onSaveComplete) {
         onSaveComplete(createdNoteId);
@@ -139,16 +185,17 @@ export function MarkdownEditor({ note, date, onSave, onCreate, onSaveComplete }:
 
   // Auto-save logic
   const { status } = useAutoSave({
-    value: { content, tagIds },
-    onSave: async (value) => {
+    value: { textContent, imageUrls, tagIds },
+    onSave: async () => {
+      const content = combineContent();
       if (note) {
         // Update existing note
-        await onSave(value);
-      } else if (value.content.trim().length > 0 && !isCreating) {
+        await onSave({ content, tagIds });
+      } else if (textContent.trim().length > 0 && !isCreating) {
         // Create new note (only if there's content and not already creating)
         try {
           setIsCreating(true);
-          await onCreate({ date, ...value });
+          await onCreate({ date, content, tagIds });
           // Don't call onSaveComplete here - we don't want to navigate away during auto-save
         } catch (error) {
           setIsCreating(false);
@@ -176,22 +223,54 @@ export function MarkdownEditor({ note, date, onSave, onCreate, onSaveComplete }:
         </div>
       </div>
 
-      <div data-color-mode="auto">
-        <MDEditor
-          value={content}
-          onChange={(val) => setContent(val || '')}
-          height={500}
-          preview="edit"
-          hideToolbar={false}
-          enableScroll={true}
-          textareaProps={{
-            placeholder: 'Start typing... (Markdown supported)',
-          }}
-        />
-      </div>
+      <textarea
+        value={textContent}
+        onChange={(e) => setTextContent(e.target.value)}
+        placeholder="Start typing your note..."
+        className="w-full h-96 p-4 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-500 focus:border-transparent resize-y"
+      />
+
+      {/* Display existing images */}
+      {imageUrls.length > 0 && (
+        <div className="mt-6">
+          <div className="flex items-center justify-between mb-3">
+            <h4 className="text-sm font-semibold text-gray-700 dark:text-gray-300">
+              Attached Images ({imageUrls.length})
+            </h4>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {imageUrls.map((url, index) => (
+              <div
+                key={index}
+                className="relative group border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden"
+              >
+                <img
+                  src={url}
+                  alt={`Image ${index + 1}`}
+                  className="w-full h-32 object-cover"
+                />
+                <button
+                  onClick={() => setImageUrls((prev) => prev.filter((_, i) => i !== index))}
+                  className="absolute top-2 right-2 p-1.5 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600"
+                  title="Remove image"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M6 18L18 6M6 6l12 12"
+                    />
+                  </svg>
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       <div className="mt-2 text-xs text-gray-500 dark:text-gray-400">
-        💡 Tip: Use Markdown for formatting. Auto-saves every 30 seconds, or click 'Save' to save immediately.
+        💡 Tip: Auto-saves every 30 seconds, or click 'Save' to save immediately.
       </div>
 
       {/* Image Upload Section */}
@@ -200,15 +279,10 @@ export function MarkdownEditor({ note, date, onSave, onCreate, onSaveComplete }:
           Upload Images
         </h4>
         <ImageUpload
+          ref={imageUploadRef}
           noteId={note?.id}
           onImagesUploaded={insertImages}
-          disabled={!note?.id}
         />
-        {!note?.id && (
-          <p className="mt-2 text-sm text-amber-600 dark:text-amber-400">
-            ℹ️ Save the note first before uploading images
-          </p>
-        )}
       </div>
     </div>
   );

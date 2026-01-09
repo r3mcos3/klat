@@ -1,6 +1,7 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useAllNotes, useUpdateNote, useDeleteNote } from '@/hooks/useNotes';
 import { formatDateNL } from '@/utils/dateHelpers';
+import { extractImageUrlsFromMarkdown } from '@/utils/imageHelpers';
 import { ConfirmDialog } from '@/components/Common/ConfirmDialog';
 import { LiveDateTime } from '@/components/Common/LiveDateTime';
 import { ThemeToggle } from '@/components/Common/ThemeToggle';
@@ -105,6 +106,7 @@ export function CardStackView() {
   const getPreviewText = (content: string, maxLength: number = 150): string => {
     // Remove markdown formatting
     const stripped = content
+      .replace(/!\[.*?\]\(.*?\)/g, '') // Remove images
       .replace(/#{1,6}\s/g, '') // Remove headers
       .replace(/\*\*(.+?)\*\*/g, '$1') // Remove bold
       .replace(/\*(.+?)\*/g, '$1') // Remove italic
@@ -417,6 +419,43 @@ export function CardStackView() {
                           {getPreviewText(note.content)}
                         </p>
                       )}
+
+                      {/* Image Preview */}
+                      {(() => {
+                        const imageUrls = extractImageUrlsFromMarkdown(note.content);
+                        if (imageUrls.length > 0) {
+                          const displayImages = imageUrls.slice(0, 3);
+                          const remainingCount = imageUrls.length - 3;
+
+                          return (
+                            <div className="mb-4">
+                              <div className="grid grid-cols-3 gap-2">
+                                {displayImages.map((url, index) => (
+                                  <div
+                                    key={index}
+                                    className="relative rounded-lg overflow-hidden border border-gray-200 dark:border-gray-700"
+                                  >
+                                    <img
+                                      src={url}
+                                      alt={`Preview ${index + 1}`}
+                                      className="w-full h-24 object-cover"
+                                      loading="lazy"
+                                    />
+                                    {index === 2 && remainingCount > 0 && (
+                                      <div className="absolute inset-0 bg-black bg-opacity-60 flex items-center justify-center">
+                                        <span className="text-white font-semibold text-sm">
+                                          +{remainingCount}
+                                        </span>
+                                      </div>
+                                    )}
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          );
+                        }
+                        return null;
+                      })()}
 
                       {/* Info Bar (Deadline & Importance) */}
                       <div className="flex flex-wrap items-center gap-3 mb-4">
