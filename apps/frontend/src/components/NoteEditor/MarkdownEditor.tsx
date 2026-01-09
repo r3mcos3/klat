@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { useAutoSave, SaveStatus } from '@/hooks/useAutoSave';
 import { useUpdateNote } from '@/hooks/useNotes';
 import { extractImageUrlsFromMarkdown } from '@/utils/imageHelpers';
+import { handleImageDragStart } from '@/utils/dragHelpers';
 import { ImageUpload, ImageUploadRef } from './ImageUpload';
 import type { Note } from '@klat/types';
 
@@ -247,7 +248,9 @@ export function MarkdownEditor({ note, date, onSave, onCreate, onSaveComplete }:
                 <img
                   src={url}
                   alt={`Image ${index + 1}`}
-                  className="w-full h-32 object-cover"
+                  className="w-full h-32 object-cover cursor-grab active:cursor-grabbing"
+                  draggable="true"
+                  onDragStart={(e) => handleImageDragStart(e, url)}
                 />
                 <button
                   onClick={() => setImageUrls((prev) => prev.filter((_, i) => i !== index))}

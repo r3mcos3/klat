@@ -2,6 +2,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAllNotes, useUpdateNote, useDeleteNote } from '@/hooks/useNotes';
 import { formatDateNL } from '@/utils/dateHelpers';
 import { extractImageUrlsFromMarkdown } from '@/utils/imageHelpers';
+import { handleImageDragStart } from '@/utils/dragHelpers';
 import { ConfirmDialog } from '@/components/Common/ConfirmDialog';
 import { LiveDateTime } from '@/components/Common/LiveDateTime';
 import { ThemeToggle } from '@/components/Common/ThemeToggle';
@@ -438,11 +439,13 @@ export function CardStackView() {
                                     <img
                                       src={url}
                                       alt={`Preview ${index + 1}`}
-                                      className="w-full h-24 object-cover"
+                                      className="w-full h-24 object-cover cursor-grab active:cursor-grabbing"
                                       loading="lazy"
+                                      draggable="true"
+                                      onDragStart={(e) => handleImageDragStart(e, url)}
                                     />
                                     {index === 2 && remainingCount > 0 && (
-                                      <div className="absolute inset-0 bg-black bg-opacity-60 flex items-center justify-center">
+                                      <div className="absolute inset-0 bg-black bg-opacity-60 flex items-center justify-center pointer-events-none">
                                         <span className="text-white font-semibold text-sm">
                                           +{remainingCount}
                                         </span>
