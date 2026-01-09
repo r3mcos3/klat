@@ -225,14 +225,19 @@ export function NoteEditView() {
       const hashtagIds = await processHashtags(data.content);
       const cleanedContent = removeHashtags(data.content);
       const allTagIds = [...new Set([...selectedTagIds, ...hashtagIds])];
-      const deadlineISO = deadline ? deadline.toISOString() : undefined;
+
+      // Normalize datetime formats: convert +00:00 to Z for Zod datetime validation
+      const deadlineISO = deadline ? deadline.toISOString().replace('+00:00', 'Z') : undefined;
+      const normalizedCompletedAt = completedAt
+        ? completedAt.replace('+00:00', 'Z')
+        : undefined;
 
       await updateNote.mutateAsync({
         id: note.id,
         data: {
           content: cleanedContent,
           deadline: deadlineISO,
-          completedAt: completedAt || undefined,
+          completedAt: normalizedCompletedAt,
           inProgress: inProgress,
           importance: importance,
           tagIds: allTagIds,
@@ -247,13 +252,18 @@ export function NoteEditView() {
     const hashtagIds = await processHashtags(data.content);
     const cleanedContent = removeHashtags(data.content);
     const allTagIds = [...new Set([...selectedTagIds, ...hashtagIds])];
-    const deadlineISO = deadline ? deadline.toISOString() : undefined;
+
+    // Normalize datetime formats: convert +00:00 to Z for Zod datetime validation
+    const deadlineISO = deadline ? deadline.toISOString().replace('+00:00', 'Z') : undefined;
+    const normalizedCompletedAt = completedAt
+      ? completedAt.replace('+00:00', 'Z')
+      : undefined;
 
     const newNote = await createNote.mutateAsync({
       date: noteDate.toISOString().split('T')[0], // Format as YYYY-MM-DD
       content: cleanedContent,
       deadline: deadlineISO,
-      completedAt: completedAt || undefined,
+      completedAt: normalizedCompletedAt,
       inProgress: inProgress,
       importance: importance,
       tagIds: allTagIds,
