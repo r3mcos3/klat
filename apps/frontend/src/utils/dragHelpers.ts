@@ -15,18 +15,10 @@ export const handleImageDragStart = async (
     // Determine filename from URL if not provided
     const finalFilename = filename || getFilenameFromUrl(imageUrl);
 
-    // Create a File object from the blob
-    const file = new File([blob], finalFilename, { type: blob.type });
-
-    // Set drag data with the file
+    // Set drag data with the DownloadURL format
+    // This allows the browser to download the file when dropped
     e.dataTransfer.effectAllowed = 'copy';
     e.dataTransfer.setData('DownloadURL', `${blob.type}:${finalFilename}:${imageUrl}`);
-
-    // For browsers that support it, add the file directly
-    if (e.dataTransfer.items) {
-      // Note: This is limited by browser security - some browsers don't allow this
-      // But we set the DownloadURL as fallback
-    }
   } catch (error) {
     console.error('Failed to prepare image for dragging:', error);
     // Fallback: just set the URL
