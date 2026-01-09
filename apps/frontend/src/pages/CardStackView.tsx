@@ -8,7 +8,7 @@ import { ConfirmDialog } from '@/components/Common/ConfirmDialog';
 import { LiveDateTime } from '@/components/Common/LiveDateTime';
 import { ThemeToggle } from '@/components/Common/ThemeToggle';
 import { useAuthStore } from '@/store/authStore';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import type { Note } from '@klat/types';
 
 export function CardStackView() {
@@ -21,11 +21,13 @@ export function CardStackView() {
 
   const [noteToDelete, setNoteToDelete] = useState<Note | null>(null);
 
+  // Tab state
+  const [activeTab, setActiveTab] = useState<'active' | 'completed'>('active');
+
   // Filter state
   const [searchQuery, setSearchQuery] = useState('');
   const [priorityFilter, setPriorityFilter] = useState<'ALL' | 'HIGH' | 'MEDIUM' | 'LOW' | 'NONE'>('ALL');
   const [selectedTagIds, setSelectedTagIds] = useState<string[]>([]);
-  const [showCompleted, setShowCompleted] = useState(true);
 
   const handleLogout = async () => {
     await logout();
@@ -46,39 +48,43 @@ export function CardStackView() {
     }
   };
 
-  // Filter and sort notes
-  const filteredAndSortedNotes = [...notes]
-    // Apply filters
+  // First apply search/priority/tag filters to all notes
+  const baseFilteredNotes = [...notes].filter((note) => {
+    // Filter by search query (search in content)
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase();
+      const contentMatch = note.content.toLowerCase().includes(query);
+      if (!contentMatch) return false;
+    }
+
+    // Filter by priority
+    if (priorityFilter !== 'ALL') {
+      if (priorityFilter === 'NONE') {
+        if (note.importance) return false;
+      } else {
+        if (note.importance !== priorityFilter) return false;
+      }
+    }
+
+    // Filter by tags
+    if (selectedTagIds.length > 0) {
+      const noteTagIds = note.tags?.map((t: any) => t.id) || [];
+      const hasSelectedTag = selectedTagIds.some(tagId => noteTagIds.includes(tagId));
+      if (!hasSelectedTag) return false;
+    }
+
+    return true;
+  });
+
+  // Then filter by active tab and sort
+  const filteredAndSortedNotes = baseFilteredNotes
     .filter((note) => {
-      // Filter by search query (search in content)
-      if (searchQuery.trim()) {
-        const query = searchQuery.toLowerCase();
-        const contentMatch = note.content.toLowerCase().includes(query);
-        if (!contentMatch) return false;
+      // Filter by active tab
+      if (activeTab === 'active') {
+        return !note.completedAt;
+      } else {
+        return !!note.completedAt;
       }
-
-      // Filter by priority
-      if (priorityFilter !== 'ALL') {
-        if (priorityFilter === 'NONE') {
-          if (note.importance) return false;
-        } else {
-          if (note.importance !== priorityFilter) return false;
-        }
-      }
-
-      // Filter by tags
-      if (selectedTagIds.length > 0) {
-        const noteTagIds = note.tags?.map((t: any) => t.id) || [];
-        const hasSelectedTag = selectedTagIds.some(tagId => noteTagIds.includes(tagId));
-        if (!hasSelectedTag) return false;
-      }
-
-      // Filter by completion status
-      if (!showCompleted && note.completedAt) {
-        return false;
-      }
-
-      return true;
     })
     // Sort notes: by importance (HIGH -> MEDIUM -> LOW -> none), then completed at bottom
     .sort((a, b) => {
@@ -110,6 +116,22 @@ export function CardStackView() {
       // Then sort by date (newest first) within each group
       return parseNoteDate(b.date) - parseNoteDate(a.date);
     });
+
+  // Auto-switch to tab with results when filtering
+  useEffect(() => {
+    // Only auto-switch if filters are active
+    if (searchQuery || priorityFilter !== 'ALL' || selectedTagIds.length > 0) {
+      const activeCount = baseFilteredNotes.filter(n => !n.completedAt).length;
+      const completedCount = baseFilteredNotes.filter(n => n.completedAt).length;
+
+      // Switch to tab with results if current tab is empty
+      if (activeTab === 'active' && activeCount === 0 && completedCount > 0) {
+        setActiveTab('completed');
+      } else if (activeTab === 'completed' && completedCount === 0 && activeCount > 0) {
+        setActiveTab('active');
+      }
+    }
+  }, [searchQuery, priorityFilter, selectedTagIds, baseFilteredNotes, activeTab]);
 
   const handleToggleDone = async (e: React.MouseEvent, note: Note) => {
     e.stopPropagation();
@@ -245,6 +267,42 @@ export function CardStackView() {
           </div>
         </div>
 
+        {/* Tabs */}
+        <div className="flex gap-2 mb-4">
+          <button
+            onClick={() => setActiveTab('active')}
+            className={`
+              flex-1 px-4 py-3 rounded-lg font-medium transition-all
+              ${activeTab === 'active'
+                ? 'bg-primary-600 text-white shadow-md'
+                : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-700'}
+            `}
+          >
+            Active Notes
+            {baseFilteredNotes.filter(n => !n.completedAt).length > 0 && (
+              <span className={`ml-2 px-2 py-0.5 rounded-full text-xs font-bold ${activeTab === 'active' ? 'bg-primary-500' : 'bg-gray-200 dark:bg-gray-700'}`}>
+                {baseFilteredNotes.filter(n => !n.completedAt).length}
+              </span>
+            )}
+          </button>
+          <button
+            onClick={() => setActiveTab('completed')}
+            className={`
+              flex-1 px-4 py-3 rounded-lg font-medium transition-all
+              ${activeTab === 'completed'
+                ? 'bg-primary-600 text-white shadow-md'
+                : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-700'}
+            `}
+          >
+            Completed
+            {baseFilteredNotes.filter(n => n.completedAt).length > 0 && (
+              <span className={`ml-2 px-2 py-0.5 rounded-full text-xs font-bold ${activeTab === 'completed' ? 'bg-primary-500' : 'bg-gray-200 dark:bg-gray-700'}`}>
+                {baseFilteredNotes.filter(n => n.completedAt).length}
+              </span>
+            )}
+          </button>
+        </div>
+
         {/* Filter Bar */}
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4 mb-6">
           <div className="flex flex-col gap-3 md:flex-row md:items-center md:gap-3">
@@ -303,24 +361,12 @@ export function CardStackView() {
               )}
             </div>
 
-            {/* Show Completed Toggle */}
-            <label className="flex items-center gap-2 px-3 py-2 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 rounded-md transition-colors">
-              <input
-                type="checkbox"
-                checked={showCompleted}
-                onChange={(e) => setShowCompleted(e.target.checked)}
-                className="w-4 h-4 text-primary-600 border-gray-300 dark:border-gray-600 rounded focus:ring-primary-500"
-              />
-              <span className="text-sm text-gray-700 dark:text-gray-300 whitespace-nowrap">Show Completed</span>
-            </label>
-
             {/* Clear Filters */}
             <button
               onClick={() => {
                 setSearchQuery('');
                 setPriorityFilter('ALL');
                 setSelectedTagIds([]);
-                setShowCompleted(true);
               }}
               className="px-3 py-2 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md transition-colors flex items-center gap-1"
               title="Clear all filters"
