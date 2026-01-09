@@ -19,7 +19,7 @@ export function NoteEditView() {
   const [deadline, setDeadline] = useState<Date | null>(null);
   const [completedAt, setCompletedAt] = useState<string>('');
   const [inProgress, setInProgress] = useState<boolean>(false);
-  const [importance, setImportance] = useState<'LOW' | 'MEDIUM' | 'HIGH' | null | undefined>(undefined);
+  const [importance, setImportance] = useState<'LOW' | 'MEDIUM' | 'HIGH' | null>(null);
   const [noteDate, setNoteDate] = useState<Date | null>(null);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
@@ -50,7 +50,7 @@ export function NoteEditView() {
       setDeadline(null);
       setCompletedAt('');
       setInProgress(false);
-      setImportance(undefined);
+      setImportance(null);
     } else if (note) {
       // For existing notes, load from note data
       setNoteDate(parseNoteDate(note.date));
@@ -476,7 +476,7 @@ export function NoteEditView() {
             {(['LOW', 'MEDIUM', 'HIGH'] as const).map((level) => (
               <button
                 key={level}
-                onClick={() => setImportance(importance === level ? undefined : level)}
+                onClick={() => setImportance(importance === level ? null : level)}
                 className={`
                   px-4 py-2 rounded-lg text-sm font-medium border transition-colors flex-1
                   ${importance === level
