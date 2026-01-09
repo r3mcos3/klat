@@ -2,7 +2,6 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { useEffect } from 'react';
 import { CardStackView } from './pages/CardStackView';
 import { NoteEditView } from './pages/NoteEditView';
-import { SearchView } from './pages/SearchView';
 import { TagsView } from './pages/TagsView';
 import LoginView from './pages/LoginView';
 import { AuthProvider } from './components/Auth/AuthProvider';
@@ -49,14 +48,6 @@ function App() {
             element={
               <ProtectedRoute>
                 <NoteEditView />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/search"
-            element={
-              <ProtectedRoute>
-                <SearchView />
               </ProtectedRoute>
             }
           />

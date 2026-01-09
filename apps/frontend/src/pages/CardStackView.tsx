@@ -1,5 +1,6 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useAllNotes, useUpdateNote, useDeleteNote } from '@/hooks/useNotes';
+import { useAllTags } from '@/hooks/useTags';
 import { formatDateNL } from '@/utils/dateHelpers';
 import { extractImageUrlsFromMarkdown } from '@/utils/imageHelpers';
 import { handleImageDragStart } from '@/utils/dragHelpers';
@@ -12,12 +13,19 @@ import type { Note } from '@klat/types';
 
 export function CardStackView() {
   const { data: notes = [], isLoading, error } = useAllNotes();
+  const { data: allTags = [] } = useAllTags();
   const updateNote = useUpdateNote();
   const deleteNote = useDeleteNote();
   const navigate = useNavigate();
   const { logout } = useAuthStore();
 
   const [noteToDelete, setNoteToDelete] = useState<Note | null>(null);
+
+  // Filter state
+  const [searchQuery, setSearchQuery] = useState('');
+  const [priorityFilter, setPriorityFilter] = useState<'ALL' | 'HIGH' | 'MEDIUM' | 'LOW' | 'NONE'>('ALL');
+  const [selectedTagIds, setSelectedTagIds] = useState<string[]>([]);
+  const [showCompleted, setShowCompleted] = useState(true);
 
   const handleLogout = async () => {
     await logout();
@@ -38,36 +46,70 @@ export function CardStackView() {
     }
   };
 
-  // Sort notes: by importance (HIGH -> MEDIUM -> LOW -> none), then completed at bottom
-  const sortedNotes = [...notes].sort((a, b) => {
-    // First, sort by completion status (uncompleted first)
-    const aCompleted = !!a.completedAt;
-    const bCompleted = !!b.completedAt;
-
-    if (aCompleted !== bCompleted) {
-      return aCompleted ? 1 : -1; // Uncompleted comes before completed
-    }
-
-    // For uncompleted notes, sort by importance level
-    if (!aCompleted && !bCompleted) {
-      const importanceOrder: { [key: string]: number } = {
-        'HIGH': 1,
-        'MEDIUM': 2,
-        'LOW': 3,
-        '': 4, // No importance
-      };
-
-      const aImportance = importanceOrder[a.importance || ''];
-      const bImportance = importanceOrder[b.importance || ''];
-
-      if (aImportance !== bImportance) {
-        return aImportance - bImportance; // Lower number (higher priority) comes first
+  // Filter and sort notes
+  const filteredAndSortedNotes = [...notes]
+    // Apply filters
+    .filter((note) => {
+      // Filter by search query (search in content)
+      if (searchQuery.trim()) {
+        const query = searchQuery.toLowerCase();
+        const contentMatch = note.content.toLowerCase().includes(query);
+        if (!contentMatch) return false;
       }
-    }
 
-    // Then sort by date (newest first) within each group
-    return parseNoteDate(b.date) - parseNoteDate(a.date);
-  });
+      // Filter by priority
+      if (priorityFilter !== 'ALL') {
+        if (priorityFilter === 'NONE') {
+          if (note.importance) return false;
+        } else {
+          if (note.importance !== priorityFilter) return false;
+        }
+      }
+
+      // Filter by tags
+      if (selectedTagIds.length > 0) {
+        const noteTagIds = note.tags?.map((t: any) => t.id) || [];
+        const hasSelectedTag = selectedTagIds.some(tagId => noteTagIds.includes(tagId));
+        if (!hasSelectedTag) return false;
+      }
+
+      // Filter by completion status
+      if (!showCompleted && note.completedAt) {
+        return false;
+      }
+
+      return true;
+    })
+    // Sort notes: by importance (HIGH -> MEDIUM -> LOW -> none), then completed at bottom
+    .sort((a, b) => {
+      // First, sort by completion status (uncompleted first)
+      const aCompleted = !!a.completedAt;
+      const bCompleted = !!b.completedAt;
+
+      if (aCompleted !== bCompleted) {
+        return aCompleted ? 1 : -1; // Uncompleted comes before completed
+      }
+
+      // For uncompleted notes, sort by importance level
+      if (!aCompleted && !bCompleted) {
+        const importanceOrder: { [key: string]: number } = {
+          'HIGH': 1,
+          'MEDIUM': 2,
+          'LOW': 3,
+          '': 4, // No importance
+        };
+
+        const aImportance = importanceOrder[a.importance || ''];
+        const bImportance = importanceOrder[b.importance || ''];
+
+        if (aImportance !== bImportance) {
+          return aImportance - bImportance; // Lower number (higher priority) comes first
+        }
+      }
+
+      // Then sort by date (newest first) within each group
+      return parseNoteDate(b.date) - parseNoteDate(a.date);
+    });
 
   const handleToggleDone = async (e: React.MouseEvent, note: Note) => {
     e.stopPropagation();
@@ -187,20 +229,6 @@ export function CardStackView() {
               New note
             </Link>
             <Link
-              to="/search"
-              className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-600 flex items-center gap-2 shadow-sm"
-            >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                />
-              </svg>
-              Search
-            </Link>
-            <Link
               to="/tags"
               className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-600 flex items-center gap-2 shadow-sm"
             >
@@ -217,6 +245,94 @@ export function CardStackView() {
           </div>
         </div>
 
+        {/* Filter Bar */}
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4 mb-6">
+          <div className="flex flex-col gap-3 md:flex-row md:items-center md:gap-3">
+            {/* Search Input */}
+            <div className="flex-1">
+              <div className="relative">
+                <svg className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Search notes..."
+                  className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                />
+              </div>
+            </div>
+
+            {/* Priority Filter */}
+            <select
+              value={priorityFilter}
+              onChange={(e) => setPriorityFilter(e.target.value as typeof priorityFilter)}
+              className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+            >
+              <option value="ALL">All Priorities</option>
+              <option value="HIGH">🔴 High</option>
+              <option value="MEDIUM">🟡 Medium</option>
+              <option value="LOW">🔵 Low</option>
+              <option value="NONE">No Priority</option>
+            </select>
+
+            {/* Tag Filter */}
+            <div className="relative">
+              <select
+                multiple
+                value={selectedTagIds}
+                onChange={(e) => {
+                  const selected = Array.from(e.target.selectedOptions, option => option.value);
+                  setSelectedTagIds(selected);
+                }}
+                className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-500 focus:border-transparent min-w-[150px]"
+                size={1}
+              >
+                <option value="" disabled>Tags...</option>
+                {allTags.map((tag: any) => (
+                  <option key={tag.id} value={tag.id}>
+                    {tag.name}
+                  </option>
+                ))}
+              </select>
+              {selectedTagIds.length > 0 && (
+                <span className="absolute -top-2 -right-2 bg-primary-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                  {selectedTagIds.length}
+                </span>
+              )}
+            </div>
+
+            {/* Show Completed Toggle */}
+            <label className="flex items-center gap-2 px-3 py-2 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 rounded-md transition-colors">
+              <input
+                type="checkbox"
+                checked={showCompleted}
+                onChange={(e) => setShowCompleted(e.target.checked)}
+                className="w-4 h-4 text-primary-600 border-gray-300 dark:border-gray-600 rounded focus:ring-primary-500"
+              />
+              <span className="text-sm text-gray-700 dark:text-gray-300 whitespace-nowrap">Show Completed</span>
+            </label>
+
+            {/* Clear Filters */}
+            <button
+              onClick={() => {
+                setSearchQuery('');
+                setPriorityFilter('ALL');
+                setSelectedTagIds([]);
+                setShowCompleted(true);
+              }}
+              className="px-3 py-2 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md transition-colors flex items-center gap-1"
+              title="Clear all filters"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+              <span className="hidden md:inline">Clear</span>
+            </button>
+          </div>
+        </div>
+
         {/* Loading State */}
         {isLoading && (
           <div className="flex items-center justify-center py-20">
@@ -228,7 +344,7 @@ export function CardStackView() {
         )}
 
         {/* Empty State */}
-        {!isLoading && sortedNotes.length === 0 && (
+        {!isLoading && filteredAndSortedNotes.length === 0 && (
           <div className="text-center py-20">
             <p className="text-gray-500 dark:text-gray-400 text-lg mb-4">You don't have any notes yet</p>
             <Link
@@ -241,10 +357,10 @@ export function CardStackView() {
         )}
 
         {/* Card Stack */}
-        {!isLoading && sortedNotes.length > 0 && (
+        {!isLoading && filteredAndSortedNotes.length > 0 && (
           <div className="relative">
             <div className="flex flex-col space-y-6">
-              {sortedNotes.map((note, _index) => {
+              {filteredAndSortedNotes.map((note, _index) => {
                 // Safely parse date (handles both YYYY-MM-DD and full ISO timestamps)
                 const dateObj = (() => {
                   try {
