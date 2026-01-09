@@ -73,7 +73,7 @@ export function NoteEditView() {
         setCompletedAt('');
       }
       setInProgress(note.inProgress || false);
-      setImportance(note.importance);
+      setImportance(note.importance ?? null);
     }
   }, [note?.id, isNewNote]);
 
