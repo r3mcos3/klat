@@ -415,7 +415,7 @@ export function CardStackView() {
 
                       {/* Content Preview */}
                       {hasContent && (
-                        <p className="text-gray-700 dark:text-gray-300 mb-4 line-clamp-6 whitespace-pre-line">
+                        <p className="text-gray-700 dark:text-gray-300 mb-4 whitespace-pre-line overflow-hidden" style={{ maxHeight: '9rem', lineHeight: '1.5rem' }}>
                           {getPreviewText(note.content)}
                         </p>
                       )}
