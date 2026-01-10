@@ -125,17 +125,18 @@ export function NoteEditView() {
   };
 
   const handleImportanceChange = async (level: 'LOW' | 'MEDIUM' | 'HIGH') => {
-    if (!note) return;
-
     const newImportance = importance === level ? null : level;
     setImportance(newImportance);
 
-    await updateNote.mutateAsync({
-      id: note.id,
-      data: {
-        importance: newImportance,
-      },
-    });
+    // Only update via API for existing notes
+    if (!isNewNote && note) {
+      await updateNote.mutateAsync({
+        id: note.id,
+        data: {
+          importance: newImportance,
+        },
+      });
+    }
   };
 
   // Extract hashtags from content (preserves original capitalization)
