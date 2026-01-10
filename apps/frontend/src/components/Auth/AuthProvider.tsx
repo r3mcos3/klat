@@ -13,11 +13,9 @@ interface AuthProviderProps {
 export function AuthProvider({ children }: AuthProviderProps) {
   const { initialize, isInitialized } = useAuthStore();
 
-  // Auto-logout after 12 hours of session time
-  // Optional: Add inactivityTimeout if you want to logout on inactivity
-  // Example: useAutoLogout({ inactivityTimeout: 30 * 60 * 1000 }) // 30 minutes
+  // Auto-logout after 24 hours of inactivity
   useAutoLogout({
-    sessionTimeout: 12 * 60 * 60 * 1000, // 12 hours
+    inactivityTimeout: 24 * 60 * 60 * 1000, // 24 hours
     debug: false, // Set to true to see debug logs
   });
 

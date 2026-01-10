@@ -3,14 +3,15 @@ import { useAuthStore } from '@/store/authStore';
 
 interface AutoLogoutOptions {
   /**
-   * Maximum session duration in milliseconds (default: 12 hours)
+   * Maximum session duration in milliseconds (optional)
    * User will be logged out after this duration regardless of activity
+   * If not set, there will be no maximum session duration
    */
   sessionTimeout?: number;
   /**
    * Inactivity timeout in milliseconds (optional)
    * User will be logged out after this period of inactivity
-   * If not set, only sessionTimeout will be used
+   * If not set, there will be no inactivity-based logout
    */
   inactivityTimeout?: number;
   /**
@@ -19,11 +20,9 @@ interface AutoLogoutOptions {
   debug?: boolean;
 }
 
-const DEFAULT_SESSION_TIMEOUT = 12 * 60 * 60 * 1000; // 12 hours in milliseconds
-
 /**
  * Auto-logout hook that handles automatic user logout based on:
- * 1. Maximum session duration (default: 12 hours)
+ * 1. Optional maximum session duration
  * 2. Optional inactivity timeout
  *
  * The hook tracks user activity (mouse, keyboard, touch events) and
@@ -31,7 +30,7 @@ const DEFAULT_SESSION_TIMEOUT = 12 * 60 * 60 * 1000; // 12 hours in milliseconds
  */
 export function useAutoLogout(options: AutoLogoutOptions = {}) {
   const {
-    sessionTimeout = DEFAULT_SESSION_TIMEOUT,
+    sessionTimeout,
     inactivityTimeout,
     debug = false,
   } = options;
@@ -89,7 +88,9 @@ export function useAutoLogout(options: AutoLogoutOptions = {}) {
     }
 
     log('Setting up auto-logout', {
-      sessionTimeout: `${sessionTimeout / 1000 / 60} minutes`,
+      sessionTimeout: sessionTimeout
+        ? `${sessionTimeout / 1000 / 60} minutes`
+        : 'disabled',
       inactivityTimeout: inactivityTimeout
         ? `${inactivityTimeout / 1000 / 60} minutes`
         : 'disabled',
@@ -99,11 +100,13 @@ export function useAutoLogout(options: AutoLogoutOptions = {}) {
     sessionStartRef.current = Date.now();
     lastActivityRef.current = Date.now();
 
-    // Set up session timeout (maximum duration)
-    sessionTimerRef.current = setTimeout(() => {
-      log('Session timeout reached');
-      performLogout();
-    }, sessionTimeout);
+    // Set up session timeout (maximum duration) if enabled
+    if (sessionTimeout) {
+      sessionTimerRef.current = setTimeout(() => {
+        log('Session timeout reached');
+        performLogout();
+      }, sessionTimeout);
+    }
 
     // Set up inactivity timeout if enabled
     if (inactivityTimeout) {
@@ -134,15 +137,18 @@ export function useAutoLogout(options: AutoLogoutOptions = {}) {
           window.removeEventListener(event, handleUserActivity);
         });
       };
-    } else {
-      // Cleanup function for session timeout only
-      return () => {
-        log('Cleaning up session timer');
-        if (sessionTimerRef.current) {
-          clearTimeout(sessionTimerRef.current);
-        }
-      };
     }
+
+    // Cleanup function when no inactivity timeout
+    return () => {
+      log('Cleaning up auto-logout timers');
+      if (sessionTimerRef.current) {
+        clearTimeout(sessionTimerRef.current);
+      }
+      if (inactivityTimerRef.current) {
+        clearTimeout(inactivityTimerRef.current);
+      }
+    };
   }, [user, sessionTimeout, inactivityTimeout]);
 
   // Return session info for debugging/display purposes
