@@ -7,12 +7,24 @@
       "config": {
         "distDir": "apps/frontend/dist"
       }
+    },
+    {
+      "src": "apps/backend/api/index.ts",
+      "use": "@vercel/node"
     }
   ],
   "routes": [
     {
+      "src": "/api/(.*)",
+      "dest": "/apps/backend/api/index.ts"
+    },
+    {
+      "src": "/health",
+      "dest": "/apps/backend/api/index.ts"
+    },
+    {
       "src": "/(.*)",
-      "dest": "apps/frontend/$1"
+      "dest": "/apps/frontend/$1"
     }
   ]
 }

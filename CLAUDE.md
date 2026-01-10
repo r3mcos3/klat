@@ -288,3 +288,42 @@ All commits must:
 - **Never include** "Generated with Claude Code" footer or "Co-Authored-By: Claude" signatures
 
 Example: `✨ Add delete button for notes with confirmation dialog`
+
+## Deployment
+
+### Vercel Deployment (Single Project)
+
+The application is deployed as a **single Vercel project** with both frontend and backend:
+
+**Structure:**
+- Frontend: Served as static site from `apps/frontend/dist`
+- Backend: Runs as Vercel serverless function from `apps/backend/api/index.ts`
+- All API requests to `/api/*` are routed to the backend serverless function
+
+**Routing (configured in root `vercel.json`):**
+```
+yourdomain.com/          → Frontend (React)
+yourdomain.com/api/*     → Backend (Express as serverless function)
+yourdomain.com/health    → Backend health check
+```
+
+**Environment Variables (set in Vercel Dashboard):**
+
+Frontend:
+- `VITE_SUPABASE_URL` - Your Supabase project URL
+- `VITE_SUPABASE_ANON_KEY` - Supabase anonymous key
+
+Backend:
+- `SUPABASE_URL` - Your Supabase project URL
+- `SUPABASE_SERVICE_ROLE_KEY` - Supabase service role key (bypasses RLS)
+- `NODE_ENV` - Set to `production`
+
+**Benefits of Single Project Setup:**
+- ✅ No CORS issues (same domain)
+- ✅ Unified deployment and environment management
+- ✅ Cost-effective (single project)
+- ✅ Automatic HTTPS for both frontend and backend
+
+**Development vs Production:**
+- **Development:** Frontend calls `http://localhost:3001/api` (separate backend server)
+- **Production:** Frontend calls `/api` (relative path, same domain)
