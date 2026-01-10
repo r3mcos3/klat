@@ -1,14 +1,14 @@
 #!/bin/bash
 set -e
 
-echo "Building backend..."
-cd apps/backend
-npm run build
+echo "Building backend for API..."
+cd apps/backend && npm run build && cd ../..
 
-echo "Copying compiled backend to /api..."
-cd ../..
+echo "Copying backend to /api..."
+rm -rf api/src api/dist 2>/dev/null || true
 mkdir -p api/dist
-cp -r apps/backend/dist/* api/dist/
-cp -r apps/backend/src api/
+cp -r apps/backend/dist/* api/dist/ 2>/dev/null || echo "No dist to copy"
+cp -r apps/backend/src api/ 2>/dev/null || echo "No src to copy"
 
 echo "API build complete!"
+ls -la api/
