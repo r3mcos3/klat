@@ -2,8 +2,10 @@
 set -e
 
 echo "Building backend for API..."
-echo "Installing backend dependencies..."
-cd apps/backend && npm install && npm run build && cd ../..
+echo "Installing dependencies..."
+npm install --workspace=apps/backend
+echo "Building backend..."
+npm run build --workspace=apps/backend
 
 echo "Copying backend to /api..."
 rm -rf api/src api/dist 2>/dev/null || true
