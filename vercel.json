@@ -13,18 +13,23 @@
       "use": "@vercel/node"
     }
   ],
-  "routes": [
+  "rewrites": [
     {
-      "src": "/api/(.*)",
-      "dest": "/apps/backend/api/index.ts"
+      "source": "/api/:path*",
+      "destination": "/apps/backend/api/index.ts"
     },
     {
-      "src": "/health",
-      "dest": "/apps/backend/api/index.ts"
+      "source": "/health",
+      "destination": "/apps/backend/api/index.ts"
+    }
+  ],
+  "routes": [
+    {
+      "handle": "filesystem"
     },
     {
       "src": "/(.*)",
-      "dest": "/apps/frontend/$1"
+      "dest": "/apps/frontend/index.html"
     }
   ]
 }
