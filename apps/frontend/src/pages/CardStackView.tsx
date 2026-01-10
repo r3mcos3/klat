@@ -86,7 +86,7 @@ export function CardStackView() {
         return !!note.completedAt;
       }
     })
-    // Sort notes: by importance (HIGH -> MEDIUM -> LOW -> none), then completed at bottom
+    // Sort notes: by completion, in progress status, importance, then date
     .sort((a, b) => {
       // First, sort by completion status (uncompleted first)
       const aCompleted = !!a.completedAt;
@@ -96,8 +96,16 @@ export function CardStackView() {
         return aCompleted ? 1 : -1; // Uncompleted comes before completed
       }
 
-      // For uncompleted notes, sort by importance level
+      // For uncompleted notes, sort by in progress status first
       if (!aCompleted && !bCompleted) {
+        const aInProgress = !!a.inProgress;
+        const bInProgress = !!b.inProgress;
+
+        if (aInProgress !== bInProgress) {
+          return aInProgress ? -1 : 1; // In progress comes before not in progress
+        }
+
+        // Then sort by importance level
         const importanceOrder: { [key: string]: number } = {
           'HIGH': 1,
           'MEDIUM': 2,

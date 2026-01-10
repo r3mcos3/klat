@@ -1,14 +1,14 @@
 // Predefined color palette for tags
 export const TAG_COLORS = [
   '#EF4444', // Red
-  '#F59E0B', // Orange
+  '#F59E0B', // Amber
   '#10B981', // Green
   '#3B82F6', // Blue
   '#6366F1', // Indigo
   '#8B5CF6', // Purple
   '#EC4899', // Pink
   '#14B8A6', // Teal
-  '#F97316', // Orange
+  '#EAB308', // Yellow
   '#84CC16', // Lime
 ];
 
