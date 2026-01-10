@@ -21,15 +21,10 @@
     {
       "source": "/health",
       "destination": "/apps/backend/api/index.ts"
-    }
-  ],
-  "routes": [
-    {
-      "handle": "filesystem"
     },
     {
-      "src": "/(.*)",
-      "dest": "/apps/frontend/index.html"
+      "source": "/(.*)",
+      "destination": "/apps/frontend/index.html"
     }
   ]
 }
