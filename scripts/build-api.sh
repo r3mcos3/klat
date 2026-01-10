@@ -2,8 +2,8 @@
 set -e
 
 echo "Building backend for API..."
-echo "Installing dependencies..."
-npm install --workspace=apps/backend
+echo "Installing ALL dependencies (including dev)..."
+npm install
 echo "Building backend..."
 npm run build --workspace=apps/backend
 
