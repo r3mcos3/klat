@@ -1,7 +1,7 @@
 {
-  "buildCommand": "cd ../.. && npm install && npm run build --workspace=packages/types && npm run build --workspace=apps/frontend",
+  "buildCommand": "cd ../.. && npm run build --workspace=packages/types && npm run build --workspace=apps/frontend",
   "outputDirectory": "dist",
-  "installCommand": "cd ../.. && npm install",
+  "installCommand": "cd ../.. && npm install --include=dev",
   "framework": "vite",
   "rewrites": [
     {
