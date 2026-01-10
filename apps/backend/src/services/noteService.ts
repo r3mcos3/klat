@@ -36,7 +36,7 @@ export class NoteService {
 
     // Add tags if provided
     if (tagIds && tagIds.length > 0) {
-      const tagRelations = tagIds.map((tagId) => ({
+      const tagRelations = tagIds.map((tagId: string) => ({
         A: id,
         B: tagId,
       }));
@@ -184,7 +184,7 @@ export class NoteService {
 
       // Add new tags
       if (tagIds.length > 0) {
-        const tagRelations = tagIds.map((tagId) => ({
+        const tagRelations = tagIds.map((tagId: string) => ({
           A: id,
           B: tagId,
         }));
