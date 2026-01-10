@@ -9,25 +9,24 @@
       }
     },
     {
-      "src": "apps/backend/package.json",
-      "use": "@vercel/static-build",
+      "src": "apps/backend/api/index.ts",
+      "use": "@vercel/node",
       "config": {
-        "distDir": "dist"
+        "includeFiles": [
+          "apps/backend/src/**",
+          "apps/backend/node_modules/**"
+        ]
       }
-    },
-    {
-      "src": "api/index.js",
-      "use": "@vercel/node"
     }
   ],
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "/api/index.js"
+      "destination": "/apps/backend/api/index.ts"
     },
     {
       "source": "/health",
-      "destination": "/api/index.js"
+      "destination": "/apps/backend/api/index.ts"
     },
     {
       "source": "/(.*)",
