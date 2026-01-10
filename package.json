@@ -9,7 +9,7 @@
   ],
   "scripts": {
     "dev": "concurrently \"npm run backend:dev\" \"npm run frontend:dev\"",
-    "build": "npm run build --workspaces --if-present",
+    "build": "npm run build --workspaces --if-present && bash scripts/build-api.sh",
     "lint": "npm run lint --workspaces --if-present",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
     "backend:dev": "npm run dev --workspace=apps/backend",
