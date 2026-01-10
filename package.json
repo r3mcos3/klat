@@ -15,12 +15,14 @@
     "backend:dev": "npm run dev --workspace=apps/backend",
     "frontend:dev": "npm run dev --workspace=apps/frontend"
   },
+  "dependencies": {
+    "typescript": "^5.0.0"
+  },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^6.0.0",
     "@typescript-eslint/parser": "^6.0.0",
     "concurrently": "^8.2.2",
     "eslint": "^8.45.0",
-    "prettier": "^3.0.0",
-    "typescript": "^5.0.0"
+    "prettier": "^3.0.0"
   }
 }
