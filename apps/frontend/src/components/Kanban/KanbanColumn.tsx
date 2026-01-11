@@ -44,6 +44,7 @@ export function KanbanColumn({ column, onDelete }: KanbanColumnProps) {
 
   return (
     <div
+      ref={setNodeRef}
       className={`flex flex-col bg-secondary rounded-xl border-2 ${colors.border} ${isOver ? colors.glow : 'shadow-ocean'} transition-all duration-300 min-h-[600px] backdrop-blur-sm`}
     >
       {/* Column Header */}
@@ -59,10 +60,7 @@ export function KanbanColumn({ column, onDelete }: KanbanColumnProps) {
       </div>
 
       {/* Cards Container */}
-      <div
-        ref={setNodeRef}
-        className="flex-1 p-4 space-y-3 overflow-y-auto"
-      >
+      <div className="flex-1 p-4 space-y-3 overflow-y-auto">
         <SortableContext items={column.notes.map(n => n.id)} strategy={verticalListSortingStrategy}>
           {column.notes.length === 0 ? (
             <div className="flex items-center justify-center h-32 text-tertiary text-sm italic">
@@ -74,6 +72,8 @@ export function KanbanColumn({ column, onDelete }: KanbanColumnProps) {
             ))
           )}
         </SortableContext>
+        {/* Extra space to ensure droppable area even when full */}
+        {column.notes.length > 0 && <div className="h-20" />}
       </div>
     </div>
   );

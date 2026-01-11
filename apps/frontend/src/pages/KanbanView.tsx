@@ -84,9 +84,28 @@ export function KanbanView() {
     if (!over) return;
 
     const noteId = active.id as string;
-    const targetColumnId = over.id as ColumnId;
+    let targetColumnId = over.id as string;
 
-    // Find the note
+    // If dropped on a note instead of column, find which column that note is in
+    const validColumnIds = ['todo', 'inProgress', 'done'];
+    if (!validColumnIds.includes(targetColumnId)) {
+      // over.id is a note ID, find which column it belongs to
+      const targetNote = allNotes.find(n => n.id === targetColumnId);
+      if (targetNote) {
+        // Determine column based on note status
+        if (targetNote.completedAt) {
+          targetColumnId = 'done';
+        } else if (targetNote.inProgress) {
+          targetColumnId = 'inProgress';
+        } else {
+          targetColumnId = 'todo';
+        }
+      } else {
+        return; // Invalid drop target
+      }
+    }
+
+    // Find the note being dragged
     const note = allNotes.find(n => n.id === noteId);
     if (!note) return;
 
