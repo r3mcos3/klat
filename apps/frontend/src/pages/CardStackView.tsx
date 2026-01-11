@@ -285,12 +285,12 @@ export function CardStackView() {
               flex-1 px-6 py-4 rounded-xl font-body font-semibold transition-all
               ${activeTab === 'active'
                 ? 'bg-accent-primary text-white shadow-dark-lg'
-                : 'bg-secondary text-primary hover:bg-terracotta-100 dark:hover:bg-terracotta-100/10 border border-default shadow-dark'}
+                : 'bg-secondary text-primary hover:bg-accent-primary-subtle border border-default shadow-dark'}
             `}
           >
             Active Notes
             {baseFilteredNotes.filter(n => !n.completedAt).length > 0 && (
-              <span className={`ml-2 px-2.5 py-0.5 rounded-full text-xs font-bold ${activeTab === 'active' ? 'bg-terracotta-600' : 'bg-cream-100 dark:bg-charcoal-700'}`}>
+              <span className={`ml-2 px-2.5 py-0.5 rounded-full text-xs font-bold ${activeTab === 'active' ? 'bg-accent-primary-hover' : 'bg-tertiary'}`}>
                 {baseFilteredNotes.filter(n => !n.completedAt).length}
               </span>
             )}
@@ -301,12 +301,12 @@ export function CardStackView() {
               flex-1 px-6 py-4 rounded-xl font-body font-semibold transition-all
               ${activeTab === 'completed'
                 ? 'bg-accent-primary text-white shadow-dark-lg'
-                : 'bg-secondary text-primary hover:bg-terracotta-100 dark:hover:bg-terracotta-100/10 border border-default shadow-dark'}
+                : 'bg-secondary text-primary hover:bg-accent-primary-subtle border border-default shadow-dark'}
             `}
           >
             Completed
             {baseFilteredNotes.filter(n => n.completedAt).length > 0 && (
-              <span className={`ml-2 px-2.5 py-0.5 rounded-full text-xs font-bold ${activeTab === 'completed' ? 'bg-terracotta-600' : 'bg-cream-100 dark:bg-charcoal-700'}`}>
+              <span className={`ml-2 px-2.5 py-0.5 rounded-full text-xs font-bold ${activeTab === 'completed' ? 'bg-accent-primary-hover' : 'bg-tertiary'}`}>
                 {baseFilteredNotes.filter(n => n.completedAt).length}
               </span>
             )}
@@ -430,11 +430,11 @@ export function CardStackView() {
 
                 // Get accent bar color based on importance/completion
                 const getAccentColor = () => {
-                  if (note.completedAt) return 'var(--success)'; // sage-500
-                  if (note.importance === 'HIGH') return 'var(--priority-high)'; // priority-high
-                  if (note.importance === 'MEDIUM') return 'var(--priority-medium)'; // priority-medium
-                  if (note.importance === 'LOW') return 'var(--priority-low)'; // priority-low
-                  return '#e5e5e0'; // neutral gray
+                  if (note.completedAt) return '#10b981'; // success
+                  if (note.importance === 'HIGH') return '#ff4757'; // priority-high (bright red)
+                  if (note.importance === 'MEDIUM') return '#ffa502'; // priority-medium (bright orange)
+                  if (note.importance === 'LOW') return '#00d9ff'; // priority-low (cyan)
+                  return 'rgb(71, 85, 105)'; // neutral slate
                 };
 
                 return (
@@ -738,9 +738,9 @@ export function CardStackView() {
                               key={tag.id}
                               className="font-body text-[12px] font-semibold uppercase tracking-wider px-3 py-1.5 rounded-full"
                               style={{
-                                backgroundColor: tag.color ? `${tag.color}40` : '#f8f4ed',
-                                border: `1px solid ${tag.color ? `${tag.color}80` : '#757570'}`,
-                                color: tag.color || '#757570',
+                                backgroundColor: tag.color ? `${tag.color}40` : 'rgba(100, 116, 139, 0.1)',
+                                border: `1px solid ${tag.color ? `${tag.color}80` : 'rgb(100, 116, 139)'}`,
+                                color: tag.color || 'rgb(100, 116, 139)',
                               }}
                             >
                               {tag.name}
