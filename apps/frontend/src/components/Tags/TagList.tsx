@@ -10,7 +10,7 @@ interface TagListProps {
 export function TagList({ tags, selectedTags = [], onToggle, readonly = false }: TagListProps) {
   if (tags.length === 0) {
     return (
-      <div className="text-sm text-gray-500 italic">No tags available</div>
+      <div className="font-body text-sm text-charcoal-500 italic">No tags available</div>
     );
   }
 
@@ -25,19 +25,20 @@ export function TagList({ tags, selectedTags = [], onToggle, readonly = false }:
             onClick={() => onToggle && onToggle(tag.id)}
             disabled={readonly}
             className={`
-              px-3 py-1.5 rounded-md text-sm font-medium transition-all
-              ${readonly ? 'cursor-default' : 'cursor-pointer hover:opacity-80'}
+              font-body px-3 py-1.5 rounded-full text-[12px] font-semibold uppercase tracking-wider transition-all
+              ${readonly ? 'cursor-default' : 'cursor-pointer hover:opacity-90'}
               ${
                 isSelected
                   ? 'ring-2 ring-offset-1'
                   : readonly
                   ? ''
-                  : 'hover:ring-1 hover:ring-gray-300'
+                  : 'hover:ring-1'
               }
             `}
             style={{
-              backgroundColor: tag.color ? `${tag.color}30` : '#E5E7EB',
-              color: tag.color || '#374151',
+              backgroundColor: tag.color ? `${tag.color}40` : '#f8f4ed',
+              border: `1px solid ${tag.color ? `${tag.color}80` : '#757570'}`,
+              color: tag.color || '#757570',
             }}
           >
             {tag.name}

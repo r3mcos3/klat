@@ -73,19 +73,20 @@ export function DayCell({ date, currentMonth, note }: DayCellProps) {
         }
       }}
       className={`
-        min-h-24 p-2 border border-gray-200 hover:bg-gray-50 transition-colors cursor-pointer
+        min-h-[120px] p-4 border transition-all duration-200 cursor-pointer
         flex flex-col items-start justify-start relative group
-        ${!isCurrentMonth ? 'bg-gray-50 text-gray-400' : 'bg-white'}
-        ${note?.completedAt ? 'bg-green-50' : ''}
-        ${isToday ? 'ring-2 ring-primary-500' : ''}
+        ${!isCurrentMonth ? 'bg-cream-100 dark:bg-charcoal-700 text-charcoal-500 border-cream-100 dark:border-charcoal-700' : 'bg-white dark:bg-cream-100 border-cream-100 dark:border-charcoal-700'}
+        ${note?.completedAt ? 'bg-sage-100 dark:bg-sage-100/10' : ''}
+        ${isToday ? 'bg-terracotta-100 dark:bg-terracotta-100/10' : ''}
+        hover:shadow-soft hover:-translate-y-1
       `}
     >
-      <div className="flex justify-between items-start w-full mb-1">
+      <div className="flex justify-between items-start w-full mb-3">
         <span
           className={`
-            text-sm font-medium
-            ${isToday ? 'text-primary-600 font-bold' : ''}
-            ${!isCurrentMonth ? 'text-gray-300' : 'text-gray-700'}
+            font-display text-[28px] font-bold leading-none
+            ${isToday ? 'text-terracotta-600' : ''}
+            ${!isCurrentMonth ? 'text-charcoal-500 dark:text-charcoal-500' : 'text-charcoal-900 dark:text-charcoal-900'}
           `}
         >
           {date.getDate()}
@@ -96,9 +97,9 @@ export function DayCell({ date, currentMonth, note }: DayCellProps) {
             onClick={handleToggleDone}
             className={`
               p-1 rounded-full transition-all
-              ${note?.completedAt 
-                ? 'text-green-600 hover:bg-red-100 hover:text-red-600 bg-green-50' 
-                : 'text-gray-400 hover:bg-green-100 hover:text-green-600 bg-gray-100'}
+              ${note?.completedAt
+                ? 'text-sage-500 hover:bg-priority-high/10 hover:text-priority-high bg-sage-100'
+                : 'text-charcoal-500 hover:bg-sage-100 hover:text-sage-500 bg-cream-100 dark:bg-charcoal-700'}
             `}
             title={note?.completedAt ? "Mark as incomplete" : "Mark as completed"}
           >
@@ -116,40 +117,31 @@ export function DayCell({ date, currentMonth, note }: DayCellProps) {
       </div>
 
       {hasNote && isCurrentMonth && (
-        <div className="w-full flex flex-col gap-1">
+        <div className="w-full flex flex-col gap-2">
           {/* Note content preview */}
-          <p className="text-xs text-gray-600 line-clamp-2 text-left">
+          <p className="text-[11px] font-body text-charcoal-700 dark:text-charcoal-700 line-clamp-3 leading-relaxed text-left">
             {getPreviewText(note.content)}
           </p>
 
           {/* Tags preview */}
           {note.tags && note.tags.length > 0 && (
-            <div className="flex flex-wrap gap-1">
+            <div className="mt-auto pt-2 flex flex-wrap gap-1">
               {note.tags.slice(0, 2).map((tag: any) => (
                 <span
                   key={tag.id}
-                  className="text-xs px-1.5 py-0.5 rounded"
+                  className="text-[10px] font-body font-semibold uppercase tracking-wide px-2 py-0.5 rounded-full"
                   style={{
-                    backgroundColor: tag.color ? `${tag.color}20` : '#E5E7EB',
-                    color: tag.color || '#374151',
+                    backgroundColor: tag.color ? `${tag.color}40` : '#f8f4ed',
+                    border: `1px solid ${tag.color ? `${tag.color}80` : '#757570'}`,
+                    color: tag.color || '#757570',
                   }}
                 >
                   {tag.name}
                 </span>
               ))}
               {note.tags.length > 2 && (
-                <span className="text-xs text-gray-400">+{note.tags.length - 2}</span>
+                <span className="text-[10px] text-charcoal-500">+{note.tags.length - 2}</span>
               )}
-            </div>
-          )}
-
-          {/* Done indicator */}
-          {note?.completedAt && (
-            <div className="mt-1 flex items-center gap-1 text-green-600">
-              <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-              </svg>
-              <span className="text-xs font-medium">Completed</span>
             </div>
           )}
         </div>

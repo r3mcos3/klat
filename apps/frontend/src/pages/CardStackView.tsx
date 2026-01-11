@@ -215,13 +215,13 @@ export function CardStackView() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
-      <div className="container mx-auto px-4 py-4 max-w-5xl">
+    <div className="min-h-screen bg-gradient-to-br from-cream-50 to-cream-100 dark:from-cream-50 dark:to-cream-100">
+      <div className="container mx-auto px-4 py-6 max-w-5xl">
         {/* Header */}
-        <div className="flex flex-col gap-4 mb-6 md:flex-row md:items-center md:justify-between">
+        <div className="flex flex-col gap-4 mb-8 md:flex-row md:items-center md:justify-between">
           <div>
-            <h1 className="text-4xl font-bold text-gray-900 dark:text-white">klat</h1>
-            <p className="text-gray-600 dark:text-gray-400 mt-1">Your Personal Notes</p>
+            <h1 className="font-display text-5xl font-bold text-charcoal-900 dark:text-charcoal-900 tracking-tight">klat</h1>
+            <p className="font-body text-charcoal-700 dark:text-charcoal-700 mt-2">Your Personal Notes</p>
           </div>
 
           {/* Live Clock & Date - Hidden on mobile */}
@@ -233,7 +233,7 @@ export function CardStackView() {
             <ThemeToggle />
             <button
               onClick={handleLogout}
-              className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-600 flex items-center gap-2 shadow-sm"
+              className="px-4 py-2 font-body text-sm font-medium text-charcoal-900 dark:text-charcoal-900 bg-white dark:bg-cream-100 border border-cream-100 dark:border-charcoal-700 rounded-lg hover:bg-terracotta-100 dark:hover:bg-terracotta-100/10 hover:text-terracotta-600 hover:border-terracotta-500 flex items-center gap-2 shadow-soft transition-all"
               title="Logout"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -248,7 +248,7 @@ export function CardStackView() {
             </button>
             <Link
               to="/note/new"
-              className="px-4 py-2 text-sm font-medium text-white bg-primary-600 rounded-md hover:bg-primary-700 flex items-center gap-2 shadow-sm transition-colors"
+              className="px-4 py-2 font-body text-sm font-medium text-white bg-terracotta-500 rounded-lg hover:bg-terracotta-600 flex items-center gap-2 shadow-soft transition-all"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path
@@ -262,7 +262,7 @@ export function CardStackView() {
             </Link>
             <Link
               to="/tags"
-              className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-600 flex items-center gap-2 shadow-sm"
+              className="px-4 py-2 font-body text-sm font-medium text-charcoal-900 dark:text-charcoal-900 bg-white dark:bg-cream-100 border border-cream-100 dark:border-charcoal-700 rounded-lg hover:bg-terracotta-100 dark:hover:bg-terracotta-100/10 hover:text-terracotta-600 hover:border-terracotta-500 flex items-center gap-2 shadow-soft transition-all"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path
@@ -278,19 +278,19 @@ export function CardStackView() {
         </div>
 
         {/* Tabs */}
-        <div className="flex gap-2 mb-4">
+        <div className="flex gap-3 mb-6">
           <button
             onClick={() => setActiveTab('active')}
             className={`
-              flex-1 px-4 py-3 rounded-lg font-medium transition-all
+              flex-1 px-6 py-4 rounded-xl font-body font-semibold transition-all
               ${activeTab === 'active'
-                ? 'bg-primary-600 text-white shadow-md'
-                : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-700'}
+                ? 'bg-terracotta-500 text-white shadow-soft-lg'
+                : 'bg-white dark:bg-cream-100 text-charcoal-900 dark:text-charcoal-900 hover:bg-terracotta-100 dark:hover:bg-terracotta-100/10 border border-cream-100 dark:border-charcoal-700 shadow-soft'}
             `}
           >
             Active Notes
             {baseFilteredNotes.filter(n => !n.completedAt).length > 0 && (
-              <span className={`ml-2 px-2 py-0.5 rounded-full text-xs font-bold ${activeTab === 'active' ? 'bg-primary-500' : 'bg-gray-200 dark:bg-gray-700'}`}>
+              <span className={`ml-2 px-2.5 py-0.5 rounded-full text-xs font-bold ${activeTab === 'active' ? 'bg-terracotta-600' : 'bg-cream-100 dark:bg-charcoal-700'}`}>
                 {baseFilteredNotes.filter(n => !n.completedAt).length}
               </span>
             )}
@@ -298,15 +298,15 @@ export function CardStackView() {
           <button
             onClick={() => setActiveTab('completed')}
             className={`
-              flex-1 px-4 py-3 rounded-lg font-medium transition-all
+              flex-1 px-6 py-4 rounded-xl font-body font-semibold transition-all
               ${activeTab === 'completed'
-                ? 'bg-primary-600 text-white shadow-md'
-                : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-700'}
+                ? 'bg-terracotta-500 text-white shadow-soft-lg'
+                : 'bg-white dark:bg-cream-100 text-charcoal-900 dark:text-charcoal-900 hover:bg-terracotta-100 dark:hover:bg-terracotta-100/10 border border-cream-100 dark:border-charcoal-700 shadow-soft'}
             `}
           >
             Completed
             {baseFilteredNotes.filter(n => n.completedAt).length > 0 && (
-              <span className={`ml-2 px-2 py-0.5 rounded-full text-xs font-bold ${activeTab === 'completed' ? 'bg-primary-500' : 'bg-gray-200 dark:bg-gray-700'}`}>
+              <span className={`ml-2 px-2.5 py-0.5 rounded-full text-xs font-bold ${activeTab === 'completed' ? 'bg-terracotta-600' : 'bg-cream-100 dark:bg-charcoal-700'}`}>
                 {baseFilteredNotes.filter(n => n.completedAt).length}
               </span>
             )}
@@ -314,7 +314,7 @@ export function CardStackView() {
         </div>
 
         {/* Filter Bar */}
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4 mb-6">
+        <div className="bg-white dark:bg-cream-100 rounded-xl shadow-soft p-6 mb-8">
           <div className="flex flex-col gap-3 md:flex-row md:items-center md:gap-3">
             {/* Search Input */}
             <div className="flex-1">
@@ -428,18 +428,13 @@ export function CardStackView() {
                 })();
                 const hasContent = note.content.trim().length > 0;
 
-                // Get border color based on importance
-                const getBorderColor = () => {
-                  if (note.completedAt) return 'border-green-200';
-                  if (note.importance === 'HIGH') return 'border-red-500';
-                  if (note.importance === 'MEDIUM') return 'border-amber-500';
-                  if (note.importance === 'LOW') return 'border-blue-500';
-                  return 'border-gray-200';
-                };
-
-                const getBorderWidth = () => {
-                  if (note.importance && !note.completedAt) return 'border-2';
-                  return 'border';
+                // Get accent bar color based on importance/completion
+                const getAccentColor = () => {
+                  if (note.completedAt) return '#6b9080'; // sage-500
+                  if (note.importance === 'HIGH') return '#c93a3a'; // priority-high
+                  if (note.importance === 'MEDIUM') return '#d97706'; // priority-medium
+                  if (note.importance === 'LOW') return '#0c8ab3'; // priority-low
+                  return '#e5e5e0'; // neutral gray
                 };
 
                 return (
@@ -457,17 +452,21 @@ export function CardStackView() {
                         }
                       }}
                       className={`
-                        w-full rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 p-6 hover:scale-[1.02] text-left
-                        ${getBorderWidth()}
-                        ${getBorderColor()}
-                        ${note.completedAt ? 'bg-green-50 dark:bg-green-900/20 shadow-green-100/50' : 'bg-white dark:bg-gray-800'}
+                        w-full rounded-xl shadow-soft hover:shadow-soft-lg transition-all duration-300 p-8 hover:-translate-y-1 text-left
+                        relative overflow-hidden
+                        ${note.completedAt ? 'bg-sage-100/30 dark:bg-sage-100/5' : 'bg-cream-50 dark:bg-cream-100'}
                       `}
                     >
+                      {/* Left accent bar */}
+                      <div
+                        className="absolute left-0 top-0 bottom-0 w-1 rounded-l-xl"
+                        style={{ backgroundColor: getAccentColor() }}
+                      />
                       {/* Date & Done Toggle */}
-                      <div className="flex items-center justify-between mb-4">
-                        <div className="flex flex-col gap-1">
+                      <div className="flex items-center justify-between mb-6">
+                        <div className="flex flex-col gap-2">
                           <div className="flex items-center gap-3">
-                            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                            <h3 className="font-display text-[32px] font-bold text-charcoal-900 dark:text-charcoal-900 leading-none">
                               {formatDateNL(dateObj, 'EEEE d MMMM yyyy')}
                             </h3>
                             {note.completedAt && (
@@ -588,7 +587,7 @@ export function CardStackView() {
 
                       {/* Content Preview */}
                       {hasContent && (
-                        <p className="text-gray-700 dark:text-gray-300 mb-4 whitespace-pre-line overflow-hidden" style={{ maxHeight: '9rem', lineHeight: '1.5rem' }}>
+                        <p className="font-body text-[15px] leading-[1.7] text-charcoal-700 dark:text-charcoal-700 mb-6 whitespace-pre-line overflow-hidden" style={{ maxHeight: '9rem' }}>
                           {getPreviewText(note.content)}
                         </p>
                       )}
@@ -733,15 +732,15 @@ export function CardStackView() {
 
                       {/* Tags */}
                       {note.tags && note.tags.length > 0 && (
-                        <div className="flex flex-wrap gap-2">
+                        <div className="flex flex-wrap gap-2 mb-6">
                           {note.tags.map((tag: any) => (
                             <span
                               key={tag.id}
-                              className="text-sm px-3 py-1 rounded-full font-medium"
+                              className="font-body text-[12px] font-semibold uppercase tracking-wider px-3 py-1.5 rounded-full"
                               style={{
-                                backgroundColor: tag.color ? `${tag.color}20` : '#E5E7EB',
-                                color: tag.color || '#374151',
-                                border: `1px solid ${tag.color ? `${tag.color}40` : '#D1D5DB'}`,
+                                backgroundColor: tag.color ? `${tag.color}40` : '#f8f4ed',
+                                border: `1px solid ${tag.color ? `${tag.color}80` : '#757570'}`,
+                                color: tag.color || '#757570',
                               }}
                             >
                               {tag.name}
