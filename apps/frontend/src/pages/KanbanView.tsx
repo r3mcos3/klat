@@ -127,7 +127,7 @@ export function KanbanView() {
   const activeNote = activeId ? allNotes.find(n => n.id === activeId) : null;
 
   return (
-    <div className="min-h-screen bg-primary">
+    <div className="min-h-screen bg-primary relative z-10">
       <div className="container mx-auto px-4 py-6 max-w-[1800px]">
         {/* Header */}
         <div className="flex flex-col gap-4 mb-8 md:flex-row md:items-center md:justify-between">
@@ -144,7 +144,7 @@ export function KanbanView() {
             <ThemeToggle />
             <button
               onClick={handleLogout}
-              className="px-4 py-2 font-body text-sm font-medium text-primary bg-secondary border border-default rounded-lg hover:bg-accent-primary-subtle hover:text-accent-primary hover:border-accent-primary flex items-center gap-2 shadow-dark transition-all"
+              className="px-4 py-2 font-body text-sm font-medium text-primary bg-secondary border border-default rounded-lg hover:bg-accent-primary-subtle hover:text-accent-primary hover:border-accent-primary flex items-center gap-2 shadow-ocean transition-all"
               title="Logout"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -154,7 +154,7 @@ export function KanbanView() {
             </button>
             <Link
               to="/note/new"
-              className="px-4 py-2 font-body text-sm font-medium text-primary bg-accent-primary rounded-lg hover:bg-accent-primary-hover flex items-center gap-2 shadow-dark transition-all"
+              className="px-4 py-2 font-body text-sm font-medium text-bg-primary bg-accent-primary rounded-lg hover:bg-accent-primary-hover hover:shadow-glow flex items-center gap-2 shadow-ocean transition-all"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -163,7 +163,7 @@ export function KanbanView() {
             </Link>
             <Link
               to="/tags"
-              className="px-4 py-2 font-body text-sm font-medium text-primary bg-secondary border border-default rounded-lg hover:bg-accent-primary-subtle hover:text-accent-primary hover:border-accent-primary flex items-center gap-2 shadow-dark transition-all"
+              className="px-4 py-2 font-body text-sm font-medium text-primary bg-secondary border border-default rounded-lg hover:bg-accent-primary-subtle hover:text-accent-primary hover:border-accent-primary flex items-center gap-2 shadow-ocean transition-all"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
@@ -174,7 +174,7 @@ export function KanbanView() {
         </div>
 
         {/* Filter Bar */}
-        <div className="bg-secondary rounded-xl shadow-dark p-6 mb-8">
+        <div className="bg-secondary rounded-xl shadow-ocean p-6 mb-8 border border-border-subtle">
           <div className="flex flex-col gap-3 md:flex-row md:items-center md:gap-3">
             <div className="flex-1">
               <div className="relative">
@@ -186,7 +186,7 @@ export function KanbanView() {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Search notes..."
-                  className="w-full pl-10 pr-4 py-2 border border-default rounded-md bg-tertiary text-primary placeholder-tertiary focus:ring-2 focus:ring-accent-primary focus:border-transparent"
+                  className="w-full pl-10 pr-4 py-2.5 border-2 border-accent-primary/30 rounded-lg bg-bg-tertiary text-text-primary placeholder-text-secondary focus:ring-2 focus:ring-accent-primary focus:border-accent-primary font-body transition-all hover:border-accent-primary/50 hover:bg-bg-elevated"
                 />
               </div>
             </div>
@@ -199,7 +199,7 @@ export function KanbanView() {
                   const selected = Array.from(e.target.selectedOptions, option => option.value);
                   setSelectedTagIds(selected);
                 }}
-                className="px-3 py-2 border border-default rounded-md bg-tertiary text-primary focus:ring-2 focus:ring-accent-primary focus:border-transparent min-w-[150px]"
+                className="px-3 py-2.5 border-2 border-accent-primary/30 rounded-lg bg-bg-tertiary text-text-primary focus:ring-2 focus:ring-accent-primary focus:border-accent-primary min-w-[150px] font-body transition-all hover:border-accent-primary/50 hover:bg-bg-elevated"
                 size={1}
               >
                 <option value="" disabled>Tags...</option>

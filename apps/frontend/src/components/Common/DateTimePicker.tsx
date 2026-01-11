@@ -27,7 +27,7 @@ const CustomInput = forwardRef<HTMLInputElement, any>(({ value, onClick, placeho
     ref={ref}
     placeholder={placeholder}
     readOnly
-    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 cursor-pointer bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
+    className="w-full px-4 py-2.5 border-2 border-accent-primary/30 rounded-lg focus:ring-2 focus:ring-accent-primary focus:border-accent-primary cursor-pointer bg-bg-secondary text-text-primary placeholder-text-secondary font-body transition-all hover:border-accent-primary/50 hover:bg-bg-tertiary"
   />
 ));
 
@@ -55,7 +55,7 @@ export function DateTimePicker({
       placeholderText={placeholderText}
       customInput={<CustomInput />}
       className={className}
-      calendarClassName="rounded-lg shadow-lg border border-gray-200"
+      calendarClassName="rounded-lg shadow-ocean-lg border-2 border-accent-primary/30 bg-secondary"
       wrapperClassName="w-full"
     />
   );

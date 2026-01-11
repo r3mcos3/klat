@@ -18,9 +18,9 @@ function SaveStatusIndicator({ status }: { status: SaveStatus }) {
   if (status === 'idle') return null;
 
   const statusConfig = {
-    saving: { text: 'Saving...', color: 'text-blue-600' },
-    saved: { text: 'Saved', color: 'text-green-600' },
-    error: { text: 'Error saving', color: 'text-red-600' },
+    saving: { text: 'Saving...', color: 'text-accent-primary' },
+    saved: { text: 'Saved', color: 'text-success' },
+    error: { text: 'Error saving', color: 'text-priority-high' },
   };
 
   const config = statusConfig[status];
@@ -211,13 +211,13 @@ export function MarkdownEditor({ note, date, onSave, onCreate, onSaveComplete }:
   return (
     <div className="w-full">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Note</h3>
+        <h3 className="text-lg font-display font-semibold text-primary">Note</h3>
         <div className="flex items-center gap-3">
           <SaveStatusIndicator status={status} />
           <button
             onClick={handleManualSave}
             disabled={isSaving}
-            className="px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm font-medium"
+            className="px-4 py-2 bg-accent-primary text-bg-primary rounded-md hover:bg-accent-primary-hover hover:shadow-glow disabled:opacity-50 disabled:cursor-not-allowed transition-all text-sm font-body font-medium"
           >
             {isSaving ? 'Saving...' : 'Save'}
           </button>
@@ -228,14 +228,14 @@ export function MarkdownEditor({ note, date, onSave, onCreate, onSaveComplete }:
         value={textContent}
         onChange={(e) => setTextContent(e.target.value)}
         placeholder="Start typing your note..."
-        className="w-full h-96 p-4 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-500 focus:border-transparent resize-y"
+        className="w-full h-96 p-4 border-2 border-accent-primary/30 rounded-lg bg-bg-secondary text-text-primary placeholder-text-secondary focus:ring-2 focus:ring-accent-primary focus:border-accent-primary resize-y font-body transition-all hover:border-accent-primary/50 hover:bg-bg-tertiary"
       />
 
       {/* Display existing images */}
       {imageUrls.length > 0 && (
         <div className="mt-6">
           <div className="flex items-center justify-between mb-3">
-            <h4 className="text-sm font-semibold text-gray-700 dark:text-gray-300">
+            <h4 className="text-sm font-body font-semibold text-primary">
               Attached Images ({imageUrls.length})
             </h4>
           </div>
@@ -243,7 +243,7 @@ export function MarkdownEditor({ note, date, onSave, onCreate, onSaveComplete }:
             {imageUrls.map((url, index) => (
               <div
                 key={index}
-                className="relative group border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden"
+                className="relative group border border-border-default rounded-lg overflow-hidden hover:border-accent-primary transition-colors"
               >
                 <img
                   src={url}
@@ -254,7 +254,7 @@ export function MarkdownEditor({ note, date, onSave, onCreate, onSaveComplete }:
                 />
                 <button
                   onClick={() => setImageUrls((prev) => prev.filter((_, i) => i !== index))}
-                  className="absolute top-2 right-2 p-1.5 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600"
+                  className="absolute top-2 right-2 p-1.5 bg-priority-high text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-priority-high hover:glow-coral"
                   title="Remove image"
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -272,13 +272,13 @@ export function MarkdownEditor({ note, date, onSave, onCreate, onSaveComplete }:
         </div>
       )}
 
-      <div className="mt-2 text-xs text-gray-500 dark:text-gray-400">
+      <div className="mt-2 text-xs font-body text-tertiary">
         💡 Tip: Auto-saves every 30 seconds, or click 'Save' to save immediately.
       </div>
 
       {/* Image Upload Section */}
       <div className="mt-8">
-        <h4 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">
+        <h4 className="text-sm font-body font-semibold text-primary mb-3">
           Upload Images
         </h4>
         <ImageUpload

@@ -2,6 +2,9 @@ import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { useNavigate } from 'react-router-dom';
 import { formatDateNL } from '@/utils/dateHelpers';
+import { ImageLightbox } from '@/components/Common/ImageLightbox';
+import { useState } from 'react';
+import { createPortal } from 'react-dom';
 import type { Note } from '@klat/types';
 
 interface KanbanCardProps {
@@ -12,6 +15,8 @@ interface KanbanCardProps {
 
 export function KanbanCard({ note, isDragging = false, onDelete }: KanbanCardProps) {
   const navigate = useNavigate();
+  const [lightboxImage, setLightboxImage] = useState<string | null>(null);
+  const [lightboxIndex, setLightboxIndex] = useState<number>(0);
 
   const {
     attributes,
@@ -29,10 +34,17 @@ export function KanbanCard({ note, isDragging = false, onDelete }: KanbanCardPro
 
   // Get accent color based on importance
   const getAccentColor = () => {
-    if (note.importance === 'HIGH') return '#ff4757'; // priority-high
-    if (note.importance === 'MEDIUM') return '#ffa502'; // priority-medium
-    if (note.importance === 'LOW') return '#00d9ff'; // priority-low
-    return '#3a4049'; // border-default
+    if (note.importance === 'HIGH') return '#ff6b6b'; // priority-high
+    if (note.importance === 'MEDIUM') return '#ffa726'; // priority-medium
+    if (note.importance === 'LOW') return '#4fc3f7'; // priority-low
+    return '#1e4976'; // border-default
+  };
+
+  // Extract image URLs from markdown
+  const getImageUrls = (content: string): string[] => {
+    const imageRegex = /!\[.*?\]\((.*?)\)/g;
+    const matches = [...content.matchAll(imageRegex)];
+    return matches.map(match => match[1]).filter(url => url);
   };
 
   // Get preview text
@@ -53,6 +65,8 @@ export function KanbanCard({ note, isDragging = false, onDelete }: KanbanCardPro
     return stripped;
   };
 
+  const imageUrls = getImageUrls(note.content);
+
   // Format date
   const dateObj = (() => {
     try {
@@ -72,19 +86,34 @@ export function KanbanCard({ note, isDragging = false, onDelete }: KanbanCardPro
     if (onDelete) onDelete(note);
   };
 
+  const handleImageClick = (e: React.MouseEvent, url: string, index: number) => {
+    e.stopPropagation();
+    setLightboxImage(url);
+    setLightboxIndex(index);
+  };
+
+  const handleLightboxNavigate = (direction: 'prev' | 'next') => {
+    const newIndex = direction === 'prev' ? lightboxIndex - 1 : lightboxIndex + 1;
+    if (newIndex >= 0 && newIndex < imageUrls.length) {
+      setLightboxIndex(newIndex);
+      setLightboxImage(imageUrls[newIndex]);
+    }
+  };
+
   return (
-    <div
-      ref={setNodeRef}
-      style={style}
-      {...attributes}
-      {...listeners}
-      className={`
-        bg-tertiary rounded-lg border border-default p-4 cursor-grab active:cursor-grabbing
-        transition-all duration-200 relative overflow-hidden group
-        ${isDragging || isSortableDragging ? 'opacity-50 shadow-dark-lg scale-105' : 'hover:shadow-dark hover:border-accent-primary'}
-      `}
-      onClick={handleClick}
-    >
+    <>
+      <div
+        ref={setNodeRef}
+        style={style}
+        {...attributes}
+        {...listeners}
+        className={`
+          bg-tertiary rounded-lg border border-default p-4 cursor-grab active:cursor-grabbing
+          transition-all duration-200 relative overflow-hidden group backdrop-blur-sm
+          ${isDragging || isSortableDragging ? 'opacity-50 shadow-ocean-lg scale-105' : 'hover:shadow-ocean hover:border-accent-primary hover:glow-cyan'}
+        `}
+        onClick={handleClick}
+      >
       {/* Left accent bar */}
       <div
         className="absolute left-0 top-0 bottom-0 w-1"
@@ -114,6 +143,38 @@ export function KanbanCard({ note, isDragging = false, onDelete }: KanbanCardPro
           <p className="text-sm text-primary mb-3 line-clamp-3 leading-relaxed">
             {getPreviewText(note.content)}
           </p>
+        )}
+
+        {/* Image Previews */}
+        {imageUrls.length > 0 && (
+          <div className="mb-3 flex gap-1 overflow-hidden">
+            {imageUrls.slice(0, 3).map((url, index) => (
+              <button
+                key={index}
+                onClick={(e) => handleImageClick(e, url, index)}
+                className="relative w-16 h-16 rounded border border-border-default overflow-hidden flex-shrink-0 hover:border-accent-primary hover:shadow-glow transition-all cursor-pointer group"
+              >
+                <img
+                  src={url}
+                  alt={`Preview ${index + 1}`}
+                  className="w-full h-full object-cover group-hover:scale-110 transition-transform"
+                />
+                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center">
+                  <svg className="w-6 h-6 text-white opacity-0 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
+                  </svg>
+                </div>
+              </button>
+            ))}
+            {imageUrls.length > 3 && (
+              <button
+                onClick={(e) => handleImageClick(e, imageUrls[3], 3)}
+                className="w-16 h-16 rounded border border-border-default bg-elevated flex items-center justify-center text-xs text-secondary font-mono hover:border-accent-primary hover:text-accent-primary transition-all cursor-pointer"
+              >
+                +{imageUrls.length - 3}
+              </button>
+            )}
+          </div>
         )}
 
         {/* Tags */}
@@ -154,5 +215,18 @@ export function KanbanCard({ note, isDragging = false, onDelete }: KanbanCardPro
         )}
       </div>
     </div>
+
+    {/* Image Lightbox - Rendered at document body level */}
+    {lightboxImage && createPortal(
+      <ImageLightbox
+        imageUrl={lightboxImage}
+        onClose={() => setLightboxImage(null)}
+        allImages={imageUrls}
+        currentIndex={lightboxIndex}
+        onNavigate={handleLightboxNavigate}
+      />,
+      document.body
+    )}
+    </>
   );
 }

@@ -21,19 +21,22 @@ export function KanbanColumn({ column, onDelete }: KanbanColumnProps) {
 
   const columnColors = {
     todo: {
-      border: 'border-accent-secondary',
-      glow: 'shadow-[0_0_20px_rgba(0,217,255,0.2)]',
-      header: 'bg-accent-secondary/10',
+      border: 'border-accent-primary',
+      glow: 'shadow-[0_0_20px_rgba(6,182,212,0.3)]',
+      header: 'bg-accent-primary/10',
+      icon: 'text-accent-primary',
     },
     inProgress: {
       border: 'border-priority-medium',
-      glow: 'shadow-[0_0_20px_rgba(255,165,2,0.2)]',
+      glow: 'shadow-[0_0_20px_rgba(255,167,38,0.3)]',
       header: 'bg-priority-medium/10',
+      icon: 'text-priority-medium',
     },
     done: {
       border: 'border-success',
-      glow: 'shadow-[0_0_20px_rgba(0,255,136,0.2)]',
+      glow: 'shadow-[0_0_20px_rgba(20,184,166,0.3)]',
       header: 'bg-success/10',
+      icon: 'text-success',
     },
   };
 
@@ -41,7 +44,7 @@ export function KanbanColumn({ column, onDelete }: KanbanColumnProps) {
 
   return (
     <div
-      className={`flex flex-col bg-secondary rounded-xl border-2 ${colors.border} ${isOver ? colors.glow : 'shadow-dark'} transition-all duration-300 min-h-[600px]`}
+      className={`flex flex-col bg-secondary rounded-xl border-2 ${colors.border} ${isOver ? colors.glow : 'shadow-ocean'} transition-all duration-300 min-h-[600px] backdrop-blur-sm`}
     >
       {/* Column Header */}
       <div className={`p-4 ${colors.header} border-b-2 ${colors.border} rounded-t-xl`}>

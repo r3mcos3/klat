@@ -3,47 +3,50 @@
 @tailwind utilities;
 
 :root {
-  /* Midnight Modern - Light theme (but dark!) */
-  --bg-primary: #1a1d23;
-  --bg-secondary: #242930;
-  --bg-tertiary: #2d3340;
-  --bg-elevated: #353b4a;
+  /* Deep Ocean - Light theme (actually dark with deep blues) */
+  --bg-primary: #0a1929;
+  --bg-secondary: #132f4c;
+  --bg-tertiary: #1e3a5f;
+  --bg-elevated: #2c5282;
 
-  --text-primary: #e8eaed;
-  --text-secondary: #9aa0a6;
-  --text-tertiary: #6c7280;
+  --text-primary: #e3f2fd;
+  --text-secondary: #90caf9;
+  --text-tertiary: #64b5f6;
 
-  --accent-primary: #00ff88;
-  --accent-primary-hover: #00cc6e;
-  --accent-primary-subtle: rgba(0, 255, 136, 0.15);
+  --accent-primary: #06b6d4;
+  --accent-primary-hover: #0891b2;
+  --accent-primary-subtle: rgba(6, 182, 212, 0.15);
 
-  --accent-secondary: #00d9ff;
-  --accent-secondary-hover: #00b8d4;
-  --accent-secondary-subtle: rgba(0, 217, 255, 0.15);
+  --accent-secondary: #14b8a6;
+  --accent-secondary-hover: #0d9488;
+  --accent-secondary-subtle: rgba(20, 184, 166, 0.15);
 
-  --border-default: #3a4049;
-  --border-subtle: #2a2f38;
+  --border-default: #1e4976;
+  --border-subtle: #163454;
 
-  /* Priority colors - bright and visible */
-  --priority-high: #ff4757;
-  --priority-high-bg: rgba(255, 71, 87, 0.15);
-  --priority-medium: #ffa502;
-  --priority-medium-bg: rgba(255, 165, 2, 0.15);
-  --priority-low: #00d9ff;
-  --priority-low-bg: rgba(0, 217, 255, 0.15);
+  /* Priority colors */
+  --priority-high: #ff6b6b;
+  --priority-high-bg: rgba(255, 107, 107, 0.15);
+  --priority-medium: #ffa726;
+  --priority-medium-bg: rgba(255, 167, 38, 0.15);
+  --priority-low: #4fc3f7;
+  --priority-low-bg: rgba(79, 195, 247, 0.15);
 
   /* Status colors */
-  --success: #00ff88;
-  --success-bg: rgba(0, 255, 136, 0.15);
+  --success: #14b8a6;
+  --success-bg: rgba(20, 184, 166, 0.15);
+
+  /* Wave gradient background */
+  --wave-gradient: linear-gradient(135deg, #0a1929 0%, #1e3a5f 50%, #2c5282 100%);
 
   /* Typography */
-  --font-display: 'Inter', system-ui, sans-serif;
-  --font-body: 'Inter', system-ui, sans-serif;
-  --font-mono: 'JetBrains Mono', monospace;
+  --font-display: 'Outfit', system-ui, sans-serif;
+  --font-body: 'Work Sans', system-ui, sans-serif;
+  --font-mono: 'Fira Code', monospace;
 
   /* Base styles */
   font-family: var(--font-body);
-  line-height: 1.5;
+  line-height: 1.6;
   font-weight: 400;
   color-scheme: dark;
 
@@ -54,28 +57,32 @@
 }
 
 .dark {
-  /* Midnight Modern - Dark theme (even darker!) */
-  --bg-primary: #0d0f12;
-  --bg-secondary: #161920;
-  --bg-tertiary: #1e2229;
-  --bg-elevated: #272c35;
+  /* Deep Ocean - Dark theme (even deeper!) */
+  --bg-primary: #020617;
+  --bg-secondary: #0a1929;
+  --bg-tertiary: #132f4c;
+  --bg-elevated: #1e3a5f;
 
-  /* Text stays the same - already light */
-  /* Accents stay the same - already bright */
+  --text-primary: #e3f2fd;
+  --text-secondary: #90caf9;
+  --text-tertiary: #64b5f6;
 
-  --border-default: #2a2f38;
-  --border-subtle: #1a1f28;
+  --border-default: #163454;
+  --border-subtle: #0a1929;
+
+  --wave-gradient: linear-gradient(135deg, #020617 0%, #0a1929 50%, #132f4c 100%);
 }
 
 body {
   margin: 0;
   min-height: 100vh;
-  background-color: var(--bg-primary);
+  background: var(--wave-gradient);
+  background-attachment: fixed;
   color: var(--text-primary);
   position: relative;
 }
 
-/* Subtle scan line effect for tech feel */
+/* Subtle water ripple effect */
 body::before {
   content: '';
   position: fixed;
@@ -83,20 +90,40 @@ body::before {
   left: 0;
   width: 100%;
   height: 100%;
-  opacity: 0.02;
+  opacity: 0.03;
   pointer-events: none;
-  background: repeating-linear-gradient(
-    0deg,
-    transparent,
-    transparent 2px,
-    rgba(255, 255, 255, 0.03) 2px,
-    rgba(255, 255, 255, 0.03) 4px
-  );
-  z-index: 9999;
+  background-image:
+    radial-gradient(circle at 20% 50%, rgba(6, 182, 212, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 80% 80%, rgba(20, 184, 166, 0.1) 0%, transparent 50%);
+  animation: ripple 20s ease-in-out infinite;
+  z-index: 0;
+}
+
+@keyframes ripple {
+  0%, 100% { opacity: 0.03; }
+  50% { opacity: 0.06; }
+}
+
+/* Smooth scroll */
+html {
+  scroll-behavior: smooth;
 }
 
 @layer utilities {
   .text-balance {
     text-wrap: balance;
+  }
+
+  /* Ocean glow effects */
+  .glow-cyan {
+    box-shadow: 0 0 20px rgba(6, 182, 212, 0.3);
+  }
+
+  .glow-teal {
+    box-shadow: 0 0 20px rgba(20, 184, 166, 0.3);
+  }
+
+  .glow-coral {
+    box-shadow: 0 0 20px rgba(255, 107, 107, 0.3);
   }
 }

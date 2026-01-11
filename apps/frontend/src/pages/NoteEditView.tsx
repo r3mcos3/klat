@@ -291,10 +291,10 @@ export function NoteEditView() {
 
   if (noteLoading || tagsLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+      <div className="min-h-screen bg-primary flex items-center justify-center relative z-10">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto" />
-          <p className="mt-4 text-gray-600 dark:text-gray-400">Loading...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-accent-primary mx-auto" />
+          <p className="mt-4 text-secondary">Loading...</p>
         </div>
       </div>
     );
@@ -303,14 +303,14 @@ export function NoteEditView() {
   const dateObj = noteDate || new Date();
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen bg-primary relative z-10">
       <div className="container mx-auto px-4 py-8 max-w-4xl">
         {/* Header */}
         <div className="mb-8">
           <div className="flex items-center justify-between mb-4">
             <Link
               to="/"
-              className="inline-flex items-center text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100"
+              className="inline-flex items-center text-sm font-body text-secondary hover:text-primary transition-colors"
             >
               <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path
@@ -326,7 +326,7 @@ export function NoteEditView() {
             {!isNewNote && note && (
               <button
                 onClick={handleDeleteClick}
-                className="inline-flex items-center px-3 py-1.5 text-sm text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-md transition-colors"
+                className="inline-flex items-center px-3 py-1.5 text-sm font-body text-priority-high hover:text-priority-high hover:bg-priority-high-bg rounded-md transition-colors"
               >
                 <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path
@@ -341,15 +341,15 @@ export function NoteEditView() {
             )}
           </div>
 
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+          <h1 className="text-3xl font-display font-bold text-primary">
             {isNewNote ? 'New note' : formatDateNL(dateObj, 'EEEE d MMMM yyyy')}
           </h1>
         </div>
 
         {/* Date info - automatically set to current time for new notes */}
         {isNewNote && noteDate && (
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 mb-6">
-            <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+          <div className="bg-secondary rounded-lg shadow-ocean p-6 mb-6 border border-border-subtle">
+            <div className="flex items-center gap-2 text-sm font-body text-secondary">
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path
                   strokeLinecap="round"
@@ -365,7 +365,7 @@ export function NoteEditView() {
 
         {/* Timestamps for existing notes */}
         {!isNewNote && note && (note.createdAt || note.updatedAt) && (
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 mb-6">
+          <div className="bg-secondary rounded-lg shadow-ocean p-6 mb-6 border border-border-subtle">
             <div className="space-y-2">
               {note.createdAt && (() => {
                 try {
@@ -385,7 +385,7 @@ export function NoteEditView() {
                     return null;
                   }
                   return (
-                    <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+                    <div className="flex items-center gap-2 text-sm font-body text-secondary">
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path
                           strokeLinecap="round"
@@ -420,7 +420,7 @@ export function NoteEditView() {
                     return null;
                   }
                   return (
-                    <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+                    <div className="flex items-center gap-2 text-sm font-body text-secondary">
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path
                           strokeLinecap="round"
@@ -442,8 +442,8 @@ export function NoteEditView() {
         )}
 
         {/* Tags Section */}
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 mb-6">
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Tags</h3>
+        <div className="bg-secondary rounded-lg shadow-ocean p-6 mb-6 border border-border-subtle">
+          <h3 className="text-lg font-display font-semibold text-primary mb-4">Tags</h3>
           {allTags.length > 0 ? (
             <TagList
               tags={allTags}
@@ -451,16 +451,16 @@ export function NoteEditView() {
               onToggle={handleToggleTag}
             />
           ) : (
-            <div className="text-sm text-gray-500 dark:text-gray-400">
-              No tags yet. <Link to="/tags" className="text-primary-600 dark:text-primary-400 hover:underline">Create one</Link>
+            <div className="text-sm font-body text-tertiary">
+              No tags yet. <Link to="/tags" className="text-accent-primary hover:text-accent-primary-hover hover:underline">Create one</Link>
             </div>
           )}
         </div>
 
         {/* Deadline Section */}
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 mb-6">
+        <div className="bg-secondary rounded-lg shadow-ocean p-6 mb-6 border border-border-subtle">
           <div className="flex items-center gap-2 mb-4">
-            <svg className="w-5 h-5 text-gray-700 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -468,7 +468,7 @@ export function NoteEditView() {
                 d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
               />
             </svg>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Deadline (optional)</h3>
+            <h3 className="text-lg font-display font-semibold text-primary">Deadline (optional)</h3>
           </div>
           <div className="flex items-center gap-4">
             <div className="flex-1">
@@ -481,7 +481,7 @@ export function NoteEditView() {
             {deadline && (
               <button
                 onClick={() => setDeadline(null)}
-                className="px-4 py-2 text-sm text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+                className="px-4 py-2 text-sm font-body text-secondary hover:text-primary hover:bg-tertiary rounded-lg transition-colors"
               >
                 Clear
               </button>
@@ -490,12 +490,12 @@ export function NoteEditView() {
         </div>
 
         {/* Importance Section */}
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 mb-6">
+        <div className="bg-secondary rounded-lg shadow-ocean p-6 mb-6 border border-border-subtle">
           <div className="flex items-center gap-2 mb-4">
-            <svg className="w-5 h-5 text-gray-700 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
             </svg>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Importance (optional)</h3>
+            <h3 className="text-lg font-display font-semibold text-primary">Importance (optional)</h3>
           </div>
           <div className="flex gap-2">
             {(['LOW', 'MEDIUM', 'HIGH'] as const).map((level) => (
@@ -503,14 +503,14 @@ export function NoteEditView() {
                 key={level}
                 onClick={() => handleImportanceChange(level)}
                 className={`
-                  px-4 py-2 rounded-lg text-sm font-medium border transition-colors flex-1
+                  px-4 py-2 rounded-lg text-sm font-body font-medium border transition-colors flex-1
                   ${importance === level
                     ? level === 'HIGH'
-                      ? 'bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-300 border-red-200 dark:border-red-700 ring-2 ring-red-500'
+                      ? 'bg-priority-high-bg text-priority-high border-priority-high ring-2 ring-priority-high'
                       : level === 'MEDIUM'
-                        ? 'bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-700 ring-2 ring-amber-500'
-                        : 'bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-700 ring-2 ring-blue-500'
-                    : 'bg-white dark:bg-gray-700 text-gray-600 dark:text-gray-300 border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600'
+                        ? 'bg-priority-medium-bg text-priority-medium border-priority-medium ring-2 ring-priority-medium'
+                        : 'bg-priority-low-bg text-priority-low border-priority-low ring-2 ring-priority-low'
+                    : 'bg-tertiary text-secondary border-border-default hover:bg-elevated'
                   }
                 `}
               >
@@ -524,47 +524,47 @@ export function NoteEditView() {
 
         {/* Done Button Section */}
         {!isNewNote && note && (
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 mb-6">
+          <div className="bg-secondary rounded-lg shadow-ocean p-6 mb-6 border border-border-subtle">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
-                <svg className="w-5 h-5 text-gray-700 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Completed</h3>
+                <h3 className="text-lg font-display font-semibold text-primary">Completed</h3>
               </div>
               <button
                 onClick={handleToggleDone}
                 className={`
-                  px-4 py-2 rounded-lg font-medium transition-colors
+                  px-4 py-2 rounded-lg font-body font-medium transition-colors
                   ${completedAt
-                    ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 hover:bg-green-200 dark:hover:bg-green-900/50'
-                    : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'}
+                    ? 'bg-success-bg text-success hover:bg-success hover:text-bg-primary'
+                    : 'bg-tertiary text-secondary hover:bg-elevated'}
                 `}
               >
                 {completedAt ? '✓ Completed' : 'Mark as completed'}
               </button>
             </div>
             {completedAt && (
-              <p className="mb-4 text-sm text-gray-600 dark:text-gray-400">
+              <p className="mb-4 text-sm font-body text-secondary">
                 Completed on: {formatCompletedAt(completedAt)}
               </p>
             )}
 
-            <div className="border-t border-gray-200 dark:border-gray-700 pt-4 flex items-center justify-between">
+            <div className="border-t border-border-default pt-4 flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <svg className="w-5 h-5 text-gray-700 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">In Progress</h3>
+                <h3 className="text-lg font-display font-semibold text-primary">In Progress</h3>
               </div>
               <button
                 onClick={handleToggleInProgress}
                 className={`
-                  px-4 py-2 rounded-lg font-medium transition-colors
+                  px-4 py-2 rounded-lg font-body font-medium transition-colors
                   ${inProgress
-                    ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 hover:bg-blue-200 dark:hover:bg-blue-900/50'
-                    : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'}
+                    ? 'bg-priority-medium-bg text-priority-medium hover:bg-priority-medium hover:text-bg-primary'
+                    : 'bg-tertiary text-secondary hover:bg-elevated'}
                 `}
               >
                 {inProgress ? '⏸ In Progress' : '▶ Start'}
@@ -574,7 +574,7 @@ export function NoteEditView() {
         )}
 
         {/* Editor Section */}
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6">
+        <div className="bg-secondary rounded-lg shadow-ocean p-6 border border-border-subtle">
           <MarkdownEditor
             note={note}
             date={noteDate ? noteDate.toISOString().split('T')[0] : new Date().toISOString().split('T')[0]}
@@ -585,7 +585,7 @@ export function NoteEditView() {
         </div>
 
         {/* Helper text */}
-        <div className="mt-4 text-sm text-gray-500 dark:text-gray-400 text-center space-y-1">
+        <div className="mt-4 text-sm font-body text-tertiary text-center space-y-1">
           <p>💡 Your note auto-saves every 30 seconds, or use the 'Save' button</p>
           <p>🏷️ Use #hashtags in your note to automatically create tags (the # will be removed)</p>
         </div>

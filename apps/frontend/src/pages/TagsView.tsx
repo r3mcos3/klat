@@ -101,13 +101,13 @@ export function TagsView() {
         </div>
 
         {/* Create Tag */}
-        <div className="bg-secondary rounded-xl shadow-dark p-8 mb-6">
+        <div className="bg-secondary rounded-xl shadow-ocean p-8 mb-6 border border-border-subtle">
           <h2 className="font-display text-2xl font-bold text-primary mb-6">Create new tag</h2>
           <TagInput />
         </div>
 
         {/* Tags List */}
-        <div className="bg-secondary rounded-xl shadow-dark p-8">
+        <div className="bg-secondary rounded-xl shadow-ocean p-8 border border-border-subtle">
           <h2 className="font-display text-2xl font-bold text-primary mb-6">
             Your tags ({tags.length})
           </h2>
@@ -127,7 +127,7 @@ export function TagsView() {
               {tags.map((tag) => (
                 <div
                   key={tag.id}
-                  className="relative overflow-hidden flex items-center bg-tertiary rounded-lg p-5 hover:shadow-dark transition-all"
+                  className="relative overflow-hidden flex items-center bg-tertiary rounded-lg p-5 border-2 border-border-default hover:shadow-ocean hover:border-accent-primary transition-all"
                 >
                   {/* Color bar */}
                   <div
@@ -140,40 +140,40 @@ export function TagsView() {
                     <div className="space-y-4">
                       <div className="flex gap-4">
                         <div className="flex-1">
-                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                          <label className="block text-sm font-body font-medium text-primary mb-1">
                             Tag name
                           </label>
                           <input
                             type="text"
                             value={editName}
                             onChange={(e) => setEditName(e.target.value)}
-                            className="w-full px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 placeholder-gray-500 dark:placeholder-gray-400"
+                            className="w-full px-3 py-2.5 bg-bg-secondary text-text-primary border-2 border-accent-primary/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-primary placeholder-text-secondary font-body transition-all hover:border-accent-primary/50 hover:bg-bg-tertiary"
                             placeholder="Enter tag name"
                           />
                         </div>
                         <div className="w-32">
-                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                          <label className="block text-sm font-body font-medium text-primary mb-1">
                             Color
                           </label>
                           <input
                             type="color"
                             value={editColor || '#E5E7EB'}
                             onChange={(e) => setEditColor(e.target.value)}
-                            className="w-full h-10 border border-gray-300 dark:border-gray-600 rounded-md cursor-pointer bg-white dark:bg-gray-700"
+                            className="w-full h-10 border-2 border-accent-primary/30 rounded-lg cursor-pointer bg-bg-secondary transition-all hover:border-accent-primary/50"
                           />
                         </div>
                       </div>
                       <div className="flex gap-2 justify-end">
                         <button
                           onClick={handleEditCancel}
-                          className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md"
+                          className="px-4 py-2 text-sm font-body font-medium text-secondary hover:bg-tertiary rounded-md transition-colors"
                         >
                           Cancel
                         </button>
                         <button
                           onClick={handleEditSave}
                           disabled={!editName.trim() || updateTag.isPending}
-                          className="px-4 py-2 text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 rounded-md disabled:opacity-50"
+                          className="px-4 py-2 text-sm font-body font-medium text-bg-primary bg-accent-primary hover:bg-accent-primary-hover hover:shadow-glow rounded-md disabled:opacity-50 transition-all"
                         >
                           {updateTag.isPending ? 'Saving...' : 'Save'}
                         </button>
