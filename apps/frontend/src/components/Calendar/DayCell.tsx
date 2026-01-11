@@ -75,18 +75,18 @@ export function DayCell({ date, currentMonth, note }: DayCellProps) {
       className={`
         min-h-[120px] p-4 border transition-all duration-200 cursor-pointer
         flex flex-col items-start justify-start relative group
-        ${!isCurrentMonth ? 'bg-cream-100 dark:bg-charcoal-700 text-charcoal-500 border-cream-100 dark:border-charcoal-700' : 'bg-white dark:bg-cream-100 border-cream-100 dark:border-charcoal-700'}
-        ${note?.completedAt ? 'bg-sage-100 dark:bg-sage-100/10' : ''}
-        ${isToday ? 'bg-terracotta-100 dark:bg-terracotta-100/10' : ''}
-        hover:shadow-soft hover:-translate-y-1
+        ${!isCurrentMonth ? 'bg-tertiary text-tertiary border-default' : 'bg-secondary border-default'}
+        ${note?.completedAt ? 'bg-success-bg' : ''}
+        ${isToday ? 'bg-accent-primary-subtle' : ''}
+        hover:shadow-dark hover:-translate-y-1
       `}
     >
       <div className="flex justify-between items-start w-full mb-3">
         <span
           className={`
             font-display text-[28px] font-bold leading-none
-            ${isToday ? 'text-terracotta-600' : ''}
-            ${!isCurrentMonth ? 'text-charcoal-500 dark:text-charcoal-500' : 'text-charcoal-900 dark:text-charcoal-900'}
+            ${isToday ? 'text-accent-primary' : ''}
+            ${!isCurrentMonth ? 'text-tertiary' : 'text-primary'}
           `}
         >
           {date.getDate()}
@@ -98,8 +98,8 @@ export function DayCell({ date, currentMonth, note }: DayCellProps) {
             className={`
               p-1 rounded-full transition-all
               ${note?.completedAt
-                ? 'text-sage-500 hover:bg-priority-high/10 hover:text-priority-high bg-sage-100'
-                : 'text-charcoal-500 hover:bg-sage-100 hover:text-sage-500 bg-cream-100 dark:bg-charcoal-700'}
+                ? 'text-success hover:bg-priority-high/10 hover:text-priority-high bg-success-bg'
+                : 'text-tertiary hover:bg-success-bg hover:text-success bg-tertiary'}
             `}
             title={note?.completedAt ? "Mark as incomplete" : "Mark as completed"}
           >
@@ -119,7 +119,7 @@ export function DayCell({ date, currentMonth, note }: DayCellProps) {
       {hasNote && isCurrentMonth && (
         <div className="w-full flex flex-col gap-2">
           {/* Note content preview */}
-          <p className="text-[11px] font-body text-charcoal-700 dark:text-charcoal-700 line-clamp-3 leading-relaxed text-left">
+          <p className="text-[11px] font-body text-secondary line-clamp-3 leading-relaxed text-left">
             {getPreviewText(note.content)}
           </p>
 
@@ -131,16 +131,16 @@ export function DayCell({ date, currentMonth, note }: DayCellProps) {
                   key={tag.id}
                   className="text-[10px] font-body font-semibold uppercase tracking-wide px-2 py-0.5 rounded-full"
                   style={{
-                    backgroundColor: tag.color ? `${tag.color}40` : '#f8f4ed',
-                    border: `1px solid ${tag.color ? `${tag.color}80` : '#757570'}`,
-                    color: tag.color || '#757570',
+                    backgroundColor: tag.color ? `${tag.color}40` : 'rgba(100, 116, 139, 0.1)',
+                    border: `1px solid ${tag.color ? `${tag.color}80` : 'rgb(100, 116, 139)'}`,
+                    color: tag.color || 'rgb(100, 116, 139)',
                   }}
                 >
                   {tag.name}
                 </span>
               ))}
               {note.tags.length > 2 && (
-                <span className="text-[10px] text-charcoal-500">+{note.tags.length - 2}</span>
+                <span className="text-[10px] text-tertiary">+{note.tags.length - 2}</span>
               )}
             </div>
           )}

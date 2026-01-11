@@ -215,13 +215,13 @@ export function CardStackView() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-cream-50 to-cream-100 dark:from-cream-50 dark:to-cream-100">
+    <div className="min-h-screen bg-primary">
       <div className="container mx-auto px-4 py-6 max-w-5xl">
         {/* Header */}
         <div className="flex flex-col gap-4 mb-8 md:flex-row md:items-center md:justify-between">
           <div>
-            <h1 className="font-display text-5xl font-bold text-charcoal-900 dark:text-charcoal-900 tracking-tight">klat</h1>
-            <p className="font-body text-charcoal-700 dark:text-charcoal-700 mt-2">Your Personal Notes</p>
+            <h1 className="font-display text-5xl font-bold text-primary tracking-tight">klat</h1>
+            <p className="font-body text-secondary mt-2">Your Personal Notes</p>
           </div>
 
           {/* Live Clock & Date - Hidden on mobile */}
@@ -233,7 +233,7 @@ export function CardStackView() {
             <ThemeToggle />
             <button
               onClick={handleLogout}
-              className="px-4 py-2 font-body text-sm font-medium text-charcoal-900 dark:text-charcoal-900 bg-white dark:bg-cream-100 border border-cream-100 dark:border-charcoal-700 rounded-lg hover:bg-terracotta-100 dark:hover:bg-terracotta-100/10 hover:text-terracotta-600 hover:border-terracotta-500 flex items-center gap-2 shadow-soft transition-all"
+              className="px-4 py-2 font-body text-sm font-medium text-primary bg-secondary border border-default rounded-lg hover:bg-accent-primary-subtle hover:text-accent-primary hover:border-accent-primary flex items-center gap-2 shadow-dark transition-all"
               title="Logout"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -248,7 +248,7 @@ export function CardStackView() {
             </button>
             <Link
               to="/note/new"
-              className="px-4 py-2 font-body text-sm font-medium text-white bg-terracotta-500 rounded-lg hover:bg-terracotta-600 flex items-center gap-2 shadow-soft transition-all"
+              className="px-4 py-2 font-body text-sm font-medium text-white bg-accent-primary rounded-lg hover:bg-accent-primary-hover flex items-center gap-2 shadow-dark transition-all"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path
@@ -262,7 +262,7 @@ export function CardStackView() {
             </Link>
             <Link
               to="/tags"
-              className="px-4 py-2 font-body text-sm font-medium text-charcoal-900 dark:text-charcoal-900 bg-white dark:bg-cream-100 border border-cream-100 dark:border-charcoal-700 rounded-lg hover:bg-terracotta-100 dark:hover:bg-terracotta-100/10 hover:text-terracotta-600 hover:border-terracotta-500 flex items-center gap-2 shadow-soft transition-all"
+              className="px-4 py-2 font-body text-sm font-medium text-primary bg-secondary border border-default rounded-lg hover:bg-accent-primary-subtle hover:text-accent-primary hover:border-accent-primary flex items-center gap-2 shadow-dark transition-all"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path
@@ -284,8 +284,8 @@ export function CardStackView() {
             className={`
               flex-1 px-6 py-4 rounded-xl font-body font-semibold transition-all
               ${activeTab === 'active'
-                ? 'bg-terracotta-500 text-white shadow-soft-lg'
-                : 'bg-white dark:bg-cream-100 text-charcoal-900 dark:text-charcoal-900 hover:bg-terracotta-100 dark:hover:bg-terracotta-100/10 border border-cream-100 dark:border-charcoal-700 shadow-soft'}
+                ? 'bg-accent-primary text-white shadow-dark-lg'
+                : 'bg-secondary text-primary hover:bg-terracotta-100 dark:hover:bg-terracotta-100/10 border border-default shadow-dark'}
             `}
           >
             Active Notes
@@ -300,8 +300,8 @@ export function CardStackView() {
             className={`
               flex-1 px-6 py-4 rounded-xl font-body font-semibold transition-all
               ${activeTab === 'completed'
-                ? 'bg-terracotta-500 text-white shadow-soft-lg'
-                : 'bg-white dark:bg-cream-100 text-charcoal-900 dark:text-charcoal-900 hover:bg-terracotta-100 dark:hover:bg-terracotta-100/10 border border-cream-100 dark:border-charcoal-700 shadow-soft'}
+                ? 'bg-accent-primary text-white shadow-dark-lg'
+                : 'bg-secondary text-primary hover:bg-terracotta-100 dark:hover:bg-terracotta-100/10 border border-default shadow-dark'}
             `}
           >
             Completed
@@ -314,7 +314,7 @@ export function CardStackView() {
         </div>
 
         {/* Filter Bar */}
-        <div className="bg-white dark:bg-cream-100 rounded-xl shadow-soft p-6 mb-8">
+        <div className="bg-secondary rounded-xl shadow-dark p-6 mb-8">
           <div className="flex flex-col gap-3 md:flex-row md:items-center md:gap-3">
             {/* Search Input */}
             <div className="flex-1">
@@ -430,10 +430,10 @@ export function CardStackView() {
 
                 // Get accent bar color based on importance/completion
                 const getAccentColor = () => {
-                  if (note.completedAt) return '#6b9080'; // sage-500
-                  if (note.importance === 'HIGH') return '#c93a3a'; // priority-high
-                  if (note.importance === 'MEDIUM') return '#d97706'; // priority-medium
-                  if (note.importance === 'LOW') return '#0c8ab3'; // priority-low
+                  if (note.completedAt) return 'var(--success)'; // sage-500
+                  if (note.importance === 'HIGH') return 'var(--priority-high)'; // priority-high
+                  if (note.importance === 'MEDIUM') return 'var(--priority-medium)'; // priority-medium
+                  if (note.importance === 'LOW') return 'var(--priority-low)'; // priority-low
                   return '#e5e5e0'; // neutral gray
                 };
 
@@ -452,9 +452,9 @@ export function CardStackView() {
                         }
                       }}
                       className={`
-                        w-full rounded-xl shadow-soft hover:shadow-soft-lg transition-all duration-300 p-8 hover:-translate-y-1 text-left
+                        w-full rounded-xl shadow-dark hover:shadow-dark-lg transition-all duration-300 p-8 hover:-translate-y-1 text-left
                         relative overflow-hidden
-                        ${note.completedAt ? 'bg-sage-100/30 dark:bg-sage-100/5' : 'bg-cream-50 dark:bg-cream-100'}
+                        ${note.completedAt ? 'bg-success-bg' : 'bg-secondary'}
                       `}
                     >
                       {/* Left accent bar */}
@@ -466,7 +466,7 @@ export function CardStackView() {
                       <div className="flex items-center justify-between mb-6">
                         <div className="flex flex-col gap-2">
                           <div className="flex items-center gap-3">
-                            <h3 className="font-display text-[32px] font-bold text-charcoal-900 dark:text-charcoal-900 leading-none">
+                            <h3 className="font-display text-[32px] font-bold text-primary leading-none">
                               {formatDateNL(dateObj, 'EEEE d MMMM yyyy')}
                             </h3>
                             {note.completedAt && (
@@ -587,7 +587,7 @@ export function CardStackView() {
 
                       {/* Content Preview */}
                       {hasContent && (
-                        <p className="font-body text-[15px] leading-[1.7] text-charcoal-700 dark:text-charcoal-700 mb-6 whitespace-pre-line overflow-hidden" style={{ maxHeight: '9rem' }}>
+                        <p className="font-body text-[15px] leading-[1.7] text-secondary mb-6 whitespace-pre-line overflow-hidden" style={{ maxHeight: '9rem' }}>
                           {getPreviewText(note.content)}
                         </p>
                       )}

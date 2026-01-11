@@ -5,45 +5,52 @@ export default {
   theme: {
     extend: {
       colors: {
-        cream: {
-          50: '#fdfbf7',
-          100: '#f8f4ed',
+        bg: {
+          primary: '#1a1d23',
+          secondary: '#242930',
+          tertiary: '#2d3340',
+          elevated: '#353b4a',
         },
-        charcoal: {
-          500: '#757570',
-          700: '#4a4a45',
-          900: '#2d2d2a',
+        text: {
+          primary: '#e8eaed',
+          secondary: '#9aa0a6',
+          tertiary: '#6c7280',
         },
-        terracotta: {
-          100: '#fde8e0',
-          500: '#d4704f',
-          600: '#c2573a',
+        accent: {
+          primary: '#00ff88',
+          'primary-hover': '#00cc6e',
+          'primary-subtle': 'rgba(0, 255, 136, 0.15)',
+          secondary: '#00d9ff',
+          'secondary-hover': '#00b8d4',
+          'secondary-subtle': 'rgba(0, 217, 255, 0.15)',
         },
-        sage: {
-          100: '#e3f0ea',
-          500: '#6b9080',
-        },
-        navy: {
-          100: '#e5eaed',
-          700: '#2c4251',
+        border: {
+          default: '#3a4049',
+          subtle: '#2a2f38',
         },
         priority: {
-          high: '#c93a3a',
-          'high-bg': '#fce8e8',
-          medium: '#d97706',
-          'medium-bg': '#fef3e7',
-          low: '#0c8ab3',
-          'low-bg': '#e6f4f9',
+          high: '#ff4757',
+          'high-bg': 'rgba(255, 71, 87, 0.15)',
+          medium: '#ffa502',
+          'medium-bg': 'rgba(255, 165, 2, 0.15)',
+          low: '#00d9ff',
+          'low-bg': 'rgba(0, 217, 255, 0.15)',
+        },
+        success: {
+          DEFAULT: '#00ff88',
+          bg: 'rgba(0, 255, 136, 0.15)',
         },
       },
       fontFamily: {
-        display: ['Crimson Pro', 'serif'],
-        body: ['DM Sans', 'sans-serif'],
+        display: ['Inter', 'system-ui', 'sans-serif'],
+        body: ['Inter', 'system-ui', 'sans-serif'],
         mono: ['JetBrains Mono', 'monospace'],
       },
       boxShadow: {
-        'soft': '0 2px 8px rgba(0, 0, 0, 0.04), 0 8px 24px rgba(0, 0, 0, 0.06)',
-        'soft-lg': '0 4px 16px rgba(0, 0, 0, 0.06), 0 12px 32px rgba(0, 0, 0, 0.08)',
+        'glow': '0 0 20px rgba(0, 255, 136, 0.3)',
+        'glow-lg': '0 0 30px rgba(0, 255, 136, 0.4)',
+        'dark': '0 4px 16px rgba(0, 0, 0, 0.4), 0 8px 32px rgba(0, 0, 0, 0.3)',
+        'dark-lg': '0 8px 24px rgba(0, 0, 0, 0.5), 0 16px 48px rgba(0, 0, 0, 0.4)',
       },
       gridTemplateColumns: {
         calendar: 'repeat(7, minmax(0, 1fr))',

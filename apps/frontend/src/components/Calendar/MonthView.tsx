@@ -62,7 +62,7 @@ export function MonthView() {
         {weekDays.map((day) => (
           <div
             key={day}
-            className="text-center font-body text-sm font-semibold text-charcoal-700 dark:text-charcoal-700 py-3 uppercase tracking-widest"
+            className="text-center font-body text-sm font-semibold text-secondary py-3 uppercase tracking-widest"
           >
             {day}
           </div>
@@ -71,16 +71,16 @@ export function MonthView() {
 
       {/* Calendar grid */}
       {isLoading ? (
-        <div className="grid grid-cols-7 gap-0 border border-cream-100 dark:border-charcoal-700 rounded-lg overflow-hidden shadow-soft">
+        <div className="grid grid-cols-7 gap-0 border border-default rounded-lg overflow-hidden shadow-dark">
           {Array.from({ length: 35 }).map((_, i) => (
             <div
               key={i}
-              className="min-h-[120px] p-4 border border-cream-100 dark:border-charcoal-700 bg-cream-100 dark:bg-charcoal-700 animate-pulse"
+              className="min-h-[120px] p-4 border border-default bg-tertiary animate-pulse"
             />
           ))}
         </div>
       ) : (
-        <div className="grid grid-cols-7 gap-0 border border-cream-100 dark:border-charcoal-700 rounded-lg overflow-hidden shadow-soft">
+        <div className="grid grid-cols-7 gap-0 border border-default rounded-lg overflow-hidden shadow-dark">
           {monthDays.map((date) => {
             const dateStr = format(date, 'yyyy-MM-dd');
             const note = notesByDate.get(dateStr);

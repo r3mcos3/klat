@@ -77,13 +77,13 @@ export function TagsView() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-cream-50 to-cream-100 dark:from-cream-50 dark:to-cream-100">
+    <div className="min-h-screen bg-primary">
       <div className="container mx-auto px-4 py-8 max-w-4xl">
         {/* Header */}
         <div className="mb-8">
           <Link
             to="/"
-            className="inline-flex items-center font-body text-sm text-charcoal-700 dark:text-charcoal-700 hover:text-terracotta-600 mb-4 transition-colors"
+            className="inline-flex items-center font-body text-sm text-secondary hover:text-accent-primary mb-4 transition-colors"
           >
             <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
@@ -96,30 +96,30 @@ export function TagsView() {
             Back to overview
           </Link>
 
-          <h1 className="font-display text-5xl font-bold text-charcoal-900 dark:text-charcoal-900 mb-3 tracking-tight">Manage Tags</h1>
-          <p className="font-body text-charcoal-700 dark:text-charcoal-700">Organize your notes with tags</p>
+          <h1 className="font-display text-5xl font-bold text-primary mb-3 tracking-tight">Manage Tags</h1>
+          <p className="font-body text-secondary">Organize your notes with tags</p>
         </div>
 
         {/* Create Tag */}
-        <div className="bg-white dark:bg-cream-100 rounded-xl shadow-soft p-8 mb-6">
-          <h2 className="font-display text-2xl font-bold text-charcoal-900 dark:text-charcoal-900 mb-6">Create new tag</h2>
+        <div className="bg-secondary rounded-xl shadow-dark p-8 mb-6">
+          <h2 className="font-display text-2xl font-bold text-primary mb-6">Create new tag</h2>
           <TagInput />
         </div>
 
         {/* Tags List */}
-        <div className="bg-white dark:bg-cream-100 rounded-xl shadow-soft p-8">
-          <h2 className="font-display text-2xl font-bold text-charcoal-900 dark:text-charcoal-900 mb-6">
+        <div className="bg-secondary rounded-xl shadow-dark p-8">
+          <h2 className="font-display text-2xl font-bold text-primary mb-6">
             Your tags ({tags.length})
           </h2>
 
           {isLoading ? (
             <div className="space-y-4">
               {[1, 2, 3].map((i) => (
-                <div key={i} className="h-16 bg-cream-100 dark:bg-charcoal-700 rounded-lg animate-pulse" />
+                <div key={i} className="h-16 bg-tertiary rounded-lg animate-pulse" />
               ))}
             </div>
           ) : tags.length === 0 ? (
-            <p className="font-body text-charcoal-500 text-center py-12">
+            <p className="font-body text-tertiary text-center py-12">
               No tags yet. Create one above!
             </p>
           ) : (
@@ -127,12 +127,12 @@ export function TagsView() {
               {tags.map((tag) => (
                 <div
                   key={tag.id}
-                  className="relative overflow-hidden flex items-center bg-cream-100 dark:bg-charcoal-900/20 rounded-lg p-5 hover:shadow-soft transition-all"
+                  className="relative overflow-hidden flex items-center bg-tertiary rounded-lg p-5 hover:shadow-dark transition-all"
                 >
                   {/* Color bar */}
                   <div
                     className="absolute left-0 top-0 bottom-0 w-1.5 rounded-l-lg"
-                    style={{ backgroundColor: tag.color || '#757570' }}
+                    style={{ backgroundColor: tag.color || 'rgb(100, 116, 139)' }}
                   />
                   <div className="pl-4 flex-1">
                   {editingTag?.id === tag.id ? (
@@ -183,21 +183,21 @@ export function TagsView() {
                     // View Mode
                     <div className="flex items-center justify-between w-full">
                       <div className="flex items-center gap-4">
-                        <h3 className="font-body text-base font-semibold uppercase tracking-wide text-charcoal-900 dark:text-charcoal-900">{tag.name}</h3>
-                        <p className="font-mono text-xs text-charcoal-500">{tag.color || 'No color'}</p>
+                        <h3 className="font-body text-base font-semibold uppercase tracking-wide text-primary">{tag.name}</h3>
+                        <p className="font-mono text-xs text-tertiary">{tag.color || 'No color'}</p>
                       </div>
 
                       <div className="flex gap-2">
                         <button
                           onClick={() => handleEditClick(tag)}
-                          className="px-4 py-2 font-body text-sm font-medium text-terracotta-600 hover:bg-terracotta-100 dark:hover:bg-terracotta-100/10 rounded-lg transition-all"
+                          className="px-4 py-2 font-body text-sm font-medium text-accent-primary hover:bg-accent-primary-subtle rounded-lg transition-all"
                         >
                           Edit
                         </button>
                         <button
                           onClick={() => handleDeleteClick(tag.id, tag.name)}
                           disabled={deleteTag.isPending}
-                          className="px-4 py-2 font-body text-sm font-medium text-priority-high hover:bg-priority-high-bg dark:hover:bg-priority-high/10 rounded-lg disabled:opacity-50 transition-all"
+                          className="px-4 py-2 font-body text-sm font-medium text-priority-high hover:bg-priority-high/10 rounded-lg disabled:opacity-50 transition-all"
                         >
                           Delete
                         </button>

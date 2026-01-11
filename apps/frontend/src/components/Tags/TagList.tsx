@@ -10,7 +10,7 @@ interface TagListProps {
 export function TagList({ tags, selectedTags = [], onToggle, readonly = false }: TagListProps) {
   if (tags.length === 0) {
     return (
-      <div className="font-body text-sm text-charcoal-500 italic">No tags available</div>
+      <div className="font-body text-sm text-tertiary italic">No tags available</div>
     );
   }
 
@@ -36,9 +36,9 @@ export function TagList({ tags, selectedTags = [], onToggle, readonly = false }:
               }
             `}
             style={{
-              backgroundColor: tag.color ? `${tag.color}40` : '#f8f4ed',
-              border: `1px solid ${tag.color ? `${tag.color}80` : '#757570'}`,
-              color: tag.color || '#757570',
+              backgroundColor: tag.color ? `${tag.color}40` : 'rgba(100, 116, 139, 0.1)',
+              border: `1px solid ${tag.color ? `${tag.color}80` : 'rgb(100, 116, 139)'}`,
+              color: tag.color || 'rgb(100, 116, 139)',
             }}
           >
             {tag.name}
