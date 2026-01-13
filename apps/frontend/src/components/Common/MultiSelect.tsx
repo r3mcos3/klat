@@ -70,11 +70,14 @@ export function MultiSelect({ options, selectedValues, onChange, placeholder = '
 
       {/* Dropdown Menu */}
       {isOpen && (
-        <div className="absolute z-10 mt-1 w-full bg-secondary border border-default rounded-md shadow-dark max-h-60 overflow-auto">
+        <div
+          className="absolute z-10 mt-1 w-full bg-secondary border border-default rounded-md shadow-dark max-h-60 overflow-auto"
+          style={{ backgroundColor: '#132f4c', borderColor: '#1e4976' }}
+        >
           {options.length === 0 ? (
-            <div className="px-3 py-2 text-secondary text-sm">No options available</div>
+            <div className="px-3 py-2 text-secondary text-sm" style={{ color: '#90caf9' }}>No options available</div>
           ) : (
-            <ul className="py-1">
+            <ul className="py-1" style={{ backgroundColor: '#132f4c' }}>
               {options.map((option) => {
                 const isSelected = selectedValues.includes(option.value);
                 return (
@@ -87,6 +90,7 @@ export function MultiSelect({ options, selectedValues, onChange, placeholder = '
                           ? 'bg-accent-primary text-white'
                           : 'text-primary hover:bg-tertiary'
                       }`}
+                      style={isSelected ? { backgroundColor: '#06b6d4', color: '#ffffff' } : { color: '#e3f2fd' }}
                     >
                       {/* Checkbox */}
                       <div
@@ -95,6 +99,7 @@ export function MultiSelect({ options, selectedValues, onChange, placeholder = '
                             ? 'border-white bg-white'
                             : 'border-primary'
                         }`}
+                        style={isSelected ? { borderColor: '#ffffff', backgroundColor: '#ffffff' } : { borderColor: '#e3f2fd' }}
                       >
                         {isSelected && (
                           <svg
@@ -102,6 +107,7 @@ export function MultiSelect({ options, selectedValues, onChange, placeholder = '
                             fill="none"
                             stroke="currentColor"
                             viewBox="0 0 24 24"
+                            style={{ color: '#06b6d4' }}
                           >
                             <path
                               strokeLinecap="round"
