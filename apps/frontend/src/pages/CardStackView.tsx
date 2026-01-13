@@ -7,6 +7,7 @@ import { handleImageDragStart } from '@/utils/dragHelpers';
 import { ConfirmDialog } from '@/components/Common/ConfirmDialog';
 import { LiveDateTime } from '@/components/Common/LiveDateTime';
 import { ThemeToggle } from '@/components/Common/ThemeToggle';
+import { MultiSelect } from '@/components/Common/MultiSelect';
 import { useAuthStore } from '@/store/authStore';
 import { useState, useEffect } from 'react';
 import type { Note } from '@klat/types';
@@ -346,30 +347,15 @@ export function CardStackView() {
             </select>
 
             {/* Tag Filter */}
-            <div className="relative">
-              <select
-                multiple
-                value={selectedTagIds}
-                onChange={(e) => {
-                  const selected = Array.from(e.target.selectedOptions, option => option.value);
-                  setSelectedTagIds(selected);
-                }}
-                className="px-3 py-2 border border-default rounded-md bg-secondary text-primary focus:ring-2 focus:ring-accent-primary focus:border-transparent min-w-[150px] [&>option]:bg-secondary [&>option]:text-primary [&>option:checked]:bg-accent-primary [&>option:checked]:text-white"
-                size={1}
-              >
-                <option value="" disabled style={{ backgroundColor: '#132f4c', color: '#e3f2fd' }}>Tags...</option>
-                {allTags.map((tag: any) => (
-                  <option key={tag.id} value={tag.id} style={{ backgroundColor: '#132f4c', color: '#e3f2fd' }}>
-                    {tag.name}
-                  </option>
-                ))}
-              </select>
-              {selectedTagIds.length > 0 && (
-                <span className="absolute -top-2 -right-2 bg-accent-primary text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                  {selectedTagIds.length}
-                </span>
-              )}
-            </div>
+            <MultiSelect
+              options={allTags.map((tag: any) => ({
+                value: tag.id,
+                label: tag.name,
+              }))}
+              selectedValues={selectedTagIds}
+              onChange={setSelectedTagIds}
+              placeholder="Tags..."
+            />
 
             {/* Clear Filters */}
             <button
