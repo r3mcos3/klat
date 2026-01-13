@@ -77,7 +77,7 @@ export function MultiSelect({ options, selectedValues, onChange, placeholder = '
             zIndex: 10,
             marginTop: '0.25rem',
             width: '100%',
-            backgroundColor: '#1e3a5f',
+            backgroundColor: '#132f4c',
             borderWidth: '1px',
             borderStyle: 'solid',
             borderColor: '#1e4976',
@@ -90,11 +90,11 @@ export function MultiSelect({ options, selectedValues, onChange, placeholder = '
           {options.length === 0 ? (
             <div style={{ padding: '0.75rem', color: '#90caf9', fontSize: '0.875rem' }}>No options available</div>
           ) : (
-            <ul style={{ backgroundColor: '#1e3a5f', padding: '0.25rem 0', margin: 0, listStyle: 'none' }}>
+            <ul style={{ backgroundColor: '#132f4c', padding: '0.25rem 0', margin: 0, listStyle: 'none' }}>
               {options.map((option) => {
                 const isSelected = selectedValues.includes(option.value);
                 return (
-                  <li key={option.value} style={{ backgroundColor: '#1e3a5f' }}>
+                  <li key={option.value} style={{ backgroundColor: '#132f4c' }}>
                     <button
                       type="button"
                       onClick={() => toggleOption(option.value)}
@@ -114,7 +114,7 @@ export function MultiSelect({ options, selectedValues, onChange, placeholder = '
                       }}
                       onMouseEnter={(e) => {
                         if (!isSelected) {
-                          e.currentTarget.style.backgroundColor = '#2c5282';
+                          e.currentTarget.style.backgroundColor = '#1e3a5f';
                         }
                       }}
                       onMouseLeave={(e) => {
