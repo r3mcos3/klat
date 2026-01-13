@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
+import styles from './MultiSelect.module.css';
 
 interface Option {
   value: string;
@@ -71,13 +72,13 @@ export function MultiSelect({ options, selectedValues, onChange, placeholder = '
       {/* Dropdown Menu */}
       {isOpen && (
         <div
-          className="absolute z-10 mt-1 w-full bg-secondary border border-default rounded-md shadow-dark max-h-60 overflow-auto"
+          className={`${styles.dropdownMenu} absolute z-10 mt-1 w-full bg-secondary border border-default rounded-md shadow-dark max-h-60 overflow-auto`}
           style={{ backgroundColor: '#132f4c', borderColor: '#1e4976' }}
         >
           {options.length === 0 ? (
             <div className="px-3 py-2 text-secondary text-sm" style={{ color: '#90caf9' }}>No options available</div>
           ) : (
-            <ul className="py-1" style={{ backgroundColor: '#132f4c' }}>
+            <ul className={styles.dropdownList} style={{ backgroundColor: '#132f4c' }}>
               {options.map((option) => {
                 const isSelected = selectedValues.includes(option.value);
                 return (
@@ -85,11 +86,7 @@ export function MultiSelect({ options, selectedValues, onChange, placeholder = '
                     <button
                       type="button"
                       onClick={() => toggleOption(option.value)}
-                      className={`w-full text-left px-3 py-2 text-sm transition-colors flex items-center gap-2 ${
-                        isSelected
-                          ? 'bg-accent-primary text-white'
-                          : 'text-primary hover:bg-tertiary'
-                      }`}
+                      className={`${isSelected ? styles.optionButtonSelected : styles.optionButton} w-full text-left px-3 py-2 text-sm transition-colors flex items-center gap-2`}
                       style={isSelected ? { backgroundColor: '#06b6d4', color: '#ffffff' } : { color: '#e3f2fd' }}
                     >
                       {/* Checkbox */}
