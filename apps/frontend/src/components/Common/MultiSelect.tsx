@@ -72,39 +72,80 @@ export function MultiSelect({ options, selectedValues, onChange, placeholder = '
       {/* Dropdown Menu */}
       {isOpen && (
         <div
-          className={`${styles.dropdownMenu} absolute z-10 mt-1 w-full bg-secondary border border-default rounded-md shadow-dark max-h-60 overflow-auto`}
-          style={{ backgroundColor: '#132f4c', borderColor: '#1e4976' }}
+          style={{
+            position: 'absolute',
+            zIndex: 10,
+            marginTop: '0.25rem',
+            width: '100%',
+            backgroundColor: '#132f4c',
+            borderWidth: '1px',
+            borderStyle: 'solid',
+            borderColor: '#1e4976',
+            borderRadius: '0.375rem',
+            boxShadow: '0 4px 16px rgba(0, 0, 0, 0.6), 0 8px 32px rgba(0, 0, 0, 0.4)',
+            maxHeight: '15rem',
+            overflowY: 'auto',
+          }}
         >
           {options.length === 0 ? (
-            <div className="px-3 py-2 text-secondary text-sm" style={{ color: '#90caf9' }}>No options available</div>
+            <div style={{ padding: '0.75rem', color: '#90caf9', fontSize: '0.875rem' }}>No options available</div>
           ) : (
-            <ul className={styles.dropdownList} style={{ backgroundColor: '#132f4c' }}>
+            <ul style={{ backgroundColor: '#132f4c', padding: '0.25rem 0', margin: 0, listStyle: 'none' }}>
               {options.map((option) => {
                 const isSelected = selectedValues.includes(option.value);
                 return (
-                  <li key={option.value}>
+                  <li key={option.value} style={{ backgroundColor: '#132f4c' }}>
                     <button
                       type="button"
                       onClick={() => toggleOption(option.value)}
-                      className={`${isSelected ? styles.optionButtonSelected : styles.optionButton} w-full text-left px-3 py-2 text-sm transition-colors flex items-center gap-2`}
-                      style={isSelected ? { backgroundColor: '#06b6d4', color: '#ffffff' } : { color: '#e3f2fd' }}
+                      style={{
+                        width: '100%',
+                        textAlign: 'left',
+                        padding: '0.5rem 0.75rem',
+                        fontSize: '0.875rem',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.5rem',
+                        border: 'none',
+                        cursor: 'pointer',
+                        transition: 'all 0.2s',
+                        backgroundColor: isSelected ? '#06b6d4' : '#132f4c',
+                        color: isSelected ? '#ffffff' : '#e3f2fd',
+                      }}
+                      onMouseEnter={(e) => {
+                        if (!isSelected) {
+                          e.currentTarget.style.backgroundColor = '#1e3a5f';
+                        }
+                      }}
+                      onMouseLeave={(e) => {
+                        if (!isSelected) {
+                          e.currentTarget.style.backgroundColor = '#132f4c';
+                        }
+                      }}
                     >
                       {/* Checkbox */}
                       <div
-                        className={`w-4 h-4 border-2 rounded flex items-center justify-center flex-shrink-0 ${
-                          isSelected
-                            ? 'border-white bg-white'
-                            : 'border-primary'
-                        }`}
-                        style={isSelected ? { borderColor: '#ffffff', backgroundColor: '#ffffff' } : { borderColor: '#e3f2fd' }}
+                        style={{
+                          width: '1rem',
+                          height: '1rem',
+                          borderWidth: '2px',
+                          borderStyle: 'solid',
+                          borderColor: isSelected ? '#ffffff' : '#e3f2fd',
+                          borderRadius: '0.25rem',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          flexShrink: 0,
+                          backgroundColor: isSelected ? '#ffffff' : 'transparent',
+                        }}
                       >
                         {isSelected && (
                           <svg
-                            className="w-3 h-3 text-accent-primary"
+                            width="12"
+                            height="12"
                             fill="none"
-                            stroke="currentColor"
+                            stroke="#06b6d4"
                             viewBox="0 0 24 24"
-                            style={{ color: '#06b6d4' }}
                           >
                             <path
                               strokeLinecap="round"
