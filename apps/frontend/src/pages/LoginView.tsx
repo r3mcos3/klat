@@ -50,7 +50,7 @@ export default function LoginView() {
             <div>
               <label
                 htmlFor="email"
-                className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                className="block text-sm font-medium text-primary mb-2"
               >
                 Email
               </label>
@@ -62,7 +62,7 @@ export default function LoginView() {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                className="w-full px-3 py-2 border border-default rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-accent-primary focus:border-transparent bg-secondary text-primary"
                 placeholder="your@email.com"
               />
             </div>
@@ -70,7 +70,7 @@ export default function LoginView() {
             <div>
               <label
                 htmlFor="password"
-                className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                className="block text-sm font-medium text-primary mb-2"
               >
                 Password
               </label>
@@ -82,12 +82,12 @@ export default function LoginView() {
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                className="w-full px-3 py-2 border border-default rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-accent-primary focus:border-transparent bg-secondary text-primary"
                 placeholder={isLoginMode ? 'Password' : 'At least 6 characters'}
                 minLength={6}
               />
               {!isLoginMode && (
-                <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                <p className="mt-1 text-xs text-secondary">
                   Password must be at least 6 characters
                 </p>
               )}

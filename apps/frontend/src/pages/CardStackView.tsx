@@ -319,7 +319,7 @@ export function CardStackView() {
             {/* Search Input */}
             <div className="flex-1">
               <div className="relative">
-                <svg className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-tertiary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                 </svg>
                 <input
@@ -327,7 +327,7 @@ export function CardStackView() {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Search notes..."
-                  className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                  className="w-full pl-10 pr-4 py-2 border border-default rounded-md bg-secondary text-primary placeholder-tertiary focus:ring-2 focus:ring-accent-primary focus:border-transparent"
                 />
               </div>
             </div>
@@ -336,7 +336,7 @@ export function CardStackView() {
             <select
               value={priorityFilter}
               onChange={(e) => setPriorityFilter(e.target.value as typeof priorityFilter)}
-              className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+              className="px-3 py-2 border border-default rounded-md bg-secondary text-primary focus:ring-2 focus:ring-accent-primary focus:border-transparent"
             >
               <option value="ALL">All Priorities</option>
               <option value="HIGH">🔴 High</option>
@@ -354,7 +354,7 @@ export function CardStackView() {
                   const selected = Array.from(e.target.selectedOptions, option => option.value);
                   setSelectedTagIds(selected);
                 }}
-                className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-500 focus:border-transparent min-w-[150px]"
+                className="px-3 py-2 border border-default rounded-md bg-secondary text-primary focus:ring-2 focus:ring-accent-primary focus:border-transparent min-w-[150px]"
                 size={1}
               >
                 <option value="" disabled>Tags...</option>
@@ -365,7 +365,7 @@ export function CardStackView() {
                 ))}
               </select>
               {selectedTagIds.length > 0 && (
-                <span className="absolute -top-2 -right-2 bg-primary-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                <span className="absolute -top-2 -right-2 bg-accent-primary text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
                   {selectedTagIds.length}
                 </span>
               )}
@@ -378,7 +378,7 @@ export function CardStackView() {
                 setPriorityFilter('ALL');
                 setSelectedTagIds([]);
               }}
-              className="px-3 py-2 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md transition-colors flex items-center gap-1"
+              className="px-3 py-2 text-sm text-secondary hover:text-primary hover:bg-tertiary rounded-md transition-colors flex items-center gap-1"
               title="Clear all filters"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
