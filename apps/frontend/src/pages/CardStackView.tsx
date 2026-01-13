@@ -336,13 +336,13 @@ export function CardStackView() {
             <select
               value={priorityFilter}
               onChange={(e) => setPriorityFilter(e.target.value as typeof priorityFilter)}
-              className="px-3 py-2 border border-default rounded-md bg-secondary text-primary focus:ring-2 focus:ring-accent-primary focus:border-transparent"
+              className="px-3 py-2 border border-default rounded-md bg-secondary text-primary focus:ring-2 focus:ring-accent-primary focus:border-transparent [&>option]:bg-secondary [&>option]:text-primary"
             >
-              <option value="ALL">All Priorities</option>
-              <option value="HIGH">🔴 High</option>
-              <option value="MEDIUM">🟡 Medium</option>
-              <option value="LOW">🔵 Low</option>
-              <option value="NONE">No Priority</option>
+              <option value="ALL" style={{ backgroundColor: '#132f4c', color: '#e3f2fd' }}>All Priorities</option>
+              <option value="HIGH" style={{ backgroundColor: '#132f4c', color: '#e3f2fd' }}>🔴 High</option>
+              <option value="MEDIUM" style={{ backgroundColor: '#132f4c', color: '#e3f2fd' }}>🟡 Medium</option>
+              <option value="LOW" style={{ backgroundColor: '#132f4c', color: '#e3f2fd' }}>🔵 Low</option>
+              <option value="NONE" style={{ backgroundColor: '#132f4c', color: '#e3f2fd' }}>No Priority</option>
             </select>
 
             {/* Tag Filter */}
@@ -354,12 +354,12 @@ export function CardStackView() {
                   const selected = Array.from(e.target.selectedOptions, option => option.value);
                   setSelectedTagIds(selected);
                 }}
-                className="px-3 py-2 border border-default rounded-md bg-secondary text-primary focus:ring-2 focus:ring-accent-primary focus:border-transparent min-w-[150px]"
+                className="px-3 py-2 border border-default rounded-md bg-secondary text-primary focus:ring-2 focus:ring-accent-primary focus:border-transparent min-w-[150px] [&>option]:bg-secondary [&>option]:text-primary [&>option:checked]:bg-accent-primary [&>option:checked]:text-white"
                 size={1}
               >
-                <option value="" disabled>Tags...</option>
+                <option value="" disabled style={{ backgroundColor: '#132f4c', color: '#e3f2fd' }}>Tags...</option>
                 {allTags.map((tag: any) => (
-                  <option key={tag.id} value={tag.id}>
+                  <option key={tag.id} value={tag.id} style={{ backgroundColor: '#132f4c', color: '#e3f2fd' }}>
                     {tag.name}
                   </option>
                 ))}
