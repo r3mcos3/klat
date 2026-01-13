@@ -1,5 +1,4 @@
 import { useState, useRef, useEffect } from 'react';
-import styles from './MultiSelect.module.css';
 
 interface Option {
   value: string;
@@ -36,10 +35,6 @@ export function MultiSelect({ options, selectedValues, onChange, placeholder = '
       onChange([...selectedValues, value]);
     }
   };
-
-  const selectedLabels = options
-    .filter(opt => selectedValues.includes(opt.value))
-    .map(opt => opt.label);
 
   return (
     <div className="relative" ref={containerRef}>
