@@ -17,10 +17,10 @@ export function LiveDateTime() {
 
   return (
     <div className="text-center">
-      <div className="text-3xl font-bold text-gray-800 dark:text-gray-100 tabular-nums">
+      <div className="text-3xl font-bold text-primary tabular-nums">
         {timeString}
       </div>
-      <div className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+      <div className="text-sm text-secondary mt-1">
         {dateString}
       </div>
     </div>
