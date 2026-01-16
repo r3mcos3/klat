@@ -51,11 +51,14 @@ export function CardStackView() {
 
   // First apply search/priority/tag filters to all notes
   const baseFilteredNotes = [...notes].filter((note) => {
-    // Filter by search query (search in content)
+    // Filter by search query (search in content AND tag names)
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase();
       const contentMatch = note.content.toLowerCase().includes(query);
-      if (!contentMatch) return false;
+      const tagMatch = note.tags?.some((tag: any) =>
+        tag.name.toLowerCase().includes(query)
+      ) || false;
+      if (!contentMatch && !tagMatch) return false;
     }
 
     // Filter by priority
