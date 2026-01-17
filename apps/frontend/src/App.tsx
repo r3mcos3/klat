@@ -1,7 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { useEffect } from 'react';
 import { KanbanView } from './pages/KanbanView';
-import { CardStackView } from './pages/CardStackView';
 import { NoteEditView } from './pages/NoteEditView';
 import { TagsView } from './pages/TagsView';
 import LoginView from './pages/LoginView';
@@ -33,14 +32,6 @@ function App() {
             element={
               <ProtectedRoute>
                 <KanbanView />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/cards"
-            element={
-              <ProtectedRoute>
-                <CardStackView />
               </ProtectedRoute>
             }
           />
