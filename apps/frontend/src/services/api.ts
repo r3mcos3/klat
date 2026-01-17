@@ -2,6 +2,7 @@ import axios from 'axios';
 import { supabase } from '@/config/supabase';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
+const isMockMode = import.meta.env.VITE_MOCK_MODE === 'true';
 
 export const api = axios.create({
   baseURL: API_BASE_URL,
@@ -19,6 +20,12 @@ let tokenExpiry: number = 0;
 api.interceptors.request.use(
   async (config) => {
     try {
+      // In mock mode, use a static mock token
+      if (isMockMode) {
+        config.headers.Authorization = 'Bearer mock-token-12345';
+        return config;
+      }
+
       const now = Date.now();
 
       // Use cached token if valid (5-min buffer before expiry)
@@ -60,6 +67,12 @@ api.interceptors.response.use(
       if (error.response.status === 401) {
         cachedToken = null;
         tokenExpiry = 0;
+
+        // In mock mode, just redirect to login
+        if (isMockMode) {
+          window.location.href = '/login';
+          return Promise.reject(error);
+        }
 
         try {
           await supabase.auth.signOut();

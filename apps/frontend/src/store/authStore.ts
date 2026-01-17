@@ -1,7 +1,30 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { supabase } from '@/config/supabase';
+import api from '@/services/api';
 import type { User, Session } from '@supabase/supabase-js';
+
+// Check if running in mock mode
+const isMockMode = import.meta.env.VITE_MOCK_MODE === 'true';
+
+// Mock user and session for development
+const createMockUser = (email: string): User => ({
+  id: 'mock-user-1',
+  email,
+  app_metadata: {},
+  user_metadata: {},
+  aud: 'authenticated',
+  created_at: new Date().toISOString(),
+} as User);
+
+const createMockSession = (email: string): Session => ({
+  access_token: 'mock-token-12345',
+  refresh_token: 'mock-refresh-token',
+  expires_in: 3600,
+  expires_at: Math.floor(Date.now() / 1000) + 3600,
+  token_type: 'bearer',
+  user: createMockUser(email),
+} as Session);
 
 interface AuthState {
   user: User | null;
@@ -35,6 +58,17 @@ export const useAuthStore = create<AuthState>()(
       initialize: async () => {
         try {
           set({ isLoading: true });
+
+          // In mock mode, check localStorage for persisted mock session
+          if (isMockMode) {
+            console.log('[AUTH] Running in MOCK MODE');
+            // Session will be restored from persist middleware
+            set({
+              isInitialized: true,
+              isLoading: false,
+            });
+            return;
+          }
 
           // Get current session from Supabase
           const {
@@ -80,6 +114,28 @@ export const useAuthStore = create<AuthState>()(
         try {
           set({ isLoading: true });
 
+          // Mock mode: call mock API
+          if (isMockMode) {
+            console.log('[AUTH] Mock login attempt for:', email);
+            try {
+              const response = await api.post('/auth/login', { email, password });
+              console.log('[AUTH] Mock login response:', response.data);
+              if (response.data?.data?.session) {
+                const mockSession = createMockSession(email);
+                set({
+                  user: mockSession.user,
+                  session: mockSession,
+                  isLoading: false,
+                });
+                return;
+              }
+              throw new Error('Invalid credentials');
+            } catch (err: any) {
+              console.error('[AUTH] Mock login error:', err.response?.data || err.message);
+              throw new Error(err.response?.data?.error || 'Login failed');
+            }
+          }
+
           const {
             data: { session },
             error,
@@ -108,6 +164,21 @@ export const useAuthStore = create<AuthState>()(
         try {
           set({ isLoading: true });
 
+          // Mock mode: call mock API
+          if (isMockMode) {
+            const response = await api.post('/auth/register', { email, password });
+            if (response.data?.data?.session) {
+              const mockSession = createMockSession(email);
+              set({
+                user: mockSession.user,
+                session: mockSession,
+                isLoading: false,
+              });
+              return;
+            }
+            throw new Error('Registration failed');
+          }
+
           const {
             data: { session },
             error,
@@ -135,6 +206,16 @@ export const useAuthStore = create<AuthState>()(
       logout: async () => {
         try {
           set({ isLoading: true });
+
+          // Mock mode: just clear state
+          if (isMockMode) {
+            set({
+              user: null,
+              session: null,
+              isLoading: false,
+            });
+            return;
+          }
 
           const { error } = await supabase.auth.signOut();
 

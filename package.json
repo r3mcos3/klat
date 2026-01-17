@@ -9,11 +9,14 @@
   ],
   "scripts": {
     "dev": "concurrently \"npm run backend:dev\" \"npm run frontend:dev\"",
+    "dev:mock": "concurrently \"npm run backend:mock\" \"npm run frontend:mock\"",
     "build": "npm run build --workspaces --if-present",
     "lint": "npm run lint --workspaces --if-present",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
     "backend:dev": "npm run dev --workspace=apps/backend",
-    "frontend:dev": "npm run dev --workspace=apps/frontend"
+    "backend:mock": "npm run dev:mock --workspace=apps/backend",
+    "frontend:dev": "npm run dev --workspace=apps/frontend",
+    "frontend:mock": "npm run dev:mock --workspace=apps/frontend"
   },
   "devDependencies": {
     "typescript": "^5.0.0",

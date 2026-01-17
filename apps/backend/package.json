@@ -6,6 +6,7 @@
   "main": "dist/server.js",
   "scripts": {
     "dev": "tsx watch src/server.ts",
+    "dev:mock": "tsx watch src/mock/mockServer.ts",
     "build": "tsc",
     "start": "node dist/server.js",
     "vercel-build": "npm run build"
