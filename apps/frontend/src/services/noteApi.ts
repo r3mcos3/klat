@@ -42,4 +42,10 @@ export const noteApi = {
   deleteNote: async (id: string): Promise<void> => {
     await api.delete(`/notes/${id}`);
   },
+
+  // Delete all completed notes
+  deleteCompletedNotes: async (): Promise<{ message: string; deletedCount: number }> => {
+    const response = await api.delete('/notes/completed/all');
+    return response.data;
+  },
 };

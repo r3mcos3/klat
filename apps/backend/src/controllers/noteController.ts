@@ -95,6 +95,17 @@ export class NoteController {
       next(error);
     }
   }
+
+  // DELETE /api/notes/completed/all - Delete all completed notes
+  async deleteCompletedNotes(req: Request, res: Response, next: NextFunction) {
+    try {
+      const userId = req.userId!; // Set by auth middleware
+      const result = await noteService.deleteCompletedNotes(userId);
+      res.json(result);
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 export default new NoteController();

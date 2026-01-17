@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { DndContext, DragEndEvent, DragOverlay, DragStartEvent, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
-import { useAllNotes, useUpdateNote, useDeleteNote } from '@/hooks/useNotes';
+import { useAllNotes, useUpdateNote, useDeleteNote, useDeleteCompletedNotes } from '@/hooks/useNotes';
 import { useAllTags } from '@/hooks/useTags';
 import { ThemeToggle } from '@/components/Common/ThemeToggle';
 import { LiveDateTime } from '@/components/Common/LiveDateTime';
@@ -24,11 +24,13 @@ export function KanbanView() {
   const { data: allTags = [] } = useAllTags();
   const updateNote = useUpdateNote();
   const deleteNote = useDeleteNote();
+  const deleteCompletedNotes = useDeleteCompletedNotes();
   const navigate = useNavigate();
   const { logout } = useAuthStore();
 
   const [activeId, setActiveId] = useState<string | null>(null);
   const [noteToDelete, setNoteToDelete] = useState<Note | null>(null);
+  const [showDeleteAllConfirm, setShowDeleteAllConfirm] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedTagIds, setSelectedTagIds] = useState<string[]>([]);
 
@@ -142,6 +144,15 @@ export function KanbanView() {
       setNoteToDelete(null);
     }
   };
+
+  const handleDeleteAllCompleted = async () => {
+    await deleteCompletedNotes.mutateAsync();
+    setShowDeleteAllConfirm(false);
+  };
+
+  const doneCount = useMemo(() => {
+    return allNotes.filter(note => note.completedAt).length;
+  }, [allNotes]);
 
   const activeNote = activeId ? allNotes.find(n => n.id === activeId) : null;
 
@@ -261,7 +272,12 @@ export function KanbanView() {
           <DndContext sensors={sensors} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {columns.map((column) => (
-                <KanbanColumn key={column.id} column={column} onDelete={handleDeleteClick} />
+                <KanbanColumn
+                  key={column.id}
+                  column={column}
+                  onDelete={handleDeleteClick}
+                  onDeleteAll={column.id === 'done' ? () => setShowDeleteAllConfirm(true) : undefined}
+                />
               ))}
             </div>
 
@@ -284,6 +300,17 @@ export function KanbanView() {
         cancelText="Cancel"
         onConfirm={handleDeleteConfirm}
         onCancel={() => setNoteToDelete(null)}
+        danger={true}
+      />
+
+      <ConfirmDialog
+        isOpen={showDeleteAllConfirm}
+        title="Delete all completed notes?"
+        message={`Are you sure you want to delete all ${doneCount} completed notes? This action cannot be undone.`}
+        confirmText="Delete All"
+        cancelText="Cancel"
+        onConfirm={handleDeleteAllCompleted}
+        onCancel={() => setShowDeleteAllConfirm(false)}
         danger={true}
       />
     </div>

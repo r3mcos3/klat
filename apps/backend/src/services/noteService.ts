@@ -243,6 +243,47 @@ export class NoteService {
       tags: note.tags?.map((t: any) => t.tag).filter(Boolean) || [],
     }));
   }
+
+  // Delete all completed notes
+  async deleteCompletedNotes(userId: string) {
+    // Get all completed notes for this user
+    const { data: completedNotes, error: fetchError } = await supabase
+      .from('notes')
+      .select('id')
+      .eq('userId', userId)
+      .not('completedAt', 'is', null);
+
+    if (fetchError) throw new AppError(fetchError.message, 500);
+
+    if (!completedNotes || completedNotes.length === 0) {
+      return { message: 'Geen voltooide notities gevonden', deletedCount: 0 };
+    }
+
+    const noteIds = completedNotes.map((note) => note.id);
+
+    // Delete associated images for each note
+    for (const noteId of noteIds) {
+      await imageService.deleteNoteImages(noteId, userId);
+    }
+
+    // Delete tag relations for all completed notes
+    const { error: tagRelationError } = await supabase
+      .from('_NoteToTag')
+      .delete()
+      .in('A', noteIds);
+
+    if (tagRelationError) throw new AppError(tagRelationError.message, 500);
+
+    // Delete all completed notes
+    const { error: deleteError } = await supabase
+      .from('notes')
+      .delete()
+      .in('id', noteIds);
+
+    if (deleteError) throw new AppError(deleteError.message, 500);
+
+    return { message: 'Voltooide notities verwijderd', deletedCount: noteIds.length };
+  }
 }
 
 export default new NoteService();

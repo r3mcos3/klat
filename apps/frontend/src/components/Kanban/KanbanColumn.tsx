@@ -12,9 +12,10 @@ interface Column {
 interface KanbanColumnProps {
   column: Column;
   onDelete: (note: Note) => void;
+  onDeleteAll?: () => void;
 }
 
-export function KanbanColumn({ column, onDelete }: KanbanColumnProps) {
+export function KanbanColumn({ column, onDelete, onDeleteAll }: KanbanColumnProps) {
   const { setNodeRef, isOver } = useDroppable({
     id: column.id,
   });
@@ -53,9 +54,22 @@ export function KanbanColumn({ column, onDelete }: KanbanColumnProps) {
           <h3 className="font-display text-xl font-bold text-primary uppercase tracking-wide">
             {column.title}
           </h3>
-          <span className="bg-tertiary text-secondary px-3 py-1 rounded-full text-sm font-mono font-semibold">
-            {column.notes.length}
-          </span>
+          <div className="flex items-center gap-2">
+            {onDeleteAll && column.notes.length > 0 && (
+              <button
+                onClick={onDeleteAll}
+                className="p-1.5 text-red-500 hover:text-red-400 hover:bg-red-900/30 rounded-lg transition-all"
+                title="Delete all completed notes"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+              </button>
+            )}
+            <span className="bg-tertiary text-secondary px-3 py-1 rounded-full text-sm font-mono font-semibold">
+              {column.notes.length}
+            </span>
+          </div>
         </div>
       </div>
 

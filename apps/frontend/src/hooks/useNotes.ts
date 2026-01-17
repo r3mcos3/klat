@@ -110,3 +110,16 @@ export const useDeleteNote = () => {
     },
   });
 };
+
+// Delete all completed notes mutation
+export const useDeleteCompletedNotes = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: () => noteApi.deleteCompletedNotes(),
+    onSuccess: () => {
+      // Invalidate all note queries
+      queryClient.invalidateQueries({ queryKey: noteKeys.all });
+    },
+  });
+};

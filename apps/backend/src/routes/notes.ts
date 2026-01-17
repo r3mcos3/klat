@@ -23,6 +23,9 @@ router.get('/', noteController.getNotes);
 // GET /api/notes/id/:id - Get note by ID (must be before /:date to avoid conflicts)
 router.get('/id/:id', validateParams(idParamSchema), noteController.getNoteById);
 
+// DELETE /api/notes/completed/all - Delete all completed notes (must be before /:id to avoid conflicts)
+router.delete('/completed/all', noteController.deleteCompletedNotes);
+
 // GET /api/notes/:date - Get note by date
 router.get('/:date', validateParams(dateParamSchema), noteController.getNoteByDate);
 
