@@ -66,73 +66,31 @@ export function MultiSelect({ options, selectedValues, onChange, placeholder = '
 
       {/* Dropdown Menu */}
       {isOpen && (
-        <div
-          style={{
-            position: 'absolute',
-            zIndex: 10,
-            marginTop: '0.25rem',
-            width: '100%',
-            backgroundColor: '#132f4c',
-            borderWidth: '1px',
-            borderStyle: 'solid',
-            borderColor: '#1e4976',
-            borderRadius: '0.375rem',
-            boxShadow: '0 4px 16px rgba(0, 0, 0, 0.6), 0 8px 32px rgba(0, 0, 0, 0.4)',
-            maxHeight: '15rem',
-            overflowY: 'auto',
-          }}
-        >
+        <div className="absolute z-50 mt-1 w-full bg-bg-secondary border border-border-default rounded-md shadow-dark max-h-60 overflow-y-auto">
           {options.length === 0 ? (
-            <div style={{ padding: '0.75rem', color: '#90caf9', fontSize: '0.875rem' }}>No options available</div>
+            <div className="p-3 text-text-secondary text-sm">No options available</div>
           ) : (
-            <ul style={{ backgroundColor: '#132f4c', padding: '0.25rem 0', margin: 0, listStyle: 'none' }}>
+            <ul className="bg-bg-secondary py-1 m-0 list-none">
               {options.map((option) => {
                 const isSelected = selectedValues.includes(option.value);
                 return (
-                  <li key={option.value} style={{ backgroundColor: '#132f4c' }}>
+                  <li key={option.value} className="bg-bg-secondary">
                     <button
                       type="button"
                       onClick={() => toggleOption(option.value)}
-                      style={{
-                        width: '100%',
-                        textAlign: 'left',
-                        padding: '0.5rem 0.75rem',
-                        fontSize: '0.875rem',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '0.5rem',
-                        border: 'none',
-                        cursor: 'pointer',
-                        transition: 'all 0.2s',
-                        backgroundColor: isSelected ? '#06b6d4' : '#132f4c',
-                        color: isSelected ? '#ffffff' : '#e3f2fd',
-                      }}
-                      onMouseEnter={(e) => {
-                        if (!isSelected) {
-                          e.currentTarget.style.backgroundColor = '#1e3a5f';
-                        }
-                      }}
-                      onMouseLeave={(e) => {
-                        if (!isSelected) {
-                          e.currentTarget.style.backgroundColor = '#132f4c';
-                        }
-                      }}
+                      className={`w-full text-left px-3 py-2 text-sm flex items-center gap-2 border-none cursor-pointer transition-all ${
+                        isSelected
+                          ? 'bg-accent-primary text-white'
+                          : 'bg-bg-secondary text-text-primary hover:bg-bg-tertiary'
+                      }`}
                     >
                       {/* Checkbox */}
                       <div
-                        style={{
-                          width: '1rem',
-                          height: '1rem',
-                          borderWidth: '2px',
-                          borderStyle: 'solid',
-                          borderColor: isSelected ? '#ffffff' : '#e3f2fd',
-                          borderRadius: '0.25rem',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          flexShrink: 0,
-                          backgroundColor: isSelected ? '#ffffff' : 'transparent',
-                        }}
+                        className={`w-4 h-4 border-2 rounded flex items-center justify-center flex-shrink-0 ${
+                          isSelected
+                            ? 'border-white bg-white'
+                            : 'border-text-primary bg-transparent'
+                        }`}
                       >
                         {isSelected && (
                           <svg
