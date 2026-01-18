@@ -13,9 +13,10 @@ interface KanbanColumnProps {
   column: Column;
   onDelete: (note: Note) => void;
   onDeleteAll?: () => void;
+  onAddNote?: () => void;
 }
 
-export function KanbanColumn({ column, onDelete, onDeleteAll }: KanbanColumnProps) {
+export function KanbanColumn({ column, onDelete, onDeleteAll, onAddNote }: KanbanColumnProps) {
   const { setNodeRef, isOver } = useDroppable({
     id: column.id,
   });
@@ -55,6 +56,17 @@ export function KanbanColumn({ column, onDelete, onDeleteAll }: KanbanColumnProp
             {column.title}
           </h3>
           <div className="flex items-center gap-2">
+            {onAddNote && (
+              <button
+                onClick={onAddNote}
+                className={`p-1.5 ${colors.icon} hover:bg-white/10 rounded-lg transition-all`}
+                title="Add new note"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                </svg>
+              </button>
+            )}
             {onDeleteAll && column.notes.length > 0 && (
               <button
                 onClick={onDeleteAll}

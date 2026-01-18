@@ -352,6 +352,7 @@ export function KanbanView() {
                   column={column}
                   onDelete={handleDeleteClick}
                   onDeleteAll={column.id === 'done' ? () => setShowDeleteAllConfirm(true) : undefined}
+                  onAddNote={column.id === 'todo' ? () => navigate('/note/new') : undefined}
                 />
               ))}
             </div>
