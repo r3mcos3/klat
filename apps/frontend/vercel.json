@@ -2,5 +2,8 @@
   "buildCommand": "cd ../.. && npm run build --workspace=packages/types && npm run build --workspace=apps/frontend",
   "outputDirectory": "dist",
   "installCommand": "cd ../.. && npm install --include=dev",
-  "framework": "vite"
+  "framework": "vite",
+  "rewrites": [
+    { "source": "/((?!api/).*)", "destination": "/index.html" }
+  ]
 }
