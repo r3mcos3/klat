@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useRef, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { DndContext, DragEndEvent, DragOverlay, DragStartEvent, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
 import { useAllNotes, useUpdateNote, useDeleteNote, useDeleteCompletedNotes } from '@/hooks/useNotes';
@@ -33,6 +33,27 @@ export function KanbanView() {
   const [showDeleteAllConfirm, setShowDeleteAllConfirm] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedTagIds, setSelectedTagIds] = useState<string[]>([]);
+  const [isTagDropdownOpen, setIsTagDropdownOpen] = useState(false);
+  const tagDropdownRef = useRef<HTMLDivElement>(null);
+
+  // Close tag dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (tagDropdownRef.current && !tagDropdownRef.current.contains(event.target as Node)) {
+        setIsTagDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const toggleTagSelection = (tagId: string) => {
+    if (selectedTagIds.includes(tagId)) {
+      setSelectedTagIds(selectedTagIds.filter(id => id !== tagId));
+    } else {
+      setSelectedTagIds([...selectedTagIds, tagId]);
+    }
+  };
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -221,26 +242,80 @@ export function KanbanView() {
               </div>
             </div>
 
-            <div className="relative">
-              <select
-                multiple
-                value={selectedTagIds}
-                onChange={(e) => {
-                  const selected = Array.from(e.target.selectedOptions, option => option.value);
-                  setSelectedTagIds(selected);
-                }}
-                className="px-3 py-2.5 border-2 border-accent-primary/30 rounded-lg bg-bg-tertiary text-text-primary focus:ring-2 focus:ring-accent-primary focus:border-accent-primary min-w-[150px] font-body transition-all hover:border-accent-primary/50 hover:bg-bg-elevated"
-                size={1}
+            <div className="relative" ref={tagDropdownRef}>
+              <button
+                type="button"
+                onClick={() => setIsTagDropdownOpen(!isTagDropdownOpen)}
+                className="px-3 py-2.5 border-2 border-accent-primary/30 rounded-lg bg-bg-tertiary text-text-primary focus:ring-2 focus:ring-accent-primary focus:border-accent-primary min-w-[150px] font-body transition-all hover:border-accent-primary/50 hover:bg-bg-elevated flex items-center justify-between gap-2"
               >
-                <option value="" disabled>Tags...</option>
-                {allTags.map((tag: any) => (
-                  <option key={tag.id} value={tag.id}>{tag.name}</option>
-                ))}
-              </select>
+                <span>{selectedTagIds.length > 0 ? `${selectedTagIds.length} selected` : 'Tags...'}</span>
+                <svg
+                  className={`w-4 h-4 transition-transform ${isTagDropdownOpen ? 'rotate-180' : ''}`}
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
               {selectedTagIds.length > 0 && (
-                <span className="absolute -top-2 -right-2 bg-accent-primary text-primary text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                <span className="absolute -top-2 -right-2 bg-accent-primary text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
                   {selectedTagIds.length}
                 </span>
+              )}
+              {isTagDropdownOpen && (
+                <div
+                  className="absolute z-50 mt-1 w-full rounded-lg max-h-60 overflow-y-auto"
+                  style={{
+                    backgroundColor: '#1e3a5f',
+                    border: '1px solid #163454',
+                    boxShadow: '0 4px 16px rgba(0, 0, 0, 0.6)',
+                  }}
+                >
+                  {allTags.length === 0 ? (
+                    <div className="p-3 text-sm text-text-secondary">No tags available</div>
+                  ) : (
+                    <ul style={{ margin: 0, padding: '0.25rem 0', listStyle: 'none' }}>
+                      {allTags.map((tag: any) => {
+                        const isSelected = selectedTagIds.includes(tag.id);
+                        return (
+                          <li key={tag.id}>
+                            <button
+                              type="button"
+                              onClick={() => toggleTagSelection(tag.id)}
+                              className="w-full text-left px-3 py-2 text-sm flex items-center gap-2 border-none cursor-pointer transition-colors"
+                              style={{
+                                backgroundColor: isSelected ? '#06b6d4' : '#1e3a5f',
+                                color: isSelected ? '#ffffff' : '#e3f2fd',
+                              }}
+                              onMouseEnter={(e) => {
+                                if (!isSelected) e.currentTarget.style.backgroundColor = '#2c5282';
+                              }}
+                              onMouseLeave={(e) => {
+                                if (!isSelected) e.currentTarget.style.backgroundColor = '#1e3a5f';
+                              }}
+                            >
+                              <div
+                                className="w-4 h-4 border-2 rounded flex items-center justify-center flex-shrink-0"
+                                style={{
+                                  borderColor: isSelected ? '#ffffff' : '#e3f2fd',
+                                  backgroundColor: isSelected ? '#ffffff' : 'transparent',
+                                }}
+                              >
+                                {isSelected && (
+                                  <svg width="12" height="12" fill="none" stroke="#06b6d4" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                                  </svg>
+                                )}
+                              </div>
+                              <span>{tag.name}</span>
+                            </button>
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  )}
+                </div>
               )}
             </div>
 

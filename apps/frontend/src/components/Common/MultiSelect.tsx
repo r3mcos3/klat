@@ -66,31 +66,33 @@ export function MultiSelect({ options, selectedValues, onChange, placeholder = '
 
       {/* Dropdown Menu */}
       {isOpen && (
-        <div className="absolute z-50 mt-1 w-full bg-bg-secondary border border-border-default rounded-md shadow-dark max-h-60 overflow-y-auto">
+        <div className="multiselect-dropdown absolute z-50 mt-1 w-full rounded-md max-h-60 overflow-y-auto">
           {options.length === 0 ? (
-            <div className="p-3 text-text-secondary text-sm">No options available</div>
+            <div className="p-3 text-sm text-text-secondary">No options available</div>
           ) : (
-            <ul className="bg-bg-secondary py-1 m-0 list-none">
+            <ul>
               {options.map((option) => {
                 const isSelected = selectedValues.includes(option.value);
                 return (
-                  <li key={option.value} className="bg-bg-secondary">
+                  <li key={option.value}>
                     <button
                       type="button"
                       onClick={() => toggleOption(option.value)}
-                      className={`w-full text-left px-3 py-2 text-sm flex items-center gap-2 border-none cursor-pointer transition-all ${
-                        isSelected
-                          ? 'bg-accent-primary text-white'
-                          : 'bg-bg-secondary text-text-primary hover:bg-bg-tertiary'
-                      }`}
+                      className={isSelected ? 'selected' : ''}
                     >
                       {/* Checkbox */}
                       <div
-                        className={`w-4 h-4 border-2 rounded flex items-center justify-center flex-shrink-0 ${
-                          isSelected
-                            ? 'border-white bg-white'
-                            : 'border-text-primary bg-transparent'
-                        }`}
+                        style={{
+                          width: '1rem',
+                          height: '1rem',
+                          border: `2px solid ${isSelected ? '#ffffff' : '#e3f2fd'}`,
+                          borderRadius: '0.25rem',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          flexShrink: 0,
+                          backgroundColor: isSelected ? '#ffffff' : 'transparent',
+                        }}
                       >
                         {isSelected && (
                           <svg
