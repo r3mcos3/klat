@@ -3,7 +3,6 @@ import { useEffect } from 'react';
 import { KanbanView } from './pages/KanbanView';
 import { NoteEditView } from './pages/NoteEditView';
 import { TagsView } from './pages/TagsView';
-import { SettingsView } from './pages/SettingsView';
 import LoginView from './pages/LoginView';
 import { AuthProvider } from './components/Auth/AuthProvider';
 import { ProtectedRoute } from './components/Auth/ProtectedRoute';
@@ -57,14 +56,6 @@ function App() {
             element={
               <ProtectedRoute>
                 <TagsView />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/settings"
-            element={
-              <ProtectedRoute>
-                <SettingsView />
               </ProtectedRoute>
             }
           />
