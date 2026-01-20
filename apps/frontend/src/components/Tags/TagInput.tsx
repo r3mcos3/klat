@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useCreateTag, useAllTags } from '@/hooks/useTags';
 import { getUnusedColor, getAvailableColors, isColorTooClose } from '@/utils/colorHelpers';
 
@@ -7,21 +7,41 @@ export function TagInput() {
   const [color, setColor] = useState('#3B82F6');
   const [isOpen, setIsOpen] = useState(false);
   const [showWarning, setShowWarning] = useState(false);
+  // Track recently created colors that may not be in allTags yet
+  const recentlyCreatedColors = useRef<Set<string>>(new Set());
 
   const createTag = useCreateTag();
   const { data: allTags = [] } = useAllTags();
 
+  // Clear recently created colors when allTags updates with those colors
+  useEffect(() => {
+    const tagColors = new Set(allTags.map(t => t.color));
+    recentlyCreatedColors.current.forEach(color => {
+      if (tagColors.has(color)) {
+        recentlyCreatedColors.current.delete(color);
+      }
+    });
+  }, [allTags]);
+
   // Get smart color suggestion when opening the form
   useEffect(() => {
-    if (isOpen && allTags.length > 0) {
-      const suggestedColor = getUnusedColor(allTags.map(t => t.color));
+    if (isOpen) {
+      // Combine existing tag colors with recently created colors
+      const existingColors = [
+        ...allTags.map(t => t.color),
+        ...Array.from(recentlyCreatedColors.current)
+      ];
+      const suggestedColor = getUnusedColor(existingColors);
       setColor(suggestedColor);
     }
   }, [isOpen, allTags]);
 
-  // Check if color is too close to existing colors
+  // Check if color is too close to existing colors (including recently created)
   useEffect(() => {
-    const existingColors = allTags.map(t => t.color);
+    const existingColors = [
+      ...allTags.map(t => t.color),
+      ...Array.from(recentlyCreatedColors.current)
+    ];
     setShowWarning(isColorTooClose(color, existingColors));
   }, [color, allTags]);
 
@@ -31,7 +51,10 @@ export function TagInput() {
     if (!name.trim()) return;
 
     try {
+      const createdColor = color;
       await createTag.mutateAsync({ name: name.trim(), color });
+      // Track this color as recently created so it's excluded from next suggestion
+      recentlyCreatedColors.current.add(createdColor);
       setName('');
       setColor('#3B82F6');
       setIsOpen(false);
@@ -51,7 +74,12 @@ export function TagInput() {
     );
   }
 
-  const availableColors = getAvailableColors(allTags.map(t => t.color));
+  // Include recently created colors in available colors calculation
+  const allExistingColors = [
+    ...allTags.map(t => t.color),
+    ...Array.from(recentlyCreatedColors.current)
+  ];
+  const availableColors = getAvailableColors(allExistingColors);
 
   return (
     <form onSubmit={handleSubmit} className="space-y-3">
