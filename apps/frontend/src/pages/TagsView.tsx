@@ -27,13 +27,14 @@ export function TagsView() {
       await deleteTag.mutateAsync(tagToDelete.id);
       setTagToDelete(null);
       setDeleteError('');
-    } catch (error: any) {
+    } catch (error) {
       // 409 = tag is still in use
-      if (error.response?.status === 409) {
+      const axiosError = error as { response?: { status?: number; data?: { error?: string; message?: string } } };
+      if (axiosError.response?.status === 409) {
         setDeleteError('This tag is still in use. Remove it from all notes before deleting.');
       } else {
         // Try to get error message from response
-        const errorMessage = error.response?.data?.error || error.response?.data?.message || 'Error deleting tag';
+        const errorMessage = axiosError.response?.data?.error || axiosError.response?.data?.message || 'Error deleting tag';
         setDeleteError(errorMessage);
       }
       // Don't close the dialog so user can see the error

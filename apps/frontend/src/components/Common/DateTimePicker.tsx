@@ -18,8 +18,14 @@ interface DateTimePickerProps {
   className?: string;
 }
 
+interface CustomInputProps {
+  value?: string;
+  onClick?: () => void;
+  placeholder?: string;
+}
+
 // Custom input component for styling
-const CustomInput = forwardRef<HTMLInputElement, any>(({ value, onClick, placeholder }, ref) => (
+const CustomInput = forwardRef<HTMLInputElement, CustomInputProps>(({ value, onClick, placeholder }, ref) => (
   <input
     type="text"
     value={value}

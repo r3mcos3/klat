@@ -71,7 +71,7 @@ function SaveStatusIndicator({ status }: { status: SaveStatus }) {
 export function MarkdownEditor({ note, date, onSave, onCreate, onSaveComplete }: MarkdownEditorProps) {
   const [textContent, setTextContent] = useState('');
   const [imageUrls, setImageUrls] = useState<string[]>([]);
-  const [tagIds, setTagIds] = useState<string[]>(note?.tags?.map((t: any) => t.id) || []);
+  const [tagIds, setTagIds] = useState<string[]>(note?.tags?.map((t) => t.id) || []);
   const [isCreating, setIsCreating] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const imageUploadRef = useRef<ImageUploadRef>(null);
@@ -99,7 +99,7 @@ export function MarkdownEditor({ note, date, onSave, onCreate, onSaveComplete }:
       const textOnly = note.content.replace(/!\[.*?\]\(.*?\)/g, '').trim();
       setTextContent(textOnly);
       setImageUrls(images);
-      setTagIds(note.tags?.map((t: any) => t.id) || []);
+      setTagIds(note.tags?.map((t) => t.id) || []);
       setIsCreating(false); // Reset creating flag when note is loaded
     }
   }, [note?.id]);

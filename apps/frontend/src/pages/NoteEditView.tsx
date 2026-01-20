@@ -55,7 +55,7 @@ export function NoteEditView() {
       // For existing notes, load from note data
       setNoteDate(parseNoteDate(note.date));
       if (note.tags) {
-        setSelectedTagIds(note.tags.map((t: any) => t.id));
+        setSelectedTagIds(note.tags.map((t) => t.id));
       }
       if (note.deadline) {
         try {

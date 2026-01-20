@@ -130,9 +130,10 @@ export const useAuthStore = create<AuthState>()(
                 return;
               }
               throw new Error('Invalid credentials');
-            } catch (err: any) {
-              console.error('[AUTH] Mock login error:', err.response?.data || err.message);
-              throw new Error(err.response?.data?.error || 'Login failed');
+            } catch (err) {
+              const axiosError = err as { response?: { data?: { error?: string } }; message?: string };
+              console.error('[AUTH] Mock login error:', axiosError.response?.data || axiosError.message);
+              throw new Error(axiosError.response?.data?.error || 'Login failed');
             }
           }
 

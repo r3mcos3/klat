@@ -74,7 +74,7 @@ export function KanbanView() {
 
       // Tag filter
       if (selectedTagIds.length > 0) {
-        const noteTagIds = note.tags?.map((t: any) => t.id) || [];
+        const noteTagIds = note.tags?.map((t) => t.id) || [];
         const hasSelectedTag = selectedTagIds.some(tagId => noteTagIds.includes(tagId));
         if (!hasSelectedTag) return false;
       }
@@ -276,7 +276,7 @@ export function KanbanView() {
                     <div className="p-3 text-sm text-text-secondary">No tags available</div>
                   ) : (
                     <ul style={{ margin: 0, padding: '0.25rem 0', listStyle: 'none' }}>
-                      {allTags.map((tag: any) => {
+                      {allTags.map((tag) => {
                         const isSelected = selectedTagIds.includes(tag.id);
                         return (
                           <li key={tag.id}>

@@ -262,7 +262,7 @@ export function KanbanCard({ note, isDragging = false, onDelete }: KanbanCardPro
         {/* Tags */}
         {note.tags && note.tags.length > 0 && (
           <div className="flex flex-wrap gap-1 mb-2">
-            {note.tags.slice(0, 3).map((tag: any) => (
+            {note.tags.slice(0, 3).map((tag) => (
               <span
                 key={tag.id}
                 className="text-[10px] font-semibold uppercase tracking-wide px-2 py-0.5 rounded-full"

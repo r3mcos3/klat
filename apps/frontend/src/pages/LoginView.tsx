@@ -22,8 +22,8 @@ export default function LoginView() {
       }
       // Navigate to home page after successful login/register
       navigate('/');
-    } catch (err: any) {
-      setError(err.message || 'An error occurred');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'An error occurred');
     }
   };
 
