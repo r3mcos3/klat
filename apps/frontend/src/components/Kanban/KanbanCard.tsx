@@ -5,6 +5,7 @@ import { formatDateNL } from '@/utils/dateHelpers';
 import { ImageLightbox } from '@/components/Common/ImageLightbox';
 import { useState } from 'react';
 import { createPortal } from 'react-dom';
+import { isPast, isToday, isTomorrow, differenceInDays } from 'date-fns';
 import type { Note } from '@klat/types';
 
 interface KanbanCardProps {
@@ -39,6 +40,74 @@ export function KanbanCard({ note, isDragging = false, onDelete }: KanbanCardPro
     if (note.importance === 'LOW') return '#4fc3f7'; // priority-low
     return '#1e4976'; // border-default
   };
+
+  // Get deadline info for banner
+  const getDeadlineInfo = () => {
+    if (!note.deadline) return null;
+
+    try {
+      const deadlineDate = new Date(note.deadline);
+      if (isNaN(deadlineDate.getTime())) return null;
+
+      const now = new Date();
+      const isOverdue = isPast(deadlineDate) && !isToday(deadlineDate);
+      const isDueToday = isToday(deadlineDate);
+      const isDueTomorrow = isTomorrow(deadlineDate);
+      const daysUntil = differenceInDays(deadlineDate, now);
+
+      let status: 'overdue' | 'today' | 'tomorrow' | 'soon' | 'normal';
+      let label: string;
+      let bgColor: string;
+      let textColor: string;
+      let icon: string;
+
+      if (isOverdue) {
+        status = 'overdue';
+        label = 'Overdue';
+        bgColor = 'bg-priority-high/20';
+        textColor = 'text-priority-high';
+        icon = '⚠️';
+      } else if (isDueToday) {
+        status = 'today';
+        label = 'Due today';
+        bgColor = 'bg-priority-high/20';
+        textColor = 'text-priority-high';
+        icon = '🔥';
+      } else if (isDueTomorrow) {
+        status = 'tomorrow';
+        label = 'Due tomorrow';
+        bgColor = 'bg-priority-medium/20';
+        textColor = 'text-priority-medium';
+        icon = '⏰';
+      } else if (daysUntil <= 7) {
+        status = 'soon';
+        label = `${daysUntil} days left`;
+        bgColor = 'bg-priority-medium/20';
+        textColor = 'text-priority-medium';
+        icon = '📅';
+      } else {
+        status = 'normal';
+        label = formatDateNL(deadlineDate, 'd MMM');
+        bgColor = 'bg-accent-primary/10';
+        textColor = 'text-accent-primary';
+        icon = '📅';
+      }
+
+      return {
+        date: deadlineDate,
+        status,
+        label,
+        bgColor,
+        textColor,
+        icon,
+        formattedDateTime: formatDateNL(deadlineDate, 'd MMM HH:mm'),
+      };
+    } catch {
+      return null;
+    }
+  };
+
+  const deadlineInfo = getDeadlineInfo();
 
   // Extract image URLs from markdown
   const getImageUrls = (content: string): string[] => {
@@ -137,6 +206,19 @@ export function KanbanCard({ note, isDragging = false, onDelete }: KanbanCardPro
             </svg>
           </button>
         </div>
+
+        {/* Deadline Banner */}
+        {deadlineInfo && (
+          <div className={`flex items-center gap-1.5 px-2 py-1 rounded-md mb-2 ${deadlineInfo.bgColor}`}>
+            <span className="text-xs">{deadlineInfo.icon}</span>
+            <span className={`text-xs font-medium ${deadlineInfo.textColor}`}>
+              {deadlineInfo.label}
+            </span>
+            <span className={`text-[10px] ${deadlineInfo.textColor} opacity-75 ml-auto`}>
+              {deadlineInfo.formattedDateTime}
+            </span>
+          </div>
+        )}
 
         {/* Content Preview */}
         {note.content.trim() && (
