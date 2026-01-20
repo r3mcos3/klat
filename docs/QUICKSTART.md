@@ -84,12 +84,8 @@ You should see the klat calendar! 🎉
 ➜ Check if `apps/backend/.env` exists and is filled in correctly.
 
 ### "Can't reach database server"
-➜ Verify your password is correct in both connection strings.
+➜ Verify your Supabase credentials are correct.
 ➜ Check if your Supabase project is active.
-
-### Prisma migrate fails
-➜ Use `DIRECT_URL` (without `?pgbouncer=true`, port 5432) for migrations if having issues.
-➜ Check if your password is correct.
 
 ## Useful Commands
 
@@ -101,7 +97,7 @@ npm run format           # Format code
 
 # Backend Specific
 npm run backend:dev      # Backend server only
-cd apps/backend && npm run prisma:studio    # Open database UI
+# View data in Supabase Dashboard: https://supabase.com/dashboard
 ```
 
 ## More Info

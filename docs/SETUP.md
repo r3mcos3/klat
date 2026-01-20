@@ -70,18 +70,16 @@ This installs dependencies for:
    CORS_ORIGIN=http://localhost:5173
    ```
 
-## 3. Migrate Database Schema
+## 3. Setup Database Schema
 
-Push the Prisma schema to your Supabase database:
+The database schema is managed via Supabase migrations in the `supabase/migrations/` directory. To apply migrations:
 
 ```bash
-cd apps/backend
-npm run migrate
+cd supabase
+npx supabase db push
 ```
 
-This will:
-1. Create `notes` and `tags` tables.
-2. Generate the Prisma Client.
+This will create the required `notes` and `tags` tables in your Supabase database.
 
 ## 4. Start the Project
 
@@ -110,13 +108,13 @@ npm run frontend:dev
 
 1. **Backend Health:** Visit http://localhost:3001/health. You should see `{"status":"ok"}`.
 2. **Frontend:** Visit http://localhost:5173. The app should load without errors.
-3. **Database:** Run `cd apps/backend && npm run prisma:studio` to view your data at http://localhost:5555.
+3. **Database:** View your data in the Supabase dashboard at https://supabase.com/dashboard/project/YOUR_PROJECT_ID/editor
 
 ## Troubleshooting
 
 - **`Environment variable not found`**: Ensure `.env` is in `apps/backend/`.
-- **`Can't reach database server`**: Check your password and ensure the project is not paused in Supabase.
-- **Prisma Migration Fails**: Ensure `DIRECT_URL` is correct (port 5432) and you have internet access.
+- **`Can't reach database server`**: Check your credentials and ensure the project is not paused in Supabase.
+- **Migration Fails**: Ensure your Supabase project is accessible and you have internet access.
 
 ## Deployment
 

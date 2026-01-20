@@ -27,7 +27,7 @@ The project is a monorepo managed by npm workspaces.
 
 ### Backend (`apps/backend`)
 - **Core:** Node.js, Express, TypeScript
-- **Database:** PostgreSQL (via Supabase), Prisma ORM
+- **Database:** PostgreSQL (via Supabase), Supabase Client Library
 - **Validation:** Zod
 
 ### Shared (`packages/types`)
@@ -49,7 +49,7 @@ The project is a monorepo managed by npm workspaces.
     Create `apps/backend/.env` and add your Supabase credentials (see `SETUP.md`).
 3.  **Run Migrations:**
     ```bash
-    cd apps/backend && npm run migrate
+    cd supabase && npx supabase db push
     ```
 4.  **Start Development:**
     ```bash
@@ -76,7 +76,7 @@ Run these from the project root:
 ```
 klat/
 ├── apps/
-│   ├── backend/     # Express API & Prisma
+│   ├── backend/     # Express API
 │   └── frontend/    # React Application
 └── packages/
     └── types/       # Shared TypeScript definitions

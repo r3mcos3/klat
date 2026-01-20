@@ -98,7 +98,7 @@ Beide Vercel en Render ondersteunen automatische deployments:
 Je Supabase database blijft waar deze is - alleen de frontend en backend worden gehost.
 
 Zorg ervoor dat je Supabase project ingesteld is met:
-- De juiste tabellen (via Prisma schema of SQL migrations)
+- De juiste tabellen (via SQL migrations in `supabase/migrations/`)
 - Row Level Security policies indien nodig
 
 ## Custom Domain (Optioneel)

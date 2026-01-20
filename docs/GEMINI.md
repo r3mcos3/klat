@@ -25,7 +25,7 @@ The project uses **npm workspaces** to manage multiple packages:
 - **Runtime:** Node.js
 - **Framework:** Express.js
 - **Language:** TypeScript
-- **ORM:** Prisma
+- **Database Client:** Supabase Client Library
 - **Validation:** Zod
 - **Database:** PostgreSQL (via Supabase)
 
@@ -43,9 +43,8 @@ Run these from the **root** directory:
 
 ### Backend Specific (`apps/backend`)
 - **Dev Server:** `npm run dev` (uses `tsx watch`)
-- **Database Migrations:** `npm run migrate` (`prisma migrate dev`)
-- **Deploy Migrations:** `npm run migrate:deploy`
-- **Prisma Studio:** `npm run prisma:studio`
+- **Database Migrations:** `cd supabase && npx supabase db push`
+- **View Database:** Use Supabase Dashboard
 
 ### Frontend Specific (`apps/frontend`)
 - **Dev Server:** `npm run dev` (Vite)
@@ -53,7 +52,7 @@ Run these from the **root** directory:
 
 ## Architecture & Conventions
 
-### Data Model (Prisma)
+### Data Model
 - **Note:** The core entity. Contains `content` (Markdown), `date`, `deadline`, and relations to `Tag`s.
 - **Tag:** Label for notes with a `name` and optional `color`.
 - **Relationship:** Many-to-Many between `Note` and `Tag`.
@@ -71,12 +70,11 @@ Run these from the **root** directory:
 
 ### Development Workflow
 1.  **Database Changes:**
-    -   Modify `apps/backend/prisma/schema.prisma`.
-    -   Run `npm run migrate` in `apps/backend`.
-    -   Run `npx prisma generate` to update the client.
+    -   Create SQL migration in `supabase/migrations/`.
+    -   Run `cd supabase && npx supabase db push` to apply migrations.
+    -   Update service methods to reflect new schema.
 2.  **Type Updates:**
     -   Update `packages/types/src/index.ts` to reflect model changes.
-    -   (Note: Ensure types stay in sync with Prisma generated types where applicable).
 3.  **Backend Logic:** Update routes/controllers/services using the new types/schema.
 4.  **Frontend Logic:** Update hooks and components to consume the new API features.
 
