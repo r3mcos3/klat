@@ -6,6 +6,7 @@ import notesRouter from './routes/notes';
 import tagsRouter from './routes/tags';
 import searchRouter from './routes/search';
 import imageRouter from './routes/images';
+import preferencesRouter from './routes/preferences';
 
 const app = express();
 
@@ -57,6 +58,7 @@ app.use('/api/notes', notesRouter);
 app.use('/api/tags', tagsRouter);
 app.use('/api/search', searchRouter);
 app.use('/api/images', imageRouter);
+app.use('/api/preferences', preferencesRouter);
 
 // Error handling
 app.use(notFoundHandler);
