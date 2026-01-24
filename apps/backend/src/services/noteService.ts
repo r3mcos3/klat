@@ -14,15 +14,19 @@ export class NoteService {
 
       // Helper function to get deadline urgency score
       const getDeadlineUrgency = (deadline: string | null): number => {
-        if (!deadline) return 4; // No deadline = medium priority
+        if (!deadline) return 5; // No deadline = medium priority
 
         const deadlineDate = new Date(deadline);
         const deadlineDay = new Date(deadlineDate.getFullYear(), deadlineDate.getMonth(), deadlineDate.getDate());
 
-        if (deadlineDay.getTime() === today.getTime()) return 1; // Due today = highest
-        if (deadlineDay.getTime() === tomorrow.getTime()) return 2; // Due tomorrow = very high
-        if (deadlineDay > tomorrow) return 3; // Future = high
-        return 5; // Overdue = lowest (show at bottom to not clutter top)
+        // Calculate days difference
+        const daysUntilDeadline = Math.ceil((deadlineDay.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+
+        if (daysUntilDeadline < 0) return 1; // Overdue = highest priority
+        if (daysUntilDeadline === 0) return 2; // Due today = very high
+        if (daysUntilDeadline === 1) return 3; // Due tomorrow = high
+        if (daysUntilDeadline <= 7) return 4; // Due within week = medium-high
+        return 6; // Due > 7 days = lowest (far future)
       };
 
       // Helper function to get importance score
