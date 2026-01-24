@@ -4,6 +4,56 @@ import { AppError } from '../middleware/errorHandler';
 import imageService from './imageService';
 
 export class NoteService {
+  // Helper function to sort notes by priority (deadline urgency + importance + age)
+  private sortNotesByPriority(notes: any[]): any[] {
+    return notes.sort((a, b) => {
+      const now = new Date();
+      const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      const tomorrow = new Date(today);
+      tomorrow.setDate(tomorrow.getDate() + 1);
+
+      // Helper function to get deadline urgency score
+      const getDeadlineUrgency = (deadline: string | null): number => {
+        if (!deadline) return 4; // No deadline = medium priority
+
+        const deadlineDate = new Date(deadline);
+        const deadlineDay = new Date(deadlineDate.getFullYear(), deadlineDate.getMonth(), deadlineDate.getDate());
+
+        if (deadlineDay.getTime() === today.getTime()) return 1; // Due today = highest
+        if (deadlineDay.getTime() === tomorrow.getTime()) return 2; // Due tomorrow = very high
+        if (deadlineDay > tomorrow) return 3; // Future = high
+        return 5; // Overdue = lowest (show at bottom to not clutter top)
+      };
+
+      // Helper function to get importance score
+      const getImportanceScore = (importance: string | null): number => {
+        if (importance === 'HIGH') return 3;
+        if (importance === 'MEDIUM') return 2;
+        if (importance === 'LOW') return 1;
+        return 0; // No importance = lowest
+      };
+
+      // 1. Sort by deadline urgency
+      const urgencyA = getDeadlineUrgency(a.deadline);
+      const urgencyB = getDeadlineUrgency(b.deadline);
+      if (urgencyA !== urgencyB) {
+        return urgencyA - urgencyB;
+      }
+
+      // 2. Sort by importance (higher first)
+      const importanceA = getImportanceScore(a.importance);
+      const importanceB = getImportanceScore(b.importance);
+      if (importanceA !== importanceB) {
+        return importanceB - importanceA;
+      }
+
+      // 3. Sort by creation date (oldest first - FIFO)
+      const dateA = new Date(a.createdAt).getTime();
+      const dateB = new Date(b.createdAt).getTime();
+      return dateA - dateB;
+    });
+  }
+
   // Create a new note (multiple notes per day allowed)
   async createNote(data: CreateNoteDto, userId: string) {
     const { date, content, deadline, completedAt, inProgress, importance, tagIds } = data;
@@ -84,15 +134,17 @@ export class NoteService {
       `
       )
       .eq('date', date)
-      .eq('userId', userId)
-      .order('createdAt', { ascending: false });
+      .eq('userId', userId);
 
     if (error) throw new AppError(error.message, 500);
 
-    return (notes || []).map((note: any) => ({
+    const transformedNotes = (notes || []).map((note: any) => ({
       ...note,
       tags: note.tags?.map((t: any) => t.tag).filter(Boolean) || [],
     }));
+
+    // Apply smart sorting
+    return this.sortNotesByPriority(transformedNotes);
   }
 
   // Get notes for a specific month
@@ -111,15 +163,17 @@ export class NoteService {
       )
       .gte('date', startDate)
       .lte('date', endDate)
-      .eq('userId', userId)
-      .order('createdAt', { ascending: false });
+      .eq('userId', userId);
 
     if (error) throw new AppError(error.message, 500);
 
-    return (notes || []).map((note: any) => ({
+    const transformedNotes = (notes || []).map((note: any) => ({
       ...note,
       tags: note.tags?.map((t: any) => t.tag).filter(Boolean) || [],
     }));
+
+    // Apply smart sorting
+    return this.sortNotesByPriority(transformedNotes);
   }
 
   // Update note
@@ -233,15 +287,17 @@ export class NoteService {
         tags:_NoteToTag(tag:tags(id, name, color))
       `
       )
-      .eq('userId', userId)
-      .order('createdAt', { ascending: false });
+      .eq('userId', userId);
 
     if (error) throw new AppError(error.message, 500);
 
-    return (notes || []).map((note: any) => ({
+    const transformedNotes = (notes || []).map((note: any) => ({
       ...note,
       tags: note.tags?.map((t: any) => t.tag).filter(Boolean) || [],
     }));
+
+    // Apply smart sorting
+    return this.sortNotesByPriority(transformedNotes);
   }
 
   // Delete all completed notes
