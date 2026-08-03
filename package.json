@@ -19,7 +19,7 @@
     "frontend:mock": "npm run dev:mock --workspace=apps/frontend"
   },
   "devDependencies": {
-    "typescript": "^5.0.0",
+    "typescript": "^7.0.0",
     "@typescript-eslint/eslint-plugin": "^6.0.0",
     "@typescript-eslint/parser": "^6.0.0",
     "concurrently": "^10.0.0",
